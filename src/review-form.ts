@@ -54,6 +54,13 @@ export class ReviewForm extends LitElement {
             .value=${this.identifier}
           />`
         : nothing}
+      ${this.token
+        ? html`<input
+            type="hidden"
+            name="field_reviewtoken"
+            .value=${this.token}
+          />`
+        : nothing}
       ${this.actionButtonsTemplate}
     </form>`;
   }
@@ -137,7 +144,7 @@ export class ReviewForm extends LitElement {
     const ratingLabel = `Rate ${num > 1 ? `${num} stars` : '1 star'}`;
 
     return html`<button
-      class="star"
+      class=${`star star-${num}`}
       title=${isSelected ? 'Clear rating' : `${ratingLabel}`}
       @click=${(e: Event) => this.handleStarClicked(e, num)}
     >

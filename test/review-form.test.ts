@@ -109,9 +109,7 @@ describe('ReviewForm', () => {
       html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`
     );
 
-    const selectedStars = el.shadowRoot?.querySelectorAll(
-      'img[src*=star-selected]'
-    );
+    const selectedStars = el.shadowRoot?.querySelectorAll('.star-selected');
     expect(selectedStars).to.exist;
     expect(selectedStars?.length).to.equal(5);
   });
@@ -124,12 +122,8 @@ describe('ReviewForm', () => {
       html`<ia-review-form .oldReview=${threeStarReview}></ia-review-form>`
     );
 
-    const selectedStars = el.shadowRoot?.querySelectorAll(
-      'img[src*=star-selected]'
-    );
-    const unselectedStars = el.shadowRoot?.querySelectorAll(
-      'img[src*=star-unselected]'
-    );
+    const selectedStars = el.shadowRoot?.querySelectorAll('.star-selected');
+    const unselectedStars = el.shadowRoot?.querySelectorAll('.star-unselected');
     expect(selectedStars).to.exist;
     expect(unselectedStars).to.exist;
     expect(selectedStars?.length).to.equal(3);
@@ -142,19 +136,15 @@ describe('ReviewForm', () => {
     );
 
     const secondStar = el.shadowRoot?.querySelector(
-      'img[alt="2 stars"]'
+      '.star-2'
     ) as HTMLImageElement;
     secondStar!.click();
 
     await el.updateComplete;
     expect(el.currentStars).to.equal(2);
 
-    const selectedStars = el.shadowRoot?.querySelectorAll(
-      'img[src*=star-selected]'
-    );
-    const unselectedStars = el.shadowRoot?.querySelectorAll(
-      'img[src*=star-unselected]'
-    );
+    const selectedStars = el.shadowRoot?.querySelectorAll('.star-selected');
+    const unselectedStars = el.shadowRoot?.querySelectorAll('.star-unselected');
     expect(selectedStars?.length).to.equal(2);
     expect(unselectedStars?.length).to.equal(3);
 
@@ -170,19 +160,15 @@ describe('ReviewForm', () => {
     );
 
     const currentStar = el.shadowRoot?.querySelector(
-      'img[alt="5 stars"]'
+      '.star-5'
     ) as HTMLImageElement;
     currentStar!.click();
 
     await el.updateComplete;
     expect(el.currentStars).to.equal(0);
 
-    const selectedStars = el.shadowRoot?.querySelectorAll(
-      'img[src*=star-selected]'
-    );
-    const unselectedStars = el.shadowRoot?.querySelectorAll(
-      'img[src*=star-unselected]'
-    );
+    const selectedStars = el.shadowRoot?.querySelectorAll('.star-selected');
+    const unselectedStars = el.shadowRoot?.querySelectorAll('.star-unselected');
     expect(selectedStars).to.be.empty;
     expect(unselectedStars?.length).to.equal(5);
 
@@ -205,12 +191,8 @@ describe('ReviewForm', () => {
     await el.updateComplete;
     expect(el.currentStars).to.equal(0);
 
-    const selectedStars = el.shadowRoot?.querySelectorAll(
-      'img[src*=star-selected]'
-    );
-    const unselectedStars = el.shadowRoot?.querySelectorAll(
-      'img[src*=star-unselected]'
-    );
+    const selectedStars = el.shadowRoot?.querySelectorAll('.star-selected');
+    const unselectedStars = el.shadowRoot?.querySelectorAll('.star-unselected');
     expect(selectedStars).to.be.empty;
     expect(unselectedStars?.length).to.equal(5);
 
@@ -242,5 +224,17 @@ describe('ReviewForm', () => {
     ) as HTMLAnchorElement;
     expect(cancelBtn).to.exist;
     expect(cancelBtn.href).to.contain('/details/foo');
+  });
+
+  it('prefills the token if provided', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form .token=${'12345a'}></ia-review-form>`
+    );
+
+    const tokenInput = el.shadowRoot?.querySelector(
+      'input[name="field_reviewtoken"]'
+    ) as HTMLInputElement;
+    expect(tokenInput).to.exist;
+    expect(tokenInput.value).to.equal('12345a');
   });
 });
