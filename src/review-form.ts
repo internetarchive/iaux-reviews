@@ -25,7 +25,7 @@ export class ReviewForm extends LitElement {
 
   /* Number of stars currently selected */
   @state()
-  numStars?: 0;
+  currentStars: number = 0;
 
   render() {
     return html`<form action=${this.endpointUrl}>
@@ -37,6 +37,10 @@ export class ReviewForm extends LitElement {
     </form>`;
   }
 
+  protected firstUpdated() {
+    this.currentStars = this.oldReview?.stars ?? 0;
+  }
+
   private get starsInputTemplate(): HTMLTemplateResult {
     return html`<div class="form-heading">
         <label for="stars-field">Rating (optional)</label>
@@ -45,9 +49,15 @@ export class ReviewForm extends LitElement {
         type="hidden"
         name="field_stars"
         id="stars-input"
-        .value=${this.oldReview?.stars ?? 0}
+        .value=${this.currentStars}
         required
-      />`;
+      />
+      <div class="stars">
+        ${[1, 2, 3, 4, 5].map(num => this.renderStar(num))}
+        <button class="clear-stars-btn" @click=${() => this.setStars(0)}>
+          Clear
+        </button>
+      </div> `;
   }
 
   private get subjectInputTemplate(): HTMLTemplateResult {
@@ -75,6 +85,28 @@ export class ReviewForm extends LitElement {
         cols="50"
         required
       ></textarea>`;
+  }
+
+  private renderStar(num: number): HTMLTemplateResult {
+    const isSelected = num === this.currentStars;
+    const ratingLabel = num > 1 ? `${num} stars` : '1 star';
+    const iconSrc = `src/assets/star-${
+      num <= this.currentStars ? 'selected' : 'unselected'
+    }.svg`;
+
+    return html`<img
+      class="star"
+      src=${iconSrc}
+      title=${isSelected ? 'Clear rating' : `Rate ${ratingLabel}`}
+      alt=${ratingLabel}
+      @click=${() => this.setStars(num)}
+      @keyup=${() => this.setStars(num)}
+    />`;
+  }
+
+  /* Updates star count, resetting to 0 if the currently selected star is clicked */
+  private setStars(num: number): void {
+    this.currentStars = num === this.currentStars ? 0 : num;
   }
 
   static styles = css`
@@ -106,9 +138,39 @@ export class ReviewForm extends LitElement {
 
     textarea,
     input[type='text'] {
-      padding: 5px;
-      width: calc(100% - 10px);
+      padding: 0.5rem;
+      width: calc(100% - 1rem);
       font-family: inherit;
+    }
+
+    .stars {
+      display: flex;
+      flex-direction: row;
+      gap: 0.2rem;
+      align-items: center;
+    }
+
+    .star {
+      width: 3rem;
+    }
+
+    .star:hover {
+      cursor: pointer;
+    }
+
+    .clear-stars-btn {
+      padding: 0 0.5rem;
+      color: var(--ia-link-color, #4b64ff);
+      font-family: inherit;
+      border: none;
+      background: transparent;
+      display: inline-block;
+      padding-top: 0.5rem;
+    }
+
+    .clear-stars-btn:hover {
+      cursor: pointer;
+      text-decoration: underline;
     }
   `;
 }

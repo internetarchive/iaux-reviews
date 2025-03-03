@@ -105,4 +105,120 @@ describe('ReviewForm', () => {
     expect(starsInput).to.exist;
     expect(starsInput.value).to.equal('5');
   });
+
+  it('shows the same number of selected stars as rating', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`
+    );
+
+    const selectedStars = el.shadowRoot?.querySelectorAll(
+      'img[src*=star-selected]'
+    );
+    expect(selectedStars).to.exist;
+    expect(selectedStars?.length).to.equal(5);
+  });
+
+  it('shows the same number of unselected stars as rating', async () => {
+    const threeStarReview = { ...mockOldReview };
+    threeStarReview.stars = 3;
+
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form .oldReview=${threeStarReview}></ia-review-form>`
+    );
+
+    const selectedStars = el.shadowRoot?.querySelectorAll(
+      'img[src*=star-selected]'
+    );
+    const unselectedStars = el.shadowRoot?.querySelectorAll(
+      'img[src*=star-unselected]'
+    );
+    expect(selectedStars).to.exist;
+    expect(unselectedStars).to.exist;
+    expect(selectedStars?.length).to.equal(3);
+    expect(unselectedStars?.length).to.equal(2);
+  });
+
+  it('changes the stars on star click', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`
+    );
+
+    const secondStar = el.shadowRoot?.querySelector(
+      'img[alt="2 stars"]'
+    ) as HTMLImageElement;
+    secondStar!.click();
+
+    await el.updateComplete;
+    expect(el.currentStars).to.equal(2);
+
+    const selectedStars = el.shadowRoot?.querySelectorAll(
+      'img[src*=star-selected]'
+    );
+    const unselectedStars = el.shadowRoot?.querySelectorAll(
+      'img[src*=star-unselected]'
+    );
+    expect(selectedStars?.length).to.equal(2);
+    expect(unselectedStars?.length).to.equal(3);
+
+    const starsInput = el.shadowRoot?.getElementById(
+      'stars-input'
+    ) as HTMLInputElement;
+    expect(starsInput?.value).to.equal('2');
+  });
+
+  it('clears the stars if current star rating clicked', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`
+    );
+
+    const currentStar = el.shadowRoot?.querySelector(
+      'img[alt="5 stars"]'
+    ) as HTMLImageElement;
+    currentStar!.click();
+
+    await el.updateComplete;
+    expect(el.currentStars).to.equal(0);
+
+    const selectedStars = el.shadowRoot?.querySelectorAll(
+      'img[src*=star-selected]'
+    );
+    const unselectedStars = el.shadowRoot?.querySelectorAll(
+      'img[src*=star-unselected]'
+    );
+    expect(selectedStars).to.be.empty;
+    expect(unselectedStars?.length).to.equal(5);
+
+    const starsInput = el.shadowRoot?.getElementById(
+      'stars-input'
+    ) as HTMLInputElement;
+    expect(starsInput?.value).to.equal('0');
+  });
+
+  it('clears the stars if clear button clicked', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`
+    );
+
+    const clearBtn = el.shadowRoot?.querySelector(
+      '.clear-stars-btn'
+    ) as HTMLButtonElement;
+    clearBtn!.click();
+
+    await el.updateComplete;
+    expect(el.currentStars).to.equal(0);
+
+    const selectedStars = el.shadowRoot?.querySelectorAll(
+      'img[src*=star-selected]'
+    );
+    const unselectedStars = el.shadowRoot?.querySelectorAll(
+      'img[src*=star-unselected]'
+    );
+    expect(selectedStars).to.be.empty;
+    expect(unselectedStars?.length).to.equal(5);
+
+    const starsInput = el.shadowRoot?.getElementById(
+      'stars-input'
+    ) as HTMLInputElement;
+    expect(starsInput?.value).to.equal('0');
+  });
 });
