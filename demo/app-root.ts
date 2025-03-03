@@ -1,20 +1,32 @@
-import { html, css, LitElement } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import '../src/your-webcomponent';
+
+import type { Review } from '../src/types/types';
+import '../src/review-form';
+
+const mockOldReview: Review = {
+  stars: 5,
+  subject: 'What a cool book!',
+  body: 'I loved it.',
+};
 
 @customElement('app-root')
 export class AppRoot extends LitElement {
   render() {
     return html`
-      <your-webcomponent title="Hello">
-        <div slot="my-slot">Some slotted content</div>
-      </your-webcomponent>
+      <div class="container">
+        <ia-review-form
+          .endpointUrl=${'https://archive.org/write-review.php'}
+          .oldReview=${mockOldReview}
+        ></ia-review-form>
+      </div>
     `;
   }
 
   static styles = css`
-    :host {
-      display: block;
+    .container {
+      max-width: 750px;
+      margin: 0 auto;
     }
   `;
 }
