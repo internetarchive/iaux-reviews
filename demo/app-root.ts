@@ -16,7 +16,8 @@ export class AppRoot extends LitElement {
     return html`
       <div class="container">
         <ia-review-form
-          .endpointUrl=${'https://archive.org/write-review.php'}
+          .identifier=${'goody'}
+          .baseHost=${'https://archive.org'}
           .oldReview=${mockOldReview}
         ></ia-review-form>
       </div>

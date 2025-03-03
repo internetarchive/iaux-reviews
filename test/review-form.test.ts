@@ -37,11 +37,9 @@ describe('ReviewForm', () => {
     expect(form?.action).to.contain('/write-review.php');
   });
 
-  it('uses a custom endpoint for form submission if desired', async () => {
+  it('uses a custom base host for form submission if desired', async () => {
     const el = await fixture<ReviewForm>(
-      html`<ia-review-form
-        .endpointUrl=${'https://archive.org/write-review.php'}
-      ></ia-review-form>`
+      html`<ia-review-form .baseHost=${'https://archive.org'}></ia-review-form>`
     );
 
     const form = el.shadowRoot?.querySelector('form');
@@ -220,5 +218,29 @@ describe('ReviewForm', () => {
       'stars-input'
     ) as HTMLInputElement;
     expect(starsInput?.value).to.equal('0');
+  });
+
+  it('prefills the identifier if provided', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form .identifier=${'foo'}></ia-review-form>`
+    );
+
+    const identifierInput = el.shadowRoot?.querySelector(
+      'input[name="identifier"]'
+    ) as HTMLInputElement;
+    expect(identifierInput).to.exist;
+    expect(identifierInput.value).to.equal('foo');
+  });
+
+  it('shows a cancel button that routes to the detail page if identifier provided', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form .identifier=${'foo'}></ia-review-form>`
+    );
+
+    const cancelBtn = el.shadowRoot?.querySelector(
+      '.btn.cancel'
+    ) as HTMLAnchorElement;
+    expect(cancelBtn).to.exist;
+    expect(cancelBtn.href).to.contain('/details/foo');
   });
 });
