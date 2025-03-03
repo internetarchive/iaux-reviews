@@ -47,13 +47,13 @@
  * Copyright 2021 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */var lt;((lt=window.HTMLSlotElement)===null||lt===void 0?void 0:lt.prototype.assignedElements)!=null;const Ce=Gt`
-  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <svg class="star-selected" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <path
     d="m81.0388846 100-30.9636029-22.5595033-30.7410319 22.5595033 10.6670595-37.3922042-30.0013093-25.2155916h37.5556428l12.5196389-37.3922042 12.3690754 37.3922042h37.5556429l-29.7034563 25.2155916z"
     fill="#f0b445"
   />
 </svg>`,xe=Gt`
-  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <svg class="star-unselected" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <path
     d="m81.0388846 100-30.9636029-22.5595033-30.7410319 22.5595033 10.6670595-37.3922042-30.0013093-25.2155916h37.5556428l12.5196389-37.3922042 12.3690754 37.3922042h37.5556429l-29.7034563 25.2155916z"
     fill="#e0e0e0"
@@ -66,6 +66,11 @@
             type="hidden"
             name="identifier"
             .value=${this.identifier}
+          />`:p}
+      ${this.token?f`<input
+            type="hidden"
+            name="field_reviewtoken"
+            .value=${this.token}
           />`:p}
       ${this.actionButtonsTemplate}
     </form>`}updated(t){var e,i;t.has("oldReview")&&(this.currentStars=(i=(e=this.oldReview)===null||e===void 0?void 0:e.stars)!==null&&i!==void 0?i:0)}get starsInputTemplate(){return f`<div class="form-heading">
@@ -119,7 +124,7 @@
         Submit review
       </button>
     </div>`}renderStar(t){const e=t===this.currentStars,i=`Rate ${t>1?`${t} stars`:"1 star"}`;return f`<button
-      class="star"
+      class=${`star star-${t}`}
       title=${e?"Clear rating":`${i}`}
       @click=${s=>this.handleStarClicked(s,t)}
     >
