@@ -8,6 +8,9 @@ import {
 } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 
+import starSelected from './assets/star-selected';
+import starUnselected from './assets/star-unselected';
+
 import type { Review } from './types/types';
 
 /**
@@ -131,30 +134,32 @@ export class ReviewForm extends LitElement {
 
   private renderStar(num: number): HTMLTemplateResult {
     const isSelected = num === this.currentStars;
-    const ratingLabel = num > 1 ? `${num} stars` : '1 star';
-    const iconSrc = `src/assets/star-${
-      num <= this.currentStars ? 'selected' : 'unselected'
-    }.svg`;
+    const ratingLabel = `Rate ${num > 1 ? `${num} stars` : '1 star'}`;
 
-    return html`<img
+    return html`<button
       class="star"
-      src=${iconSrc}
-      title=${isSelected ? 'Clear rating' : `Rate ${ratingLabel}`}
-      alt=${ratingLabel}
-      @click=${() => this.setStars(num)}
-      @keyup=${() => this.setStars(num)}
-    />`;
+      title=${isSelected ? 'Clear rating' : `${ratingLabel}`}
+      @click=${(e: Event) => this.handleStarClicked(e, num)}
+    >
+      ${num <= this.currentStars ? starSelected : starUnselected}
+    </button> `;
   }
 
-  /* Updates star count, resetting to 0 if the currently selected star is clicked */
-  private setStars(num: number): void {
-    this.currentStars = num === this.currentStars ? 0 : num;
+  /* Prevents form submission and sets stars based on number clicked */
+  private handleStarClicked(e: Event, num: number): void {
+    e.preventDefault();
+    this.setStars(num);
   }
 
   /* Clear stars if requested */
   private handleClearBtnClicked(e: Event): void {
     e.preventDefault();
     this.currentStars = 0;
+  }
+
+  /* Updates star count, resetting to 0 if the currently selected star is clicked */
+  private setStars(num: number): void {
+    this.currentStars = num === this.currentStars ? 0 : num;
   }
 
   static styles = css`
@@ -199,6 +204,7 @@ export class ReviewForm extends LitElement {
     }
 
     .star {
+      all: unset;
       width: 3rem;
     }
 
