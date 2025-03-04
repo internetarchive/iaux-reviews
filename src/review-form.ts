@@ -5,11 +5,13 @@ import {
   nothing,
   HTMLTemplateResult,
   PropertyValues,
+  CSSResultGroup,
 } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 
 import starSelected from './assets/star-selected';
 import starUnselected from './assets/star-unselected';
+import { IAButtonStyles } from './styles/ia-buttons';
 
 import type { Review } from './types/types';
 
@@ -38,7 +40,7 @@ export class ReviewForm extends LitElement {
 
   /* Number of stars currently selected */
   @state()
-  currentStars: number = 0;
+  private currentStars: number = 0;
 
   render() {
     return html`<form action=${`${this.baseHost ?? ''}/write-review.php`}>
@@ -72,7 +74,8 @@ export class ReviewForm extends LitElement {
   }
 
   private get starsInputTemplate(): HTMLTemplateResult {
-    return html`<div class="form-heading">
+    return html`
+      <div class="form-heading">
         <label for="stars-field">Rating (optional)</label>
       </div>
       <input
@@ -87,7 +90,8 @@ export class ReviewForm extends LitElement {
         <button class="clear-stars-btn" @click=${this.handleClearBtnClicked}>
           Clear
         </button>
-      </div> `;
+      </div>
+    `;
   }
 
   private get subjectInputTemplate(): HTMLTemplateResult {
@@ -121,8 +125,9 @@ export class ReviewForm extends LitElement {
     return html`<div class="action-btns">
       ${this.identifier
         ? html`<a
-            class="btn cancel"
+            class="ia-button dark"
             href=${`${this.baseHost ?? ''}/details/${this.identifier}`}
+            data-testid="cancel-btn"
           >
             Cancel
           </a>`
@@ -130,7 +135,7 @@ export class ReviewForm extends LitElement {
 
       <button
         type="submit"
-        class="btn submit"
+        class="ia-button primary"
         name="submit"
         value="Submit review"
       >
@@ -169,104 +174,82 @@ export class ReviewForm extends LitElement {
     this.currentStars = num === this.currentStars ? 0 : num;
   }
 
-  static styles = css`
-    :host {
-      font-family: var(
-        --ia-font-stack,
-        'Helvetica Neue',
-        Helvetica,
-        Arial,
-        sans-serif
-      );
+  static get styles(): CSSResultGroup {
+    return [
+      IAButtonStyles,
+      css`
+        :host {
+          font-family: var(
+            --ia-font-stack,
+            'Helvetica Neue',
+            Helvetica,
+            Arial,
+            sans-serif
+          );
 
-      color: var(--ia-text-color, #2c2c2c);
-    }
+          color: var(--ia-text-color, #2c2c2c);
+        }
 
-    .form-heading {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      padding-top: 1.5rem;
-      font-size: 1.6rem;
-      font-weight: bold;
-    }
+        .form-heading {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          padding-top: 1.5rem;
+          font-size: 1.6rem;
+          font-weight: bold;
+        }
 
-    label {
-      display: inline-block;
-      margin-bottom: 5px;
-    }
+        label {
+          display: inline-block;
+          margin-bottom: 5px;
+        }
 
-    textarea,
-    input[type='text'] {
-      padding: 0.5rem;
-      width: calc(100% - 1rem);
-      font-family: inherit;
-    }
+        textarea,
+        input[type='text'] {
+          padding: 0.5rem;
+          width: calc(100% - 1rem);
+          font-family: inherit;
+        }
 
-    .stars {
-      display: flex;
-      flex-direction: row;
-      gap: 0.2rem;
-      align-items: center;
-    }
+        .stars {
+          display: flex;
+          flex-direction: row;
+          gap: 0.2rem;
+          align-items: center;
+        }
 
-    .star {
-      all: unset;
-      width: 3rem;
-    }
+        .star {
+          all: unset;
+          width: 3rem;
+        }
 
-    .star:hover {
-      cursor: pointer;
-    }
+        .star:hover {
+          cursor: pointer;
+        }
 
-    .clear-stars-btn {
-      padding: 0 0.5rem;
-      color: var(--ia-link-color, #4b64ff);
-      font-family: inherit;
-      border: none;
-      background: transparent;
-      display: inline-block;
-      padding-top: 0.5rem;
-    }
+        .clear-stars-btn {
+          padding: 0 0.5rem;
+          color: var(--ia-link-color, #4b64ff);
+          font-family: inherit;
+          border: none;
+          background: transparent;
+          display: inline-block;
+          padding-top: 0.5rem;
+        }
 
-    .clear-stars-btn:hover {
-      cursor: pointer;
-      text-decoration: underline;
-    }
+        .clear-stars-btn:hover {
+          cursor: pointer;
+          text-decoration: underline;
+        }
 
-    .action-btns {
-      width: 100%;
-      display: flex;
-      justify-content: flex-end;
-      gap: 1rem;
-      padding-top: 1.5rem;
-    }
-
-    .btn {
-      border: 0.1rem solid #c5d1df;
-      color: #fff;
-      display: inline-block;
-      margin-bottom: 0;
-      font-weight: normal;
-      text-align: center;
-      font-family: inherit;
-      vertical-align: middle;
-      padding: 0.6rem 1.2rem;
-      font-size: 1.4rem;
-      border-radius: 4px;
-      text-decoration: none;
-    }
-
-    .btn.submit {
-      background-color: #194880;
-    }
-
-    .btn.cancel {
-      background-color: #2c2c2c;
-    }
-
-    .btn:hover {
-      cursor: pointer;
-    }
-  `;
+        .action-btns {
+          width: 100%;
+          display: flex;
+          justify-content: flex-end;
+          gap: 1rem;
+          padding-top: 1.5rem;
+        }
+      `,
+    ];
+  }
 }
