@@ -42,7 +42,6 @@
     "eslint-plugin-wc": "^2.2.0",
     "gh-pages": "^6.3.0",
     "husky": "^9.1.7",
-    "lit": "^2.8.0",
     "madge": "^8.0.0",
     "prettier": "^3.4.2",
     "rimraf": "^6.0.1",
@@ -65,5 +64,8 @@
       "eslint --fix",
       "prettier --write"
     ]
+  },
+  "dependencies": {
+    "lit": "^2.8.0"
   }
 }
