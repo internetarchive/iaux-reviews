@@ -141,7 +141,6 @@ describe('ReviewForm', () => {
     secondStar!.click();
 
     await el.updateComplete;
-    expect(el.currentStars).to.equal(2);
 
     const selectedStars = el.shadowRoot?.querySelectorAll('.star-selected');
     const unselectedStars = el.shadowRoot?.querySelectorAll('.star-unselected');
@@ -165,7 +164,6 @@ describe('ReviewForm', () => {
     currentStar!.click();
 
     await el.updateComplete;
-    expect(el.currentStars).to.equal(0);
 
     const selectedStars = el.shadowRoot?.querySelectorAll('.star-selected');
     const unselectedStars = el.shadowRoot?.querySelectorAll('.star-unselected');
@@ -189,7 +187,6 @@ describe('ReviewForm', () => {
     clearBtn!.click();
 
     await el.updateComplete;
-    expect(el.currentStars).to.equal(0);
 
     const selectedStars = el.shadowRoot?.querySelectorAll('.star-selected');
     const unselectedStars = el.shadowRoot?.querySelectorAll('.star-unselected');

@@ -40,7 +40,7 @@ export class ReviewForm extends LitElement {
 
   /* Number of stars currently selected */
   @state()
-  currentStars: number = 0;
+  private currentStars: number = 0;
 
   render() {
     return html`<form action=${`${this.baseHost ?? ''}/write-review.php`}>
@@ -74,7 +74,8 @@ export class ReviewForm extends LitElement {
   }
 
   private get starsInputTemplate(): HTMLTemplateResult {
-    return html`<div class="form-heading">
+    return html`
+      <div class="form-heading">
         <label for="stars-field">Rating (optional)</label>
       </div>
       <input
@@ -89,7 +90,8 @@ export class ReviewForm extends LitElement {
         <button class="clear-stars-btn" @click=${this.handleClearBtnClicked}>
           Clear
         </button>
-      </div> `;
+      </div>
+    `;
   }
 
   private get subjectInputTemplate(): HTMLTemplateResult {
