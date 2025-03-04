@@ -48,6 +48,18 @@ describe('ReviewForm', () => {
     expect(form?.action).to.equal('https://archive.org/write-review.php');
   });
 
+  it('uses a custom endpoint path for form submission if desired', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .baseHost=${'https://archive.org'}
+        .endpointPath=${'/foo'}
+      ></ia-review-form>`,
+    );
+
+    const form = el.shadowRoot?.querySelector('form');
+    expect(form?.action).to.equal('https://archive.org/foo');
+  });
+
   it('renders any errors that are passed in', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
