@@ -220,7 +220,7 @@ describe('ReviewForm', () => {
     );
 
     const cancelBtn = el.shadowRoot?.querySelector(
-      '.btn.cancel'
+      '*[data-testid=cancel-btn]'
     ) as HTMLAnchorElement;
     expect(cancelBtn).to.exist;
     expect(cancelBtn.href).to.contain('/details/foo');
