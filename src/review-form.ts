@@ -29,8 +29,8 @@ export class ReviewForm extends LitElement {
   /* The host for archive endpoints and data */
   @property({ type: String }) baseHost?: string;
 
-  /* The full URL for the endpoint we're submitting to */
-  @property({ type: String }) endpointUrl: string = '/write-review.php';
+  /* The path for the endpoint we're submitting to */
+  @property({ type: String }) endpointPath: string = '/write-review.php';
 
   /* The previous review to pre-fill, if any */
   @property({ type: Object }) oldReview?: Review;
@@ -43,7 +43,7 @@ export class ReviewForm extends LitElement {
   private currentStars: number = 0;
 
   render() {
-    return html`<form action=${`${this.baseHost ?? ''}/write-review.php`}>
+    return html`<form action=${`${this.baseHost ?? ''}${this.endpointPath}`}>
       ${this.errors
         ? html`<div class="errors">${this.errors.join(' ')}</div>`
         : nothing}
