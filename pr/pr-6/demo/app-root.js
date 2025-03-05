@@ -137,7 +137,7 @@
   .ia-button.dark:active {
     background-color: rgba(${ue}, 0.7);
   }
-`;let A=class extends N{constructor(){super(...arguments),this.endpointPath="/write-review.php",this.currentStars=0}render(){var e;return g`<form action=${`${(e=this.baseHost)!==null&&e!==void 0?e:""}${this.endpointPath}`}>
+`;let A=class extends N{constructor(){super(...arguments),this.baseHost="https://archive.org",this.endpointPath="/write-review.php",this.currentStars=0}render(){return g`<form action=${`${this.baseHost}${this.endpointPath}`}>
       ${this.errors?g`<div class="errors">${this.errors.join(" ")}</div>`:f}
       ${this.starsInputTemplate} ${this.subjectInputTemplate}
       ${this.bodyInputTemplate}
@@ -152,7 +152,7 @@
             .value=${this.token}
           />`:f}
       ${this.actionButtonsTemplate}
-    </form>`}updated(e){var t,n;e.has("oldReview")&&(this.currentStars=(n=(t=this.oldReview)===null||t===void 0?void 0:t.stars)!==null&&n!==void 0?n:0)}get starsInputTemplate(){return g`
+    </form>`}updated(e){e.has("oldReview")&&this.oldReview&&(this.currentStars=this.oldReview.stars)}get starsInputTemplate(){return g`
       <div class="form-heading">
         <label for="stars-field">Rating (optional)</label>
       </div>
@@ -188,10 +188,10 @@
         rows="10"
         cols="50"
         required
-      ></textarea>`}get actionButtonsTemplate(){var e;return g`<div class="action-btns">
+      ></textarea>`}get actionButtonsTemplate(){return g`<div class="action-btns">
       ${this.identifier?g`<a
             class="ia-button dark"
-            href=${`${(e=this.baseHost)!==null&&e!==void 0?e:""}/details/${this.identifier}`}
+            href=${`${this.baseHost}/details/${this.identifier}`}
             data-testid="cancel-btn"
           >
             Cancel
@@ -287,7 +287,6 @@
       <div class="container">
         <ia-review-form
           .identifier=${"goody"}
-          .baseHost=${"https://archive.org"}
           .oldReview=${It}
         ></ia-review-form>
       </div>
