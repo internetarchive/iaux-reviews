@@ -8,6 +8,7 @@ import {
   CSSResultGroup,
 } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
+import { msg } from '@lit/localize';
 
 import starSelected from './assets/star-selected';
 import starUnselected from './assets/star-unselected';
@@ -76,7 +77,7 @@ export class ReviewForm extends LitElement {
   private get starsInputTemplate(): HTMLTemplateResult {
     return html`
       <div class="form-heading">
-        <label for="stars-field">Rating (optional)</label>
+        <label for="stars-field">${msg('Rating (optional)')}</label>
       </div>
       <input
         type="hidden"
@@ -88,7 +89,7 @@ export class ReviewForm extends LitElement {
       <div class="stars">
         ${[1, 2, 3, 4, 5].map(num => this.renderStar(num))}
         <button class="clear-stars-btn" @click=${this.handleClearBtnClicked}>
-          Clear
+          ${msg('Clear')}
         </button>
       </div>
     `;
@@ -96,7 +97,7 @@ export class ReviewForm extends LitElement {
 
   private get subjectInputTemplate(): HTMLTemplateResult {
     return html`<div class="form-heading">
-        <label for="subject-input">Subject</label>
+        <label for="subject-input">${msg('Subject')}</label>
       </div>
       <input
         type="text"
@@ -109,7 +110,7 @@ export class ReviewForm extends LitElement {
 
   private get bodyInputTemplate(): HTMLTemplateResult {
     return html`<div class="form-heading">
-        <label for="body-input">Review</label>
+        <label for="body-input">${msg('Review')}</label>
       </div>
       <textarea
         name="field_reviewbody"
@@ -124,12 +125,12 @@ export class ReviewForm extends LitElement {
   private get actionButtonsTemplate(): HTMLTemplateResult {
     return html`<div class="action-btns">
       ${this.identifier
-        ? html` <a
+        ? html`<a
             class="ia-button dark"
             href="${this.baseHost}/details/${this.identifier}"
             data-testid="cancel-btn"
           >
-            Cancel
+            ${msg('Cancel')}
           </a>`
         : nothing}
 
@@ -139,19 +140,19 @@ export class ReviewForm extends LitElement {
         name="submit"
         value="Submit review"
       >
-        Submit review
+        ${msg('Submit review')}
       </button>
     </div>`;
   }
 
   private renderStar(num: number): HTMLTemplateResult {
     const isSelected = num === this.currentStars;
-    const ratingLabel = `Rate ${num > 1 ? `${num} stars` : '1 star'}`;
+    const ratingLabel = msg(`Rate ${num > 1 ? `${num} stars` : '1 star'}`);
 
     return html`
       <button
-        class=${`star star-${num}`}
-        title=${isSelected ? 'Clear rating' : `${ratingLabel}`}
+        class="star star-${num}"
+        title=${isSelected ? msg('Clear rating') : ratingLabel}
         @click=${(e: Event) => this.handleStarClicked(e, num)}
       >
         ${num <= this.currentStars ? starSelected : starUnselected}

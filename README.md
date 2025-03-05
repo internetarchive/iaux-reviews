@@ -15,7 +15,7 @@ npm install @internetarchive/reviews
 
 **Default review form:**
 ```ts
-<ia-review-form></ia-review-form>
+<ia-review-form .identifier=${'foo'}></ia-review-form>
 ```
 
 **Form with prefilled previous review:**
@@ -26,14 +26,14 @@ const myReview = new Review({
   reviewbody: 'I loved it.',
 })
 
-<ia-review-form .oldReview=${myReview}></ia-review-form>
+<ia-review-form .identifier=${'foo'} .oldReview=${myReview}></ia-review-form>
 ```
 
 **Submittable form with token:**
 ```ts
 import { VALID_TOKEN } from './constants.ts'
 
-<ia-review-form .token=${VALID_TOKEN}></ia-review-form>
+<ia-review-form .identifier=${'foo'} .token=${VALID_TOKEN}></ia-review-form>
 ```
 
 ## Development
