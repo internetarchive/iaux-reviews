@@ -1,4 +1,4 @@
-![Build Status](https://github.com/internetarchive/iaux-typescript-wc-template/actions/workflows/ci.yml/badge.svg) [![codecov](https://codecov.io/gh/internetarchive/iaux-typescript-wc-template/branch/main/graph/badge.svg?token=ZOYRJ2BV9W)](https://codecov.io/gh/internetarchive/iaux-typescript-wc-template)
+![Build Status](https://github.com/internetarchive/iaux-typescript-wc-template/actions/workflows/ci.yml/badge.svg) [![codecov](https://codecov.io/gh/internetarchive/iaux-reviews/graph/badge.svg?token=06FEWLWMXR)](https://codecov.io/gh/internetarchive/iaux-reviews)
 
 # Internet Archive Typescript WebComponent Template
 

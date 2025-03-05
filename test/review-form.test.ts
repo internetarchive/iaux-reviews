@@ -28,24 +28,13 @@ describe('ReviewForm', () => {
     expect(form).to.exist;
   });
 
-  it('uses the correct endpoint for form submission', async () => {
+  it('defaults to the correct endpoint for form submission', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form></ia-review-form>`,
     );
 
     const form = el.shadowRoot?.querySelector('form');
     expect(form?.action).to.contain('/write-review.php');
-  });
-
-  it('uses a custom base host for form submission if desired', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form
-        .baseHost=${'https://archive.org'}
-      ></ia-review-form>`,
-    );
-
-    const form = el.shadowRoot?.querySelector('form');
-    expect(form?.action).to.equal('https://archive.org/write-review.php');
   });
 
   it('uses a custom endpoint path for form submission if desired', async () => {
@@ -58,6 +47,37 @@ describe('ReviewForm', () => {
 
     const form = el.shadowRoot?.querySelector('form');
     expect(form?.action).to.equal('https://archive.org/foo');
+  });
+
+  it('defaults to the prod base host for form submission', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form .identifier=${'foo'}></ia-review-form>`,
+    );
+
+    const form = el.shadowRoot?.querySelector('form');
+    expect(form?.action).to.equal('https://archive.org/write-review.php');
+
+    const cancelBtn = el.shadowRoot?.querySelector(
+      'a[data-testid=cancel-btn]',
+    ) as HTMLAnchorElement;
+    expect(cancelBtn.href).to.equal('https://archive.org/details/foo');
+  });
+
+  it('uses a custom base host for form submission if desired', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .baseHost=${'https://foo.archive.org'}
+        .identifier=${'foo'}
+      ></ia-review-form>`,
+    );
+
+    const form = el.shadowRoot?.querySelector('form');
+    expect(form?.action).to.equal('https://foo.archive.org/write-review.php');
+
+    const cancelBtn = el.shadowRoot?.querySelector(
+      'a[data-testid=cancel-btn]',
+    ) as HTMLAnchorElement;
+    expect(cancelBtn.href).to.equal('https://foo.archive.org/details/foo');
   });
 
   it('renders any errors that are passed in', async () => {
@@ -116,6 +136,18 @@ describe('ReviewForm', () => {
     ) as HTMLInputElement;
     expect(starsInput).to.exist;
     expect(starsInput.value).to.equal('5');
+  });
+
+  it('prefills with zero stars if no previous review provided', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form></ia-review-form>`,
+    );
+
+    const starsInput = el.shadowRoot?.querySelector(
+      'input[name="field_stars"]',
+    ) as HTMLInputElement;
+    expect(starsInput).to.exist;
+    expect(starsInput.value).to.equal('0');
   });
 
   it('shows the same number of selected stars as rating', async () => {
@@ -231,7 +263,7 @@ describe('ReviewForm', () => {
     );
 
     const cancelBtn = el.shadowRoot?.querySelector(
-      '*[data-testid=cancel-btn]',
+      'a[data-testid=cancel-btn]',
     ) as HTMLAnchorElement;
     expect(cancelBtn).to.exist;
     expect(cancelBtn.href).to.contain('/details/foo');

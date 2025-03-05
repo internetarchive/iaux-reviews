@@ -27,7 +27,7 @@ export class ReviewForm extends LitElement {
   @property({ type: String }) token?: string;
 
   /* The host for archive endpoints and data */
-  @property({ type: String }) baseHost?: string;
+  @property({ type: String }) baseHost: string = 'https://archive.org';
 
   /* The path for the endpoint we're submitting to */
   @property({ type: String }) endpointPath: string = '/write-review.php';
@@ -43,7 +43,7 @@ export class ReviewForm extends LitElement {
   private currentStars: number = 0;
 
   render() {
-    return html`<form action=${`${this.baseHost ?? ''}${this.endpointPath}`}>
+    return html`<form action=${`${this.baseHost}${this.endpointPath}`}>
       ${this.errors
         ? html`<div class="errors">${this.errors.join(' ')}</div>`
         : nothing}
@@ -68,8 +68,8 @@ export class ReviewForm extends LitElement {
   }
 
   protected updated(changed: PropertyValues): void {
-    if (changed.has('oldReview')) {
-      this.currentStars = this.oldReview?.stars ?? 0;
+    if (changed.has('oldReview') && this.oldReview) {
+      this.currentStars = this.oldReview.stars;
     }
   }
 
@@ -126,7 +126,7 @@ export class ReviewForm extends LitElement {
       ${this.identifier
         ? html`<a
             class="ia-button dark"
-            href=${`${this.baseHost ?? ''}/details/${this.identifier}`}
+            href=${`${this.baseHost}/details/${this.identifier}`}
             data-testid="cancel-btn"
           >
             Cancel
