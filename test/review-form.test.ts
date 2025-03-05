@@ -1,14 +1,14 @@
 import { html, fixture, expect } from '@open-wc/testing';
 
 import type { ReviewForm } from '../src/review-form';
-import type { Review } from '../src/types/types';
+import { Review } from '@internetarchive/metadata-service';
 import '../src/review-form';
 
-const mockOldReview: Review = {
+const mockOldReview = new Review({
   stars: 5,
-  subject: 'What a cool book!',
-  body: 'I loved it.',
-};
+  reviewtitle: 'What a cool book!',
+  reviewbody: 'I loved it.',
+});
 
 describe('ReviewForm', () => {
   it('passes the a11y audit', async () => {
@@ -161,8 +161,11 @@ describe('ReviewForm', () => {
   });
 
   it('shows the same number of unselected stars as rating', async () => {
-    const threeStarReview = { ...mockOldReview };
-    threeStarReview.stars = 3;
+    const threeStarReview = new Review({
+      stars: 3,
+      reviewtitle: 'What a cool book!',
+      reviewbody: 'I loved it.',
+    });
 
     const el = await fixture<ReviewForm>(
       html`<ia-review-form .oldReview=${threeStarReview}></ia-review-form>`,

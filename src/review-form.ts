@@ -13,7 +13,7 @@ import starSelected from './assets/star-selected';
 import starUnselected from './assets/star-unselected';
 import { IAButtonStyles } from './styles/ia-buttons';
 
-import type { Review } from './types/types';
+import type { Review } from '@internetarchive/metadata-service';
 
 /**
  * Renders a form to edit a given IA review.
@@ -68,7 +68,7 @@ export class ReviewForm extends LitElement {
   }
 
   protected updated(changed: PropertyValues): void {
-    if (changed.has('oldReview') && this.oldReview) {
+    if (changed.has('oldReview') && this.oldReview?.stars) {
       this.currentStars = this.oldReview.stars;
     }
   }
@@ -102,7 +102,7 @@ export class ReviewForm extends LitElement {
         type="text"
         name="field_reviewtitle"
         id="subject-input"
-        .value=${this.oldReview?.subject ?? ''}
+        .value=${this.oldReview?.reviewtitle ?? ''}
         required
       />`;
   }
@@ -114,7 +114,7 @@ export class ReviewForm extends LitElement {
       <textarea
         name="field_reviewbody"
         id="body-input"
-        .value=${this.oldReview?.body ?? ''}
+        .value=${this.oldReview?.reviewbody ?? ''}
         rows="10"
         cols="50"
         required
