@@ -1,5 +1,5 @@
 {
-  "name": "@internetarchive/ia-reviews",
+  "name": "@internetarchive/reviews",
   "description": "Web component for displaying and editing Internet Archive reviews",
   "repository": {
     "type": "git",
