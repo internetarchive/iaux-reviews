@@ -66,6 +66,7 @@
     ]
   },
   "dependencies": {
+    "@internetarchive/metadata-service": "^1.0.3",
     "lit": "^2.8.0"
   }
 }
