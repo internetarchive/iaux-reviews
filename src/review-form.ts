@@ -43,7 +43,7 @@ export class ReviewForm extends LitElement {
   private currentStars: number = 0;
 
   render() {
-    return html`<form action=${`${this.baseHost}${this.endpointPath}`}>
+    return html`<form action="${this.baseHost}${this.endpointPath}">
       ${this.errors
         ? html`<div class="errors">${this.errors.join(' ')}</div>`
         : nothing}
@@ -124,9 +124,9 @@ export class ReviewForm extends LitElement {
   private get actionButtonsTemplate(): HTMLTemplateResult {
     return html`<div class="action-btns">
       ${this.identifier
-        ? html`<a
+        ? html` <a
             class="ia-button dark"
-            href=${`${this.baseHost}/details/${this.identifier}`}
+            href="${this.baseHost}/details/${this.identifier}"
             data-testid="cancel-btn"
           >
             Cancel
@@ -148,13 +148,15 @@ export class ReviewForm extends LitElement {
     const isSelected = num === this.currentStars;
     const ratingLabel = `Rate ${num > 1 ? `${num} stars` : '1 star'}`;
 
-    return html`<button
-      class=${`star star-${num}`}
-      title=${isSelected ? 'Clear rating' : `${ratingLabel}`}
-      @click=${(e: Event) => this.handleStarClicked(e, num)}
-    >
-      ${num <= this.currentStars ? starSelected : starUnselected}
-    </button> `;
+    return html`
+      <button
+        class=${`star star-${num}`}
+        title=${isSelected ? 'Clear rating' : `${ratingLabel}`}
+        @click=${(e: Event) => this.handleStarClicked(e, num)}
+      >
+        ${num <= this.currentStars ? starSelected : starUnselected}
+      </button>
+    `;
   }
 
   /* Prevents form submission and sets stars based on number clicked */
