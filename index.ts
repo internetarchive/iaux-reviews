@@ -1,1 +1,1 @@
-export { YourWebComponent } from './src/your-webcomponent';
+export { ReviewForm } from './src/review-form';

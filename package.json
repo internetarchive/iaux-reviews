@@ -1,9 +1,9 @@
 {
-  "name": "@internetarchive/iaux-reviews",
-  "description": "The Internet Archive Typescript WebComponent template. It is based on the @open-wc template.",
+  "name": "@internetarchive/reviews",
+  "description": "Web component for displaying and editing Internet Archive reviews",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/internetarchive/iaux-iaux-reviews.git"
+    "url": "git+https://github.com/internetarchive/iaux-reviews.git"
   },
   "license": "AGPL-3.0-only",
   "author": "Internet Archive",
@@ -66,6 +66,8 @@
     ]
   },
   "dependencies": {
+    "@internetarchive/metadata-service": "^1.0.3",
+    "@lit/localize": "^0.12.2",
     "lit": "^2.8.0"
   }
 }
