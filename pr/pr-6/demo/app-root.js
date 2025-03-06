@@ -209,7 +209,7 @@
         cols="50"
         required
       ></textarea>`}get actionButtonsTemplate(){return b`<div class="action-btns">
-      ${this.identifier?b` <a
+      ${this.identifier?b`<a
             class="ia-button dark"
             href="${this.baseHost}/details/${this.identifier}"
             data-testid="cancel-btn"
@@ -227,7 +227,7 @@
       </button>
     </div>`}renderStar(e){const t=e===this.currentStars,n=x(`Rate ${e>1?`${e} stars`:"1 star"}`);return b`
       <button
-        class=${`star star-${e}`}
+        class="star star-${e}"
         title=${t?x("Clear rating"):n}
         @click=${r=>this.handleStarClicked(r,e)}
       >
