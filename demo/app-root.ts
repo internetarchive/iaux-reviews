@@ -3,24 +3,33 @@ import { customElement } from 'lit/decorators.js';
 
 import { Review } from '@internetarchive/metadata-service';
 import '../src/review-form';
-
-const mockOldReview = new Review({
-  stars: 3,
-  reviewtitle: 'What a cool book!',
-  reviewbody: 'I loved it.',
-  reviewer: 'foo-bar',
-  reviewdate: '2025-03-03 18:13:36',
-  createdate: '2025-02-25 14:28:19',
-});
+import {
+  RecaptchaManager,
+  RecaptchaManagerInterface,
+} from '@internetarchive/recaptcha-manager';
 
 @customElement('app-root')
 export class AppRoot extends LitElement {
+  private mockOldReview = new Review({
+    stars: 3,
+    reviewtitle: 'What a cool book!',
+    reviewbody: 'I loved it.',
+    reviewer: 'foo-bar',
+    reviewdate: '2025-03-03 18:13:36',
+    createdate: '2025-02-25 14:28:19',
+  });
+
+  private recaptchaManager: RecaptchaManagerInterface = new RecaptchaManager({
+    defaultSiteKey: '6Ld64a8UAAAAAGbDwi1927ztGNw7YABQ-dqzvTN2',
+  });
+
   render() {
     return html`
       <div class="container">
         <ia-review-form
           .identifier=${'goody'}
-          .oldReview=${mockOldReview}
+          .oldReview=${this.mockOldReview}
+          .recaptchaManager=${this.recaptchaManager}
         ></ia-review-form>
       </div>
     `;
