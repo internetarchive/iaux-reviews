@@ -146,6 +146,7 @@ export class ReviewForm extends LitElement {
         name="g-recaptcha-response"
         .value=${this.recaptchaToken}
       />
+      <!-- Indicates to backend that form submission is intended -->
       <input type="hidden" name="action" value="1" />
       ${this.identifier
         ? html`<input

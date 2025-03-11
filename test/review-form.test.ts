@@ -34,7 +34,7 @@ describe('ReviewForm', () => {
     );
 
     const form = el.shadowRoot?.querySelector('form');
-    expect(form?.action).to.contain('/write-review.php');
+    expect(form?.getAttribute('action')).to.contain('/write-review.php');
   });
 
   it('uses a custom endpoint path for form submission if desired', async () => {
@@ -46,7 +46,7 @@ describe('ReviewForm', () => {
     );
 
     const form = el.shadowRoot?.querySelector('form');
-    expect(form?.action).to.equal('https://archive.org/foo');
+    expect(form?.getAttribute('action')).to.equal('https://archive.org/foo');
   });
 
   it('defaults to the prod base host for form submission', async () => {
@@ -55,7 +55,9 @@ describe('ReviewForm', () => {
     );
 
     const form = el.shadowRoot?.querySelector('form');
-    expect(form?.action).to.equal('https://archive.org/write-review.php');
+    expect(form?.getAttribute('action')).to.equal(
+      'https://archive.org/write-review.php',
+    );
 
     const cancelBtn = el.shadowRoot?.querySelector(
       'a[data-testid=cancel-btn]',
@@ -72,7 +74,9 @@ describe('ReviewForm', () => {
     );
 
     const form = el.shadowRoot?.querySelector('form');
-    expect(form?.action).to.equal('https://foo.archive.org/write-review.php');
+    expect(form?.getAttribute('action')).to.equal(
+      'https://foo.archive.org/write-review.php',
+    );
 
     const cancelBtn = el.shadowRoot?.querySelector(
       'a[data-testid=cancel-btn]',
