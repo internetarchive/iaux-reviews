@@ -65,8 +65,9 @@ export class ReviewForm extends LitElement {
     return html`<form
       id="review-form"
       action="${this.baseHost}${this.endpointPath}"
+      method="post"
     >
-      ${this.errors
+      ${this.errors.length
         ? html`<div class="errors">${this.errors.join(' ')}</div>`
         : nothing}
       ${this.starsInputTemplate} ${this.subjectInputTemplate}
@@ -135,27 +136,24 @@ export class ReviewForm extends LitElement {
 
   /* Renders all the hidden inputs we use to store other information for form submission */
   private get hiddenInputsTemplate(): HTMLTemplateResult {
-    return html`${this.identifier
-      ? html`<input
-          type="hidden"
-          name="identifier"
-          .value=${this.identifier}
-        />`
-      : nothing}
-    ${this.token
-      ? html`<input
-          type="hidden"
-          name="field_reviewtoken"
-          .value=${this.token}
-        />`
-      : nothing}
-    ${this.recaptchaToken
-      ? html`<input
-          type="hidden"
-          name="g-recaptcha-response"
-          .value=${this.recaptchaToken}
-        />`
-      : nothing}`;
+    return html`<input
+        type="hidden"
+        name="field_reviewtoken"
+        .value=${this.token}
+      />
+      <input
+        type="hidden"
+        name="g-recaptcha-response"
+        .value=${this.recaptchaToken}
+      />
+      <input type="hidden" name="action" value="1" />
+      ${this.identifier
+        ? html`<input
+            type="hidden"
+            name="identifier"
+            .value=${this.identifier}
+          />`
+        : nothing}`;
   }
 
   private get actionButtonsTemplate(): HTMLTemplateResult {
@@ -199,11 +197,13 @@ export class ReviewForm extends LitElement {
 
   private async handleSubmit(e: Event): Promise<void> {
     e.preventDefault();
+    if (!this.reviewForm.reportValidity()) return;
 
     try {
       const recaptchaToken = await this.recaptchaWidget?.execute();
       this.recaptchaToken = recaptchaToken ?? '';
 
+      // Wait for recaptcha token to be added to form
       await this.updateComplete;
       this.reviewForm.requestSubmit();
     } catch {

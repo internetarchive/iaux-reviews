@@ -99,7 +99,7 @@ describe('ReviewForm', () => {
     );
 
     const errors = el.shadowRoot?.querySelector('.errors') as HTMLDivElement;
-    expect(errors).not.to.exist;
+    expect(errors).to.be.null;
   });
 
   it('prefills the old review body if provided', async () => {
