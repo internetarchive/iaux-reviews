@@ -318,7 +318,7 @@ describe('ReviewForm', () => {
     expect(recaptchaInput.value).to.equal('mock-token');
   });
 
-  it('disables the submit button if the recaptcha widget has not been set up', async () => {
+  it('shows an error on submit if no recaptcha manager/widget is provided', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
     );
@@ -327,27 +327,20 @@ describe('ReviewForm', () => {
       'button[name="submit"]',
     ) as HTMLButtonElement;
 
-    expect(submitBtn.getAttribute('disabled')).to.exist;
-  });
-
-  it('enables the submit button once the recaptcha widget has been set up', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form
-        .oldReview=${mockOldReview}
-        .recaptchaManager=${new MockRecaptchaManager()}
-      ></ia-review-form>`,
-    );
+    submitBtn?.click();
 
     await el.updateComplete;
 
-    const submitBtn = el.shadowRoot?.querySelector(
-      'button[name="submit"]',
-    ) as HTMLButtonElement;
+    const recaptchaInput = el.shadowRoot?.querySelector(
+      'input[name="g-recaptcha-response"]',
+    ) as HTMLInputElement;
+    expect(recaptchaInput.value).not.to.equal('mock-token');
 
-    expect(submitBtn.getAttribute('disabled')).to.be.null;
+    const recaptchaErrorDiv = el.shadowRoot?.querySelector('.recaptcha-error');
+    expect(recaptchaErrorDiv).to.exist;
   });
 
-  it('shows an error if the recaptcha set-up fails', async () => {
+  it('shows an error if the recaptcha execution fails', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
         .oldReview=${mockOldReview}

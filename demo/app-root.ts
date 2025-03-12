@@ -41,9 +41,6 @@ export class AppRoot extends LitElement {
   @state()
   private showErrors: boolean = false;
 
-  @state()
-  private includeIdentifier: boolean = true;
-
   render() {
     return html`${!this.recaptchaManager
         ? html`<button
@@ -58,14 +55,14 @@ export class AppRoot extends LitElement {
             </button>`
         : nothing}
       <button @click=${() => (this.showErrors = !this.showErrors)}>
-        ${this.showErrors ? 'Hide' : 'Show'} Errors
+        ${this.showErrors ? 'Hide' : 'Show'} Pre-filled Errors
       </button>
       <div class="container">
         <ia-review-form
           .identifier=${'goody'}
           .oldReview=${this.mockOldReview}
           .recaptchaManager=${this.recaptchaManager}
-          .errors=${this.showErrors ? this.errors : []}
+          .prefilledErrors=${this.showErrors ? this.errors : []}
         ></ia-review-form>
       </div> `;
   }

@@ -189,7 +189,6 @@ export class ReviewForm extends LitElement {
         class="ia-button primary"
         name="submit"
         @click=${this.handleSubmit}
-        disabled
       >
         ${msg('Submit review')}
       </button>
@@ -213,14 +212,15 @@ export class ReviewForm extends LitElement {
 
   private async setupRecaptcha(): Promise<void> {
     this.recaptchaWidget = await this.recaptchaManager?.getRecaptchaWidget();
-    if (this.recaptchaWidget) {
-      this.submitBtn.disabled = false;
-    }
   }
 
   private async handleSubmit(e: Event): Promise<void> {
     e.preventDefault();
     if (!this.reviewForm.reportValidity()) return;
+    if (!this.recaptchaWidget) {
+      this.recaptchaError = true;
+      return;
+    }
 
     try {
       const recaptchaToken = await this.recaptchaWidget?.execute();
