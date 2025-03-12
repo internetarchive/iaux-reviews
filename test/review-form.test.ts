@@ -1,8 +1,9 @@
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, oneEvent } from '@open-wc/testing';
 
 import type { ReviewForm } from '../src/review-form';
 import { Review } from '@internetarchive/metadata-service';
 import '../src/review-form';
+import { MockRecaptchaManager } from './mocks/mock-recaptcha-manager';
 
 const mockOldReview = new Review({
   stars: 5,
@@ -286,5 +287,59 @@ describe('ReviewForm', () => {
     ) as HTMLInputElement;
     expect(tokenInput).to.exist;
     expect(tokenInput.value).to.equal('12345a');
+  });
+
+  it('adds the recaptcha token on submit if recaptcha manager provided', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .oldReview=${mockOldReview}
+        .recaptchaManager=${new MockRecaptchaManager()}
+      ></ia-review-form>`,
+    );
+
+    const submitBtn = el.shadowRoot?.querySelector(
+      'button[name="submit"]',
+    ) as HTMLButtonElement;
+
+    submitBtn?.click();
+
+    const recaptchaFinishedPromise = oneEvent(el, 'recaptchaFinished');
+    await recaptchaFinishedPromise;
+    await el.updateComplete;
+
+    const recaptchaInput = el.shadowRoot?.querySelector(
+      'input[name="g-recaptcha-response"]',
+    ) as HTMLInputElement;
+    expect(recaptchaInput).to.exist;
+    expect(recaptchaInput.value).to.equal('mock-token');
+  });
+
+  it('disables the submit button if the recaptcha widget has not been set up', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
+    );
+
+    const submitBtn = el.shadowRoot?.querySelector(
+      'button[name="submit"]',
+    ) as HTMLButtonElement;
+
+    expect(submitBtn.getAttribute('disabled')).to.exist;
+  });
+
+  it('enables the submit button once the recaptcha widget has been set up', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .oldReview=${mockOldReview}
+        .recaptchaManager=${new MockRecaptchaManager()}
+      ></ia-review-form>`,
+    );
+
+    await el.updateComplete;
+
+    const submitBtn = el.shadowRoot?.querySelector(
+      'button[name="submit"]',
+    ) as HTMLButtonElement;
+
+    expect(submitBtn.getAttribute('disabled')).to.be.null;
   });
 });

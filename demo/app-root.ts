@@ -1,5 +1,5 @@
 import { css, html, LitElement } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 
 import { Review } from '@internetarchive/metadata-service';
 import '../src/review-form';
@@ -23,13 +23,21 @@ export class AppRoot extends LitElement {
     defaultSiteKey: '6Ld64a8UAAAAAGbDwi1927ztGNw7YABQ-dqzvTN2',
   });
 
+  @state()
+  recaptchaOn: boolean = false;
+
   render() {
     return html`
+      <button @click=${() => (this.recaptchaOn = true)}>
+        Turn on ReCaptcha
+      </button>
       <div class="container">
         <ia-review-form
           .identifier=${'goody'}
           .oldReview=${this.mockOldReview}
-          .recaptchaManager=${this.recaptchaManager}
+          .recaptchaManager=${this.recaptchaOn
+            ? this.recaptchaManager
+            : undefined}
         ></ia-review-form>
       </div>
     `;
