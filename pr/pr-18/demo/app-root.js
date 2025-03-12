@@ -256,7 +256,7 @@
       >
         ${e<=this.currentStars?mn:yn}
       </button>
-    `}async setupRecaptcha(){var e;this.recaptchaWidget=await((e=this.recaptchaManager)===null||e===void 0?void 0:e.getRecaptchaWidget())}async handleSubmit(e){var t;if(e.preventDefault(),!!this.reviewForm.reportValidity()){if(!this.recaptchaWidget){this.recaptchaError=!0;return}try{const n=await((t=this.recaptchaWidget)===null||t===void 0?void 0:t.execute());this.dispatchEvent(new Event("recaptchaFinished")),n&&(this.recaptchaToken=n,await this.updateComplete,this.reviewForm.requestSubmit())}catch{console.log("fail time"),this.recaptchaError=!0}}}handleStarClicked(e,t){e.preventDefault(),this.setStars(t)}handleClearBtnClicked(e){e.preventDefault(),this.currentStars=0}setStars(e){this.currentStars=e===this.currentStars?0:e}static get styles(){return[kn,_`
+    `}async setupRecaptcha(){var e;this.recaptchaWidget=await((e=this.recaptchaManager)===null||e===void 0?void 0:e.getRecaptchaWidget()),this.recaptchaError=!1}async handleSubmit(e){var t;if(e.preventDefault(),!!this.reviewForm.reportValidity()){if(!this.recaptchaWidget){this.recaptchaError=!0;return}try{const n=await((t=this.recaptchaWidget)===null||t===void 0?void 0:t.execute());this.dispatchEvent(new Event("recaptchaFinished")),n&&(this.recaptchaToken=n,await this.updateComplete,this.reviewForm.requestSubmit())}catch{console.log("fail time"),this.recaptchaError=!0}}}handleStarClicked(e,t){e.preventDefault(),this.setStars(t)}handleClearBtnClicked(e){e.preventDefault(),this.currentStars=0}setStars(e){this.currentStars=e===this.currentStars?0:e}static get styles(){return[kn,_`
         :host {
           font-family: var(
             --ia-font-stack,
