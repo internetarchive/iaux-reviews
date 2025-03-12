@@ -235,7 +235,6 @@ export class ReviewForm extends LitElement {
         this.reviewForm.requestSubmit();
       }
     } catch {
-      console.log('fail time');
       this.recaptchaError = true;
     }
   }
