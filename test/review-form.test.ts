@@ -347,17 +347,10 @@ describe('ReviewForm', () => {
       html`<ia-review-form
         .oldReview=${mockOldReview}
         .bypassRecaptcha=${true}
+        .baseHost=${'#'}
+        .endpointPath=${'#'}
       ></ia-review-form>`,
     );
-
-    // Turn off submission for testing
-    const reviewForm = el.shadowRoot?.querySelector(
-      '#review-form',
-    ) as HTMLFormElement;
-    reviewForm.onsubmit = function (e: Event) {
-      e.preventDefault();
-    };
-    await el.updateComplete;
 
     const submitBtn = el.shadowRoot?.querySelector(
       'button[name="submit"]',
@@ -382,6 +375,8 @@ describe('ReviewForm', () => {
         .oldReview=${mockOldReview}
         .recaptchaManager=${mockRecaptchaManager}
         .bypassRecaptcha=${true}
+        .baseHost=${'#'}
+        .endpointPath=${'#'}
       ></ia-review-form>`,
     );
 

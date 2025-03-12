@@ -69,7 +69,7 @@ export class AppRoot extends LitElement {
           .oldReview=${this.mockOldReview}
           .recaptchaManager=${this.recaptchaManager}
           .prefilledErrors=${this.showErrors ? this.errors : []}
-          .bypassRecaptcha=${this.bypassRecaptcha}
+          ?bypassRecaptcha=${this.bypassRecaptcha}
         ></ia-review-form>
       </div> `;
   }

@@ -96,8 +96,8 @@ export class ReviewForm extends LitElement {
     }
 
     if (
-      !this.bypassRecaptcha &&
       changed.has('recaptchaManager') &&
+      !this.bypassRecaptcha &&
       this.recaptchaManager
     ) {
       this.setupRecaptcha();
