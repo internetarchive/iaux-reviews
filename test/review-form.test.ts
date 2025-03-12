@@ -346,7 +346,7 @@ describe('ReviewForm', () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
         .oldReview=${mockOldReview}
-        .bypassRecaptcha=${true}
+        ?bypassRecaptcha=${true}
         .baseHost=${'#'}
         .endpointPath=${'#'}
       ></ia-review-form>`,
@@ -374,7 +374,7 @@ describe('ReviewForm', () => {
       html`<ia-review-form
         .oldReview=${mockOldReview}
         .recaptchaManager=${mockRecaptchaManager}
-        .bypassRecaptcha=${true}
+        ?bypassRecaptcha=${true}
         .baseHost=${'#'}
         .endpointPath=${'#'}
       ></ia-review-form>`,
