@@ -212,6 +212,7 @@ export class ReviewForm extends LitElement {
 
   private async setupRecaptcha(): Promise<void> {
     this.recaptchaWidget = await this.recaptchaManager?.getRecaptchaWidget();
+    this.recaptchaError = false;
   }
 
   private async handleSubmit(e: Event): Promise<void> {

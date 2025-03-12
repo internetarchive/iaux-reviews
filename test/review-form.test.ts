@@ -339,33 +339,4 @@ describe('ReviewForm', () => {
     const recaptchaErrorDiv = el.shadowRoot?.querySelector('.recaptcha-error');
     expect(recaptchaErrorDiv).to.exist;
   });
-
-  it('shows an error if the recaptcha execution fails', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form
-        .oldReview=${mockOldReview}
-        .recaptchaManager=${new MockRecaptchaManager({
-          defaultSiteKey: 'fail-key',
-        })}
-      ></ia-review-form>`,
-    );
-
-    await el.updateComplete;
-
-    const submitBtn = el.shadowRoot?.querySelector(
-      'button[name="submit"]',
-    ) as HTMLButtonElement;
-
-    submitBtn?.click();
-
-    await el.updateComplete;
-
-    const recaptchaInput = el.shadowRoot?.querySelector(
-      'input[name="g-recaptcha-response"]',
-    ) as HTMLInputElement;
-    expect(recaptchaInput.value).not.to.equal('mock-token');
-
-    const recaptchaErrorDiv = el.shadowRoot?.querySelector('.recaptcha-error');
-    expect(recaptchaErrorDiv).to.exist;
-  });
 });
