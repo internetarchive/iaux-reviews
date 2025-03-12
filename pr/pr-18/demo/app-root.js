@@ -179,7 +179,7 @@
       ${this.starsInputTemplate} ${this.subjectInputTemplate}
       ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
       ${this.actionButtonsTemplate}
-    </form>`}updated(e){var t;e.has("oldReview")&&(!((t=this.oldReview)===null||t===void 0)&&t.stars)&&(this.currentStars=this.oldReview.stars),!this.bypassRecaptcha&&e.has("recaptchaManager")&&this.recaptchaManager&&this.setupRecaptcha()}get starsInputTemplate(){return A`
+    </form>`}updated(e){var t;e.has("oldReview")&&(!((t=this.oldReview)===null||t===void 0)&&t.stars)&&(this.currentStars=this.oldReview.stars),e.has("recaptchaManager")&&!this.bypassRecaptcha&&this.recaptchaManager&&this.setupRecaptcha()}get starsInputTemplate(){return A`
       <div class="form-heading">
         <label for="stars-field">${x("Rating (optional)")}</label>
       </div>
@@ -367,7 +367,7 @@
           .oldReview=${this.mockOldReview}
           .recaptchaManager=${this.recaptchaManager}
           .prefilledErrors=${this.showErrors?this.errors:[]}
-          .bypassRecaptcha=${this.bypassRecaptcha}
+          ?bypassRecaptcha=${this.bypassRecaptcha}
         ></ia-review-form>
       </div> `}};K.styles=_`
     .container {
