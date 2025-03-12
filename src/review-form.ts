@@ -203,7 +203,7 @@ export class ReviewForm extends LitElement {
   private async setupRecaptcha(): Promise<void> {
     this.recaptchaWidget = await this.recaptchaManager?.getRecaptchaWidget();
     if (this.recaptchaWidget) {
-      this.submitBtn.removeAttribute('disabled');
+      this.submitBtn.disabled = false;
     }
   }
 
@@ -227,6 +227,8 @@ export class ReviewForm extends LitElement {
       this.errors.push(
         'Sorry, we are unable to post your review at this time.',
       );
+      // Prevent retry without page reload
+      this.submitBtn.disabled = true;
     }
   }
 
@@ -329,6 +331,15 @@ export class ReviewForm extends LitElement {
 
         .ia-button:disabled:hover {
           cursor: not-allowed;
+        }
+
+        .errors {
+          font-size: 1.4rem;
+          padding: 1.5rem;
+          border: 1px solid #ebccd1;
+          color: #a94442;
+          background-color: #f2dede;
+          border-radius: 4px;
         }
       `,
     ];

@@ -23,13 +23,27 @@ export class AppRoot extends LitElement {
     defaultSiteKey: '6Ld64a8UAAAAAGbDwi1927ztGNw7YABQ-dqzvTN2',
   });
 
+  private errors: string[] = [
+    "Sorry, we couldn't submit your review.",
+    'Write a better one.',
+  ];
+
   @state()
   recaptchaOn: boolean = false;
+
+  @state()
+  showErrors: boolean = false;
+
+  @state()
+  includeIdentifier: boolean = true;
 
   render() {
     return html`
       <button @click=${() => (this.recaptchaOn = true)}>
         Turn on ReCaptcha
+      </button>
+      <button @click=${() => (this.showErrors = !this.showErrors)}>
+        ${this.showErrors ? 'Hide' : 'Show'} Errors
       </button>
       <div class="container">
         <ia-review-form
@@ -38,6 +52,7 @@ export class AppRoot extends LitElement {
           .recaptchaManager=${this.recaptchaOn
             ? this.recaptchaManager
             : undefined}
+          .errors=${this.showErrors ? this.errors : []}
         ></ia-review-form>
       </div>
     `;
@@ -46,7 +61,7 @@ export class AppRoot extends LitElement {
   static styles = css`
     .container {
       max-width: 750px;
-      margin: 0 auto;
+      margin: 10px auto;
     }
   `;
 }
