@@ -88,11 +88,13 @@ describe('ReviewForm', () => {
   it('renders any errors that are passed in', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
-        .errors=${['Too good of a review.', 'Please make it worse.']}
+        .prefilledErrors=${['Too good of a review.', 'Please make it worse.']}
       ></ia-review-form>`,
     );
 
-    const errors = el.shadowRoot?.querySelector('.errors') as HTMLDivElement;
+    const errors = el.shadowRoot?.querySelector(
+      '.prefilled-errors',
+    ) as HTMLDivElement;
     expect(errors?.innerText).to.equal(
       'Too good of a review. Please make it worse.',
     );
@@ -103,7 +105,9 @@ describe('ReviewForm', () => {
       html`<ia-review-form></ia-review-form>`,
     );
 
-    const errors = el.shadowRoot?.querySelector('.errors') as HTMLDivElement;
+    const errors = el.shadowRoot?.querySelector(
+      '.prefilled-errors',
+    ) as HTMLDivElement;
     expect(errors).to.be.null;
   });
 
@@ -341,5 +345,34 @@ describe('ReviewForm', () => {
     ) as HTMLButtonElement;
 
     expect(submitBtn.getAttribute('disabled')).to.be.null;
+  });
+
+  it('shows an error if the recaptcha set-up fails', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .oldReview=${mockOldReview}
+        .recaptchaManager=${new MockRecaptchaManager({
+          defaultSiteKey: 'fail-key',
+        })}
+      ></ia-review-form>`,
+    );
+
+    await el.updateComplete;
+
+    const submitBtn = el.shadowRoot?.querySelector(
+      'button[name="submit"]',
+    ) as HTMLButtonElement;
+
+    submitBtn?.click();
+
+    await el.updateComplete;
+
+    const recaptchaInput = el.shadowRoot?.querySelector(
+      'input[name="g-recaptcha-response"]',
+    ) as HTMLInputElement;
+    expect(recaptchaInput.value).not.to.equal('mock-token');
+
+    const recaptchaErrorDiv = el.shadowRoot?.querySelector('.recaptcha-error');
+    expect(recaptchaErrorDiv).to.exist;
   });
 });

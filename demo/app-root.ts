@@ -1,4 +1,4 @@
-import { css, html, LitElement } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import { Review } from '@internetarchive/metadata-service';
@@ -19,9 +19,16 @@ export class AppRoot extends LitElement {
     createdate: '2025-02-25 14:28:19',
   });
 
-  private recaptchaManager: RecaptchaManagerInterface = new RecaptchaManager({
-    defaultSiteKey: '6Ld64a8UAAAAAGbDwi1927ztGNw7YABQ-dqzvTN2',
-  });
+  private goodRecaptchaManager: RecaptchaManagerInterface =
+    new RecaptchaManager({
+      defaultSiteKey: '6Ld64a8UAAAAAGbDwi1927ztGNw7YABQ-dqzvTN2',
+    });
+
+  private badRecaptchaManager: RecaptchaManagerInterface = new RecaptchaManager(
+    {
+      defaultSiteKey: 'i-am-a-bad-key-that-will-fail',
+    },
+  );
 
   private errors: string[] = [
     "Sorry, we couldn't submit your review.",
@@ -29,19 +36,27 @@ export class AppRoot extends LitElement {
   ];
 
   @state()
-  recaptchaOn: boolean = false;
+  private recaptchaManager?: RecaptchaManagerInterface;
 
   @state()
-  showErrors: boolean = false;
+  private showErrors: boolean = false;
 
   @state()
-  includeIdentifier: boolean = true;
+  private includeIdentifier: boolean = true;
 
   render() {
-    return html`
-      <button @click=${() => (this.recaptchaOn = true)}>
-        Turn on ReCaptcha
-      </button>
+    return html`${!this.recaptchaManager
+        ? html`<button
+              @click=${() =>
+                (this.recaptchaManager = this.goodRecaptchaManager)}
+            >
+              Turn on ReCaptcha (good site key)</button
+            ><button
+              @click=${() => (this.recaptchaManager = this.badRecaptchaManager)}
+            >
+              Turn on ReCaptcha (bad site key)
+            </button>`
+        : nothing}
       <button @click=${() => (this.showErrors = !this.showErrors)}>
         ${this.showErrors ? 'Hide' : 'Show'} Errors
       </button>
@@ -49,13 +64,10 @@ export class AppRoot extends LitElement {
         <ia-review-form
           .identifier=${'goody'}
           .oldReview=${this.mockOldReview}
-          .recaptchaManager=${this.recaptchaOn
-            ? this.recaptchaManager
-            : undefined}
+          .recaptchaManager=${this.recaptchaManager}
           .errors=${this.showErrors ? this.errors : []}
         ></ia-review-form>
-      </div>
-    `;
+      </div> `;
   }
 
   static styles = css`

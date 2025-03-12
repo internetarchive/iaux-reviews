@@ -14,6 +14,9 @@ export class MockRecaptchaWidget implements RecaptchaWidgetInterface {
 
   /** @inheritdoc */
   async execute(): Promise<string> {
+    if (this.siteKey === 'fail-key') {
+      throw new Error('Bad site key.');
+    }
     return 'mock-token';
   }
 }
