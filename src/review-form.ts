@@ -46,6 +46,9 @@ export class ReviewForm extends LitElement {
   /* Service for activating the recaptcha challenge */
   @property({ type: Object }) recaptchaManager?: RecaptchaManagerInterface;
 
+  /* Optionally avoid using recaptcha for the form */
+  @property({ type: Boolean }) bypassRecaptcha: boolean = false;
+
   /* Recaptcha widget for the form */
   private recaptchaWidget?: RecaptchaWidgetInterface;
 
@@ -64,10 +67,6 @@ export class ReviewForm extends LitElement {
   /* The form to be submitted */
   @query('#review-form')
   private reviewForm!: HTMLFormElement;
-
-  /* The submit button */
-  @query('button[name="submit"]')
-  private submitBtn!: HTMLButtonElement;
 
   render() {
     return html`<form
@@ -96,7 +95,11 @@ export class ReviewForm extends LitElement {
       this.currentStars = this.oldReview.stars;
     }
 
-    if (changed.has('recaptchaManager') && this.recaptchaManager) {
+    if (
+      !this.bypassRecaptcha &&
+      changed.has('recaptchaManager') &&
+      this.recaptchaManager
+    ) {
       this.setupRecaptcha();
     }
   }
@@ -211,29 +214,35 @@ export class ReviewForm extends LitElement {
   }
 
   private async setupRecaptcha(): Promise<void> {
-    this.recaptchaWidget = await this.recaptchaManager?.getRecaptchaWidget();
-    this.recaptchaError = false;
+    try {
+      this.recaptchaWidget = await this.recaptchaManager?.getRecaptchaWidget();
+      this.recaptchaError = false;
+    } catch {
+      this.recaptchaError = true;
+    }
   }
 
   private async handleSubmit(e: Event): Promise<void> {
     e.preventDefault();
     if (!this.reviewForm.reportValidity()) return;
+    if (this.bypassRecaptcha) {
+      this.reviewForm.requestSubmit();
+      return;
+    }
+
     if (!this.recaptchaWidget) {
       this.recaptchaError = true;
       return;
     }
 
     try {
-      const recaptchaToken = await this.recaptchaWidget?.execute();
+      const recaptchaToken = await this.recaptchaWidget.execute();
       this.dispatchEvent(new Event('recaptchaFinished'));
+      this.recaptchaToken = recaptchaToken;
 
-      if (recaptchaToken) {
-        this.recaptchaToken = recaptchaToken;
-
-        // Wait for recaptcha token to be added to form
-        await this.updateComplete;
-        this.reviewForm.requestSubmit();
-      }
+      // Wait for recaptcha token to be added to form
+      await this.updateComplete;
+      this.reviewForm.requestSubmit();
     } catch {
       this.recaptchaError = true;
     }

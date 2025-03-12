@@ -39,6 +39,9 @@ export class AppRoot extends LitElement {
   private recaptchaManager?: RecaptchaManagerInterface;
 
   @state()
+  private bypassRecaptcha: boolean = false;
+
+  @state()
   private showErrors: boolean = false;
 
   render() {
@@ -52,8 +55,11 @@ export class AppRoot extends LitElement {
               @click=${() => (this.recaptchaManager = this.badRecaptchaManager)}
             >
               Turn on ReCaptcha (bad site key)
-            </button>`
+            </button> `
         : nothing}
+      <button @click=${() => (this.bypassRecaptcha = !this.bypassRecaptcha)}>
+        ${!this.bypassRecaptcha ? 'Bypass' : 'Enable'} ReCaptcha
+      </button>
       <button @click=${() => (this.showErrors = !this.showErrors)}>
         ${this.showErrors ? 'Hide' : 'Show'} Pre-filled Errors
       </button>
@@ -63,6 +69,7 @@ export class AppRoot extends LitElement {
           .oldReview=${this.mockOldReview}
           .recaptchaManager=${this.recaptchaManager}
           .prefilledErrors=${this.showErrors ? this.errors : []}
+          .bypassRecaptcha=${this.bypassRecaptcha}
         ></ia-review-form>
       </div> `;
   }

@@ -11,6 +11,8 @@ const mockOldReview = new Review({
   reviewbody: 'I loved it.',
 });
 
+const mockRecaptchaManager = new MockRecaptchaManager();
+
 describe('ReviewForm', () => {
   it('passes the a11y audit', async () => {
     const el = await fixture<ReviewForm>(
@@ -297,7 +299,7 @@ describe('ReviewForm', () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
         .oldReview=${mockOldReview}
-        .recaptchaManager=${new MockRecaptchaManager()}
+        .recaptchaManager=${mockRecaptchaManager}
       ></ia-review-form>`,
     );
 
@@ -338,5 +340,65 @@ describe('ReviewForm', () => {
 
     const recaptchaErrorDiv = el.shadowRoot?.querySelector('.recaptcha-error');
     expect(recaptchaErrorDiv).to.exist;
+  });
+
+  it('skips recaptcha if the bypass switch is activated', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .oldReview=${mockOldReview}
+        .bypassRecaptcha=${true}
+      ></ia-review-form>`,
+    );
+
+    // Turn off submission for testing
+    const reviewForm = el.shadowRoot?.querySelector(
+      '#review-form',
+    ) as HTMLFormElement;
+    reviewForm.onsubmit = function (e: Event) {
+      e.preventDefault();
+    };
+    await el.updateComplete;
+
+    const submitBtn = el.shadowRoot?.querySelector(
+      'button[name="submit"]',
+    ) as HTMLButtonElement;
+
+    submitBtn?.click();
+
+    await el.updateComplete;
+
+    const recaptchaInput = el.shadowRoot?.querySelector(
+      'input[name="g-recaptcha-response"]',
+    ) as HTMLInputElement;
+    expect(recaptchaInput.value).not.to.equal('mock-token');
+
+    const recaptchaErrorDiv = el.shadowRoot?.querySelector('.recaptcha-error');
+    expect(recaptchaErrorDiv).not.to.exist;
+  });
+
+  it('skips recaptcha if the bypass switch is activated, even with recaptcha manager', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .oldReview=${mockOldReview}
+        .recaptchaManager=${mockRecaptchaManager}
+        .bypassRecaptcha=${true}
+      ></ia-review-form>`,
+    );
+
+    const submitBtn = el.shadowRoot?.querySelector(
+      'button[name="submit"]',
+    ) as HTMLButtonElement;
+
+    submitBtn?.click();
+
+    await el.updateComplete;
+
+    const recaptchaInput = el.shadowRoot?.querySelector(
+      'input[name="g-recaptcha-response"]',
+    ) as HTMLInputElement;
+    expect(recaptchaInput.value).not.to.equal('mock-token');
+
+    const recaptchaErrorDiv = el.shadowRoot?.querySelector('.recaptcha-error');
+    expect(recaptchaErrorDiv).not.to.exist;
   });
 });
