@@ -81,7 +81,7 @@ export class ReviewForm extends LitElement {
         : nothing}
       ${this.recaptchaError
         ? html`<div class="errors recaptcha-error">
-            ${msg('Could not set up ReCaptcha. Please try again later.')}
+            ${msg('Could not validate review. Please try again later.')}
           </div>`
         : nothing}
       ${this.starsInputTemplate} ${this.subjectInputTemplate}

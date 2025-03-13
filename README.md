@@ -46,6 +46,11 @@ npm install
 ```bash
 npm run test
 ```
+### Local Demo
+```bash
+npm run start
+```
+**Note:** If you'd like ReCaptcha to work in your dev environment, you'll want to temporarily replace the `defaultSiteKey` in `app-root.ts` with the current IA site key. If you don't know what that is, ask in the UX team channel.
 
 ### Watch mode
 ```bash

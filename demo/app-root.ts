@@ -21,7 +21,7 @@ export class AppRoot extends LitElement {
 
   private goodRecaptchaManager: RecaptchaManagerInterface =
     new RecaptchaManager({
-      defaultSiteKey: '6Ld64a8UAAAAAGbDwi1927ztGNw7YABQ-dqzvTN2',
+      defaultSiteKey: 'demo-key',
     });
 
   private badRecaptchaManager: RecaptchaManagerInterface = new RecaptchaManager(
@@ -71,7 +71,7 @@ export class AppRoot extends LitElement {
           .prefilledErrors=${this.showErrors ? this.errors : []}
           ?bypassRecaptcha=${this.bypassRecaptcha}
         ></ia-review-form>
-      </div> `;
+      </div>`;
   }
 
   static styles = css`
