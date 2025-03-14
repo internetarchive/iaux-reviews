@@ -1,14 +1,17 @@
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, oneEvent } from '@open-wc/testing';
 
 import type { ReviewForm } from '../src/review-form';
 import { Review } from '@internetarchive/metadata-service';
 import '../src/review-form';
+import { MockRecaptchaManager } from './mocks/mock-recaptcha-manager';
 
 const mockOldReview = new Review({
   stars: 5,
   reviewtitle: 'What a cool book!',
   reviewbody: 'I loved it.',
 });
+
+const mockRecaptchaManager = new MockRecaptchaManager();
 
 describe('ReviewForm', () => {
   it('passes the a11y audit', async () => {
@@ -34,7 +37,7 @@ describe('ReviewForm', () => {
     );
 
     const form = el.shadowRoot?.querySelector('form');
-    expect(form?.action).to.contain('/write-review.php');
+    expect(form?.getAttribute('action')).to.contain('/write-review.php');
   });
 
   it('uses a custom endpoint path for form submission if desired', async () => {
@@ -46,7 +49,7 @@ describe('ReviewForm', () => {
     );
 
     const form = el.shadowRoot?.querySelector('form');
-    expect(form?.action).to.equal('https://archive.org/foo');
+    expect(form?.getAttribute('action')).to.equal('https://archive.org/foo');
   });
 
   it('defaults to the prod base host for form submission', async () => {
@@ -55,7 +58,9 @@ describe('ReviewForm', () => {
     );
 
     const form = el.shadowRoot?.querySelector('form');
-    expect(form?.action).to.equal('https://archive.org/write-review.php');
+    expect(form?.getAttribute('action')).to.equal(
+      'https://archive.org/write-review.php',
+    );
 
     const cancelBtn = el.shadowRoot?.querySelector(
       'a[data-testid=cancel-btn]',
@@ -72,7 +77,9 @@ describe('ReviewForm', () => {
     );
 
     const form = el.shadowRoot?.querySelector('form');
-    expect(form?.action).to.equal('https://foo.archive.org/write-review.php');
+    expect(form?.getAttribute('action')).to.equal(
+      'https://foo.archive.org/write-review.php',
+    );
 
     const cancelBtn = el.shadowRoot?.querySelector(
       'a[data-testid=cancel-btn]',
@@ -83,11 +90,13 @@ describe('ReviewForm', () => {
   it('renders any errors that are passed in', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
-        .errors=${['Too good of a review.', 'Please make it worse.']}
+        .prefilledErrors=${['Too good of a review.', 'Please make it worse.']}
       ></ia-review-form>`,
     );
 
-    const errors = el.shadowRoot?.querySelector('.errors') as HTMLDivElement;
+    const errors = el.shadowRoot?.querySelector(
+      '.prefilled-errors',
+    ) as HTMLDivElement;
     expect(errors?.innerText).to.equal(
       'Too good of a review. Please make it worse.',
     );
@@ -98,8 +107,10 @@ describe('ReviewForm', () => {
       html`<ia-review-form></ia-review-form>`,
     );
 
-    const errors = el.shadowRoot?.querySelector('.errors') as HTMLDivElement;
-    expect(errors).not.to.exist;
+    const errors = el.shadowRoot?.querySelector(
+      '.prefilled-errors',
+    ) as HTMLDivElement;
+    expect(errors).to.be.null;
   });
 
   it('prefills the old review body if provided', async () => {
@@ -282,5 +293,107 @@ describe('ReviewForm', () => {
     ) as HTMLInputElement;
     expect(tokenInput).to.exist;
     expect(tokenInput.value).to.equal('12345a');
+  });
+
+  it('adds the recaptcha token on submit if recaptcha manager provided', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .oldReview=${mockOldReview}
+        .recaptchaManager=${mockRecaptchaManager}
+      ></ia-review-form>`,
+    );
+
+    const submitBtn = el.shadowRoot?.querySelector(
+      'button[name="submit"]',
+    ) as HTMLButtonElement;
+
+    submitBtn?.click();
+
+    const recaptchaFinishedPromise = oneEvent(el, 'recaptchaFinished');
+    await recaptchaFinishedPromise;
+    await el.updateComplete;
+
+    const recaptchaInput = el.shadowRoot?.querySelector(
+      'input[name="g-recaptcha-response"]',
+    ) as HTMLInputElement;
+    expect(recaptchaInput).to.exist;
+    expect(recaptchaInput.value).to.equal('mock-token');
+  });
+
+  it('shows an error on submit if no recaptcha manager/widget is provided', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
+    );
+
+    const submitBtn = el.shadowRoot?.querySelector(
+      'button[name="submit"]',
+    ) as HTMLButtonElement;
+
+    submitBtn?.click();
+
+    await el.updateComplete;
+
+    const recaptchaInput = el.shadowRoot?.querySelector(
+      'input[name="g-recaptcha-response"]',
+    ) as HTMLInputElement;
+    expect(recaptchaInput.value).not.to.equal('mock-token');
+
+    const recaptchaErrorDiv = el.shadowRoot?.querySelector('.recaptcha-error');
+    expect(recaptchaErrorDiv).to.exist;
+  });
+
+  it('skips recaptcha if the bypass switch is activated', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .oldReview=${mockOldReview}
+        ?bypassRecaptcha=${true}
+        .baseHost=${'#'}
+        .endpointPath=${'#'}
+      ></ia-review-form>`,
+    );
+
+    const submitBtn = el.shadowRoot?.querySelector(
+      'button[name="submit"]',
+    ) as HTMLButtonElement;
+
+    submitBtn?.click();
+
+    await el.updateComplete;
+
+    const recaptchaInput = el.shadowRoot?.querySelector(
+      'input[name="g-recaptcha-response"]',
+    ) as HTMLInputElement;
+    expect(recaptchaInput.value).not.to.equal('mock-token');
+
+    const recaptchaErrorDiv = el.shadowRoot?.querySelector('.recaptcha-error');
+    expect(recaptchaErrorDiv).not.to.exist;
+  });
+
+  it('skips recaptcha if the bypass switch is activated, even with recaptcha manager', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .oldReview=${mockOldReview}
+        .recaptchaManager=${mockRecaptchaManager}
+        ?bypassRecaptcha=${true}
+        .baseHost=${'#'}
+        .endpointPath=${'#'}
+      ></ia-review-form>`,
+    );
+
+    const submitBtn = el.shadowRoot?.querySelector(
+      'button[name="submit"]',
+    ) as HTMLButtonElement;
+
+    submitBtn?.click();
+
+    await el.updateComplete;
+
+    const recaptchaInput = el.shadowRoot?.querySelector(
+      'input[name="g-recaptcha-response"]',
+    ) as HTMLInputElement;
+    expect(recaptchaInput.value).not.to.equal('mock-token');
+
+    const recaptchaErrorDiv = el.shadowRoot?.querySelector('.recaptcha-error');
+    expect(recaptchaErrorDiv).not.to.exist;
   });
 });
