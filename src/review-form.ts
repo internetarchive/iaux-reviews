@@ -90,6 +90,17 @@ export class ReviewForm extends LitElement {
     </form>`;
   }
 
+  protected firstUpdated(): void {
+    console.log('identifier: ' + this.identifier);
+    console.log('token: ' + this.token);
+    console.log('basehost: ' + this.baseHost);
+    console.log('endpoint path: ' + this.endpointPath);
+    console.log('old review: ' + this.oldReview);
+    console.log('prefilled errors: ' + this.prefilledErrors);
+    console.log('recaptcha manager: ' + this.recaptchaManager);
+    console.log('bypass recaptcha: ' + this.bypassRecaptcha);
+  }
+
   protected updated(changed: PropertyValues): void {
     if (changed.has('oldReview') && this.oldReview?.stars) {
       this.currentStars = this.oldReview.stars;
