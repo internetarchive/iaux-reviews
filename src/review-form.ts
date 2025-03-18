@@ -74,7 +74,7 @@ export class ReviewForm extends LitElement {
       action="${this.baseHost}${this.endpointPath}"
       method="post"
     >
-      ${this.prefilledErrors.length
+      ${this.prefilledErrors?.length
         ? html`<div class="errors prefilled-errors">
             ${this.prefilledErrors.join(' ')}
           </div>`
