@@ -113,7 +113,7 @@ export class ReviewForm extends LitElement {
         type="hidden"
         name="field_stars"
         id="stars-input"
-        .value=${this.currentStars}
+        .value=${this.currentStars.toString()}
         required
       />
       <div class="stars">
@@ -157,7 +157,7 @@ export class ReviewForm extends LitElement {
     return html`<input
         type="hidden"
         name="field_reviewtoken"
-        .value=${this.token}
+        .value=${this.token ?? ''}
       />
       <input
         type="hidden"
@@ -285,7 +285,7 @@ export class ReviewForm extends LitElement {
           display: flex;
           flex-direction: row;
           justify-content: space-between;
-          padding-top: 1.5rem;
+          padding-top: 15px;
           font-size: 1.6rem;
           font-weight: bold;
         }
@@ -297,21 +297,22 @@ export class ReviewForm extends LitElement {
 
         textarea,
         input[type='text'] {
-          padding: 0.5rem;
-          width: calc(100% - 1rem);
+          padding: 5px;
+          width: calc(100% - 10px);
           font-family: inherit;
+          font-size: inherit;
         }
 
         .stars {
           display: flex;
           flex-direction: row;
-          gap: 0.2rem;
+          gap: 2px;
           align-items: center;
         }
 
         .star {
           all: unset;
-          width: 3rem;
+          height: 30px;
         }
 
         .star:hover {
@@ -319,13 +320,14 @@ export class ReviewForm extends LitElement {
         }
 
         .clear-stars-btn {
-          padding: 0 0.5rem;
+          padding: 0 5px;
           color: var(--ia-link-color, #4b64ff);
           font-family: inherit;
           border: none;
           background: transparent;
           display: inline-block;
-          padding-top: 0.5rem;
+          padding-top: 5px;
+          font-size: inherit;
         }
 
         .clear-stars-btn:hover {
@@ -337,8 +339,8 @@ export class ReviewForm extends LitElement {
           width: 100%;
           display: flex;
           justify-content: flex-end;
-          gap: 1rem;
-          padding-top: 1.5rem;
+          gap: 10px;
+          padding-top: 15px;
         }
 
         .ia-button:disabled {
@@ -351,7 +353,7 @@ export class ReviewForm extends LitElement {
 
         .errors {
           font-size: 1.4rem;
-          padding: 1.5rem;
+          padding: 15px;
           border: 1px solid #ebccd1;
           color: #a94442;
           background-color: #f2dede;
