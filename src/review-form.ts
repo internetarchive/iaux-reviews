@@ -12,8 +12,8 @@ import { msg } from '@lit/localize';
 
 import starSelected from './assets/star-selected';
 import starUnselected from './assets/star-unselected';
-import { IAButtonStyles } from './styles/ia-buttons';
 
+import { iaButtonStyles } from '@internetarchive/ia-styles';
 import type { Review } from '@internetarchive/metadata-service';
 import type {
   RecaptchaManagerInterface,
@@ -267,7 +267,7 @@ export class ReviewForm extends LitElement {
 
   static get styles(): CSSResultGroup {
     return [
-      IAButtonStyles,
+      iaButtonStyles,
       css`
         :host {
           font-family: var(
@@ -300,7 +300,7 @@ export class ReviewForm extends LitElement {
           padding: 5px;
           width: calc(100% - 10px);
           font-family: inherit;
-          font-size: inherit;
+          font-size: 1.4rem;
         }
 
         .stars {
@@ -313,6 +313,7 @@ export class ReviewForm extends LitElement {
         .star {
           all: unset;
           height: 30px;
+          width: 30px;
         }
 
         .star:hover {
@@ -327,7 +328,7 @@ export class ReviewForm extends LitElement {
           background: transparent;
           display: inline-block;
           padding-top: 5px;
-          font-size: inherit;
+          font-size: 1.4rem;
         }
 
         .clear-stars-btn:hover {
