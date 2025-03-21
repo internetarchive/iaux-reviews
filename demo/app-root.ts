@@ -44,6 +44,9 @@ export class AppRoot extends LitElement {
   @state()
   private showErrors: boolean = false;
 
+  @state()
+  private useCharCounts: boolean = true;
+
   render() {
     return html`${!this.recaptchaManager
         ? html`<button
@@ -61,7 +64,10 @@ export class AppRoot extends LitElement {
         ${!this.bypassRecaptcha ? 'Bypass' : 'Enable'} ReCaptcha
       </button>
       <button @click=${() => (this.showErrors = !this.showErrors)}>
-        ${this.showErrors ? 'Hide' : 'Show'} Pre-filled Errors
+        ${this.showErrors ? 'Hide' : 'Show'} pre-filled errors
+      </button>
+      <button @click=${() => (this.useCharCounts = !this.useCharCounts)}>
+        ${this.useCharCounts ? 'Remove' : 'Use'} char count limits
       </button>
       <div class="container">
         <ia-review-form
@@ -69,6 +75,8 @@ export class AppRoot extends LitElement {
           .oldReview=${this.mockOldReview}
           .recaptchaManager=${this.recaptchaManager}
           .prefilledErrors=${this.showErrors ? this.errors : []}
+          .maxSubjectLength=${this.useCharCounts ? 100 : undefined}
+          .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
           ?bypassRecaptcha=${this.bypassRecaptcha}
         ></ia-review-form>
       </div>`;

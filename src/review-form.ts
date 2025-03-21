@@ -43,6 +43,12 @@ export class ReviewForm extends LitElement {
   /* Errors to add to the form on first render, if any */
   @property({ type: Array }) prefilledErrors: string[] = [];
 
+  /* Optional max length for review subject */
+  @property({ type: Number }) maxSubjectLength?: number;
+
+  /* Optional max length for review body */
+  @property({ type: Number }) maxBodyLength?: number;
+
   /* Service for activating the recaptcha challenge */
   @property({ type: Object }) recaptchaManager?: RecaptchaManagerInterface;
 
@@ -64,6 +70,14 @@ export class ReviewForm extends LitElement {
   @state()
   private currentStars: number = 0;
 
+  /* Length of review subject currently filled in */
+  @state()
+  private currentSubjectLength: number = 0;
+
+  /* Length of review body currently filled in */
+  @state()
+  private currentBodyLength: number = 0;
+
   /* The form to be submitted */
   @query('#review-form')
   private reviewForm!: HTMLFormElement;
@@ -75,9 +89,9 @@ export class ReviewForm extends LitElement {
       method="post"
     >
       ${this.prefilledErrors.length
-        ? html`<div class="errors prefilled-errors">
-            ${this.prefilledErrors.join(' ')}
-          </div>`
+        ? this.prefilledErrors.map(
+            err => html`<div class="errors prefilled-error">${err}</div>`,
+          )
         : nothing}
       ${this.recaptchaError
         ? html`<div class="errors recaptcha-error">
@@ -91,8 +105,12 @@ export class ReviewForm extends LitElement {
   }
 
   protected updated(changed: PropertyValues): void {
-    if (changed.has('oldReview') && this.oldReview?.stars) {
-      this.currentStars = this.oldReview.stars;
+    if (changed.has('oldReview') && this.oldReview) {
+      if (this.oldReview.stars) this.currentStars = this.oldReview.stars;
+      if (this.oldReview.reviewtitle)
+        this.currentSubjectLength = this.oldReview.reviewtitle.length;
+      if (this.oldReview.reviewbody)
+        this.currentBodyLength = this.oldReview.reviewbody.length;
     }
 
     if (
@@ -126,30 +144,71 @@ export class ReviewForm extends LitElement {
   }
 
   private get subjectInputTemplate(): HTMLTemplateResult {
-    return html`<div class="form-heading">
-        <label for="subject-input">${msg('Subject')}</label>
+    return html`<span id="subject-input" class="input-box ${
+      this.maxSubjectLength && this.currentSubjectLength > this.maxSubjectLength
+        ? 'error'
+        : ''
+    }"
+      ><div class="form-heading">
+        <label for="field_reviewtitle">${msg('Subject')}</label>
+        ${
+          this.maxSubjectLength
+            ? html`<div class="char-count subject">
+                ${this.currentSubjectLength}/${this.maxSubjectLength}
+              </div>`
+            : nothing
+        }
       </div>
       <input
         type="text"
         name="field_reviewtitle"
-        id="subject-input"
+        id="field_reviewtitle"
         .value=${this.oldReview?.reviewtitle ?? ''}
+        @input=${this.handleSubjectChanged}
         required
-      />`;
+    />${
+      this.maxSubjectLength
+        ? html`
+            <div class="input-error">
+              Subject may only have ${this.maxSubjectLength} characters
+            </div>
+          `
+        : nothing
+    }</div></span>`;
   }
 
   private get bodyInputTemplate(): HTMLTemplateResult {
-    return html`<div class="form-heading">
-        <label for="body-input">${msg('Review')}</label>
+    return html`<span
+      id="body-input"
+      class="input-box ${this.maxBodyLength &&
+      this.currentBodyLength > this.maxBodyLength
+        ? 'error'
+        : ''}"
+      ><div class="form-heading">
+        <label for="field_reviewbody">${msg('Review')}</label>
+        ${this.maxBodyLength
+          ? html`<div class="char-count body">
+              ${this.currentBodyLength}/${this.maxBodyLength}
+            </div>`
+          : nothing}
       </div>
       <textarea
         name="field_reviewbody"
-        id="body-input"
+        id="field_reviewbody"
         .value=${this.oldReview?.reviewbody ?? ''}
         rows="10"
         cols="50"
         required
-      ></textarea>`;
+        @input=${this.handleBodyChanged}
+      ></textarea>
+      ${this.maxBodyLength
+        ? html`
+            <div class="input-error">
+              ${msg(`Body may only have ${this.maxBodyLength} characters`)}
+            </div>
+          `
+        : nothing}
+    </span>`;
   }
 
   /* Renders all the hidden inputs we use to store other information for form submission */
@@ -191,6 +250,9 @@ export class ReviewForm extends LitElement {
         type="submit"
         class="ia-button primary"
         name="submit"
+        ?disabled=${(!!this.maxSubjectLength &&
+          this.currentSubjectLength > this.maxSubjectLength) ||
+        (!!this.maxBodyLength && this.currentBodyLength > this.maxBodyLength)}
         @click=${this.handleSubmit}
       >
         ${msg('Submit review')}
@@ -265,6 +327,18 @@ export class ReviewForm extends LitElement {
     this.currentStars = num === this.currentStars ? 0 : num;
   }
 
+  /* Updates subject input length */
+  private handleSubjectChanged(e: Event): void {
+    const subjectInput = e.target as HTMLInputElement;
+    this.currentSubjectLength = subjectInput.value.length;
+  }
+
+  /* Updates body input length */
+  private handleBodyChanged(e: Event): void {
+    const bodyInput = e.target as HTMLInputElement;
+    this.currentBodyLength = bodyInput.value.length;
+  }
+
   static get styles(): CSSResultGroup {
     return [
       iaButtonStyles,
@@ -279,6 +353,8 @@ export class ReviewForm extends LitElement {
           );
 
           color: var(--ia-text-color, #2c2c2c);
+          font-size: 1.4rem;
+          --ia-theme-error-color: #ff0000;
         }
 
         .form-heading {
@@ -286,6 +362,9 @@ export class ReviewForm extends LitElement {
           flex-direction: row;
           justify-content: space-between;
           padding-top: 15px;
+        }
+
+        .form-heading label {
           font-size: 1.6rem;
           font-weight: bold;
         }
@@ -300,7 +379,28 @@ export class ReviewForm extends LitElement {
           padding: 5px;
           width: calc(100% - 10px);
           font-family: inherit;
-          font-size: 1.4rem;
+          border-radius: 5px;
+          border: 1px solid #999999;
+        }
+
+        .input-box.error input,
+        .input-box.error textarea {
+          border: 2px solid var(--ia-theme-error-color, #ff0000);
+        }
+
+        .input-box.error .char-count,
+        .input-error {
+          color: var(--ia-theme-error-color, #ff0000);
+        }
+
+        .input-error {
+          display: none;
+        }
+
+        .input-box.error .input-error {
+          display: block;
+          text-align: right;
+          padding-top: 5px;
         }
 
         .stars {
@@ -328,7 +428,6 @@ export class ReviewForm extends LitElement {
           background: transparent;
           display: inline-block;
           padding-top: 5px;
-          font-size: 1.4rem;
         }
 
         .clear-stars-btn:hover {
@@ -353,7 +452,6 @@ export class ReviewForm extends LitElement {
         }
 
         .errors {
-          font-size: 1.4rem;
           padding: 15px;
           border: 1px solid #ebccd1;
           color: #a94442;
