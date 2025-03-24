@@ -170,7 +170,9 @@ export class ReviewForm extends LitElement {
       this.maxSubjectLength
         ? html`
             <div class="input-error">
-              Subject may only have ${this.maxSubjectLength} characters
+              ${msg(
+                `Subject may only have ${this.maxSubjectLength} characters`,
+              )}
             </div>
           `
         : nothing
