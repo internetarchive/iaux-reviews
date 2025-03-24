@@ -78,6 +78,10 @@ export class ReviewForm extends LitElement {
   @state()
   private currentBodyLength: number = 0;
 
+  /* Whether to enable the submit button */
+  @state()
+  private formCanSubmit: boolean = false;
+
   /* The form to be submitted */
   @query('#review-form')
   private reviewForm!: HTMLFormElement;
@@ -104,6 +108,10 @@ export class ReviewForm extends LitElement {
     </form>`;
   }
 
+  protected firstUpdated(): void {
+    this.formCanSubmit = this.checkSubmissionAllowed();
+  }
+
   protected updated(changed: PropertyValues): void {
     if (changed.has('oldReview') && this.oldReview) {
       if (this.oldReview.stars) this.currentStars = this.oldReview.stars;
@@ -119,6 +127,14 @@ export class ReviewForm extends LitElement {
       this.recaptchaManager
     ) {
       this.setupRecaptcha();
+    }
+
+    if (
+      (!this.bypassRecaptcha && changed.has('recaptchaWdiget')) ||
+      (!!this.maxSubjectLength && changed.has('currentSubjectLength')) ||
+      (!!this.maxBodyLength && changed.has('currentBodyLength'))
+    ) {
+      this.formCanSubmit = this.checkSubmissionAllowed();
     }
   }
 
@@ -252,9 +268,7 @@ export class ReviewForm extends LitElement {
         type="submit"
         class="ia-button primary"
         name="submit"
-        ?disabled=${(!!this.maxSubjectLength &&
-          this.currentSubjectLength > this.maxSubjectLength) ||
-        (!!this.maxBodyLength && this.currentBodyLength > this.maxBodyLength)}
+        ?disabled=${!this.formCanSubmit}
         @click=${this.handleSubmit}
       >
         ${msg('Submit review')}
@@ -339,6 +353,24 @@ export class ReviewForm extends LitElement {
   private handleBodyChanged(e: Event): void {
     const bodyInput = e.target as HTMLInputElement;
     this.currentBodyLength = bodyInput.value.length;
+  }
+
+  /* Checks if submission should be allowed */
+  private checkSubmissionAllowed(): boolean {
+    // Subject must be correct length
+    if (
+      !!this.maxSubjectLength &&
+      this.currentSubjectLength > this.maxSubjectLength
+    ) {
+      return false;
+    }
+
+    // Body must be correct length
+    if (!!this.maxBodyLength && this.currentBodyLength > this.maxBodyLength) {
+      return false;
+    }
+
+    return true;
   }
 
   static get styles(): CSSResultGroup {

@@ -507,7 +507,7 @@ describe('ReviewForm', () => {
     const errorMsg = bodyInputBox?.querySelector('.input-error');
     expect(errorMsg).to.exist;
 
-    const submitBtn = el.shadowRoot?.querySelector('button[type="submit"');
+    const submitBtn = el.shadowRoot?.querySelector('button[type="submit"]');
     expect(submitBtn?.getAttribute('disabled')).to.exist;
   });
 
