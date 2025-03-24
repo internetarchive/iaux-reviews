@@ -204,7 +204,7 @@ export class ReviewForm extends LitElement {
       ${this.maxBodyLength
         ? html`
             <div class="input-error">
-              ${msg(`Body may only have ${this.maxBodyLength} characters`)}
+              ${msg(`Review may only have ${this.maxBodyLength} characters`)}
             </div>
           `
         : nothing}
