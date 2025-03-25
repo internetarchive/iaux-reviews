@@ -130,8 +130,8 @@ export class ReviewForm extends LitElement {
     }
 
     if (
-      (!!this.maxSubjectLength && changed.has('currentSubjectLength')) ||
-      (!!this.maxBodyLength && changed.has('currentBodyLength'))
+      changed.has('currentSubjectLength') ||
+      changed.has('currentBodyLength')
     ) {
       this.formCanSubmit = this.checkSubmissionAllowed();
     }
@@ -356,6 +356,11 @@ export class ReviewForm extends LitElement {
 
   /* Checks if submission should be allowed */
   private checkSubmissionAllowed(): boolean {
+    // Subject and body must not be empty
+    if (!this.currentBodyLength || !this.currentSubjectLength) {
+      return false;
+    }
+
     // Subject must be correct length
     if (
       !!this.maxSubjectLength &&
