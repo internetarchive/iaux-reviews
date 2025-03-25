@@ -209,7 +209,7 @@
     clip-path: inset(50%) !important;
     user-select: none !important;
   }
-`;let b=class extends F{constructor(){super(...arguments),this.baseHost="https://archive.org",this.endpointPath="/write-review.php",this.prefilledErrors=[],this.bypassRecaptcha=!1,this.recaptchaToken="",this.recaptchaError=!1,this.currentStars=0,this.currentSubjectLength=0,this.currentBodyLength=0,this.formCanSubmit=!1}render(){return v`<form
+`;let b=class extends F{constructor(){super(...arguments),this.token="",this.baseHost="https://archive.org",this.endpointPath="/write-review.php",this.prefilledErrors=[],this.bypassRecaptcha=!1,this.recaptchaToken="",this.recaptchaError=!1,this.currentStars=0,this.currentSubjectLength=0,this.currentBodyLength=0,this.formCanSubmit=!1}render(){return v`<form
       id="review-form"
       action="${this.baseHost}${this.endpointPath}"
       method="post"
@@ -279,10 +279,10 @@
               ${x(`Review may only have ${this.maxBodyLength} characters`)}
             </div>
           `:y}
-    </span>`}get hiddenInputsTemplate(){var e;return v`<input
+    </span>`}get hiddenInputsTemplate(){return v`<input
         type="hidden"
         name="field_reviewtoken"
-        .value=${(e=this.token)!==null&&e!==void 0?e:""}
+        .value=${this.token}
       />
       <input
         type="hidden"
@@ -332,7 +332,6 @@
           );
 
           color: var(--ia-text-color, #2c2c2c);
-          font-size: 1.4rem;
           --ia-theme-error-color: #ff0000;
         }
 
@@ -470,5 +469,6 @@
     .container {
       max-width: 750px;
       margin: 10px auto;
+      font-size: 1.4rem;
     }
   `;l([k()],z.prototype,"recaptchaManager",void 0);l([k()],z.prototype,"bypassRecaptcha",void 0);l([k()],z.prototype,"showErrors",void 0);l([k()],z.prototype,"useCharCounts",void 0);z=l([Rt("app-root")],z);
