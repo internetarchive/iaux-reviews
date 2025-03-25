@@ -391,7 +391,6 @@ export class ReviewForm extends LitElement {
           );
 
           color: var(--ia-text-color, #2c2c2c);
-          font-size: 1.4rem;
           --ia-theme-error-color: #ff0000;
         }
 

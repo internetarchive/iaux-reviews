@@ -86,6 +86,7 @@ export class AppRoot extends LitElement {
     .container {
       max-width: 750px;
       margin: 10px auto;
+      font-size: 1.4rem;
     }
   `;
 }
