@@ -221,7 +221,7 @@
       ${this.starsInputTemplate} ${this.subjectInputTemplate}
       ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
       ${this.actionButtonsTemplate}
-    </form>`}firstUpdated(){this.formCanSubmit=this.checkSubmissionAllowed()}updated(e){e.has("oldReview")&&this.oldReview&&(this.oldReview.stars&&(this.currentStars=this.oldReview.stars),this.oldReview.reviewtitle&&(this.currentSubjectLength=this.oldReview.reviewtitle.length),this.oldReview.reviewbody&&(this.currentBodyLength=this.oldReview.reviewbody.length)),e.has("recaptchaManager")&&!this.bypassRecaptcha&&this.recaptchaManager&&this.setupRecaptcha(),(!this.bypassRecaptcha&&e.has("recaptchaWdiget")||this.maxSubjectLength&&e.has("currentSubjectLength")||this.maxBodyLength&&e.has("currentBodyLength"))&&(this.formCanSubmit=this.checkSubmissionAllowed())}get starsInputTemplate(){return v`
+    </form>`}firstUpdated(){this.formCanSubmit=this.checkSubmissionAllowed()}updated(e){e.has("oldReview")&&this.oldReview&&(this.oldReview.stars&&(this.currentStars=this.oldReview.stars),this.oldReview.reviewtitle&&(this.currentSubjectLength=this.oldReview.reviewtitle.length),this.oldReview.reviewbody&&(this.currentBodyLength=this.oldReview.reviewbody.length)),e.has("recaptchaManager")&&!this.bypassRecaptcha&&this.recaptchaManager&&this.setupRecaptcha(),(this.maxSubjectLength&&e.has("currentSubjectLength")||this.maxBodyLength&&e.has("currentBodyLength"))&&(this.formCanSubmit=this.checkSubmissionAllowed())}get starsInputTemplate(){return v`
       <div class="form-heading">
         <label for="stars-field">${x("Rating (optional)")}</label>
       </div>
