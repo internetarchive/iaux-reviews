@@ -130,7 +130,6 @@ export class ReviewForm extends LitElement {
     }
 
     if (
-      (!this.bypassRecaptcha && changed.has('recaptchaWdiget')) ||
       (!!this.maxSubjectLength && changed.has('currentSubjectLength')) ||
       (!!this.maxBodyLength && changed.has('currentBodyLength'))
     ) {
