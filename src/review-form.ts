@@ -29,7 +29,7 @@ export class ReviewForm extends LitElement {
   @property({ type: String }) identifier?: string;
 
   /* The token for the review edit */
-  @property({ type: String }) token?: string;
+  @property({ type: String }) token: string = '';
 
   /* The host for archive endpoints and data */
   @property({ type: String }) baseHost: string = 'https://archive.org';
@@ -233,7 +233,7 @@ export class ReviewForm extends LitElement {
     return html`<input
         type="hidden"
         name="field_reviewtoken"
-        .value=${this.token ?? ''}
+        .value=${this.token}
       />
       <input
         type="hidden"
