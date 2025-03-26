@@ -36,4 +36,3 @@ jobs:
           clean-exclude: pr/
           force: false
           target-folder: main
-          token: ${{ secrets.GH_TOKEN }}
