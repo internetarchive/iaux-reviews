@@ -401,7 +401,7 @@ describe('ReviewForm', () => {
     expect(recaptchaErrorDiv).not.to.exist;
   });*/
 
- /* it('displays a character counter for the subject if max length specified', async () => {
+  /* it('displays a character counter for the subject if max length specified', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
         .maxSubjectLength=${100}
