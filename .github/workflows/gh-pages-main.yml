@@ -3,8 +3,6 @@
 # This workflow will run every time new changes were pushed to the `main` branch
 
 name: App build CI/CD to main branch
-permissions:
-  contents: write
 
 on:
   push:
@@ -19,10 +17,13 @@ jobs:
         with:
           persist-credentials: false
       - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+
 
       - name: Install dependencies
         run: npm install
-  
+
       - name: Create build files for gh-pages deploy
         run: npm run ghpages:build
 
