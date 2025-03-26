@@ -19,10 +19,13 @@ jobs:
         with:
           persist-credentials: false
       - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+
 
       - name: Install dependencies
         run: npm install
-  
+
       - name: Create build files for gh-pages deploy
         run: npm run ghpages:build
 
@@ -35,4 +38,3 @@ jobs:
           clean-exclude: pr/
           force: false
           target-folder: main
-          token: ${{ secrets.GH_TOKEN }}

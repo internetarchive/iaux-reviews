@@ -12,28 +12,30 @@
   "module": "dist/index.js",
   "scripts": {
     "start": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wds\"",
-    "prepare": "rimraf dist && tsc && husky",
+    "prepare": "rimraf dist && tsc && husky install",
     "build": "tsc",
-    "lint": "eslint && prettier \"**/*.ts\" --check",
+    "lint": "eslint . && prettier \"**/*.ts\" --check",
     "format": "eslint . --fix && prettier \"**/*.ts\" --write",
     "circular": "madge --circular --extensions ts .",
     "test": "tsc && npm run lint && npm run circular && wtr --coverage",
-    "test:watch": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wtr --watch --coverage\"",
+    "test:watch": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wtr --watch\"",
     "ghpages:build": "rimraf ghpages && npm run prepare && vite build",
     "ghpages:publish": "npm run ghpages:prepare -e $(git branch --show-current)",
     "ghpages:prepare": "npm run ghpages:build && touch ghpages/.nojekyll && npm run ghpages:generate",
     "ghpages:generate": "gh-pages -t -d ghpages -m \"Build for $(git log --pretty=format:\"%h %an %ai %s\" -n1) [skip ci]\""
   },
+  "types": "dist/index.d.ts",
   "devDependencies": {
+    "@open-wc/eslint-config": "^12.0.3",
     "@open-wc/testing": "^4.0.0",
     "@types/mocha": "^10.0.10",
-    "@typescript-eslint/eslint-plugin": "^8.20.0",
-    "@typescript-eslint/parser": "^8.20.0",
+    "@typescript-eslint/eslint-plugin": "^8.28.0",
+    "@typescript-eslint/parser": "^8.28.0",
     "@web/dev-server": "^0.4.6",
     "@web/test-runner": "^0.20.0",
     "concurrently": "^9.1.2",
-    "eslint": "^9.18.0",
-    "eslint-config-prettier": "^10.0.1",
+    "eslint": "^9.23.0",
+    "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-html": "^8.1.2",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-lit": "^1.15.0",
@@ -48,13 +50,12 @@
     "sinon": "^20.0.0",
     "ts-lit-plugin": "^2.0.2",
     "tslib": "^2.8.1",
-    "typescript": "^5.7.3",
+    "typescript": "^5.8.2",
     "vite": "^6.0.7"
   },
   "publishConfig": {
     "access": "public"
   },
-  "types": "dist/index.d.ts",
   "prettier": {
     "singleQuote": true,
     "arrowParens": "avoid"
@@ -62,7 +63,8 @@
   "lint-staged": {
     "*.ts": [
       "eslint --fix",
-      "prettier --write"
+      "prettier --write",
+      "git add"
     ]
   },
   "dependencies": {
