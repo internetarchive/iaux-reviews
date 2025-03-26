@@ -89,8 +89,7 @@ export class ReviewForm extends LitElement {
   render() {
     return html`<form
       id="review-form"
-      action="${this.baseHost}${this.endpointPath}"
-      method="post"
+      @submit=${(e: Event) => e.preventDefault()}
     >
       ${this.prefilledErrors.length
         ? this.prefilledErrors.map(
@@ -302,26 +301,36 @@ export class ReviewForm extends LitElement {
   private async handleSubmit(e: Event): Promise<void> {
     e.preventDefault();
     if (!this.reviewForm.reportValidity()) return;
-    if (this.bypassRecaptcha) {
-      this.reviewForm.requestSubmit();
-      return;
-    }
+    if (!this.bypassRecaptcha) {
+      if (!this.recaptchaWidget) {
+        this.recaptchaError = true;
+        return;
+      }
+      try {
+        this.recaptchaError = false;
+        const recaptchaToken = await this.recaptchaWidget.execute();
+        this.dispatchEvent(new Event('recaptchaFinished'));
+        this.recaptchaToken = recaptchaToken;
 
-    if (!this.recaptchaWidget) {
-      this.recaptchaError = true;
-      return;
+        // Wait for recaptcha token to be added to form
+        await this.updateComplete;
+      } catch {
+        this.recaptchaError = true;
+        return;
+      }
     }
 
     try {
-      const recaptchaToken = await this.recaptchaWidget.execute();
-      this.dispatchEvent(new Event('recaptchaFinished'));
-      this.recaptchaToken = recaptchaToken;
-
-      // Wait for recaptcha token to be added to form
-      await this.updateComplete;
-      this.reviewForm.requestSubmit();
-    } catch {
-      this.recaptchaError = true;
+      const formData = new FormData(this.reviewForm);
+      console.log(formData);
+      const result = await fetch(`${this.baseHost}${this.endpointPath}`, {
+        method: 'post',
+        body: formData,
+      });
+      console.log(result);
+      //this.reviewForm.requestSubmit();
+    } catch (e) {
+      console.log(e);
     }
   }
 

@@ -74,6 +74,7 @@ export class AppRoot extends LitElement {
           .identifier=${'goody'}
           .oldReview=${this.mockOldReview}
           .recaptchaManager=${this.recaptchaManager}
+          .endpointPath=${'/reviews.php'}
           .prefilledErrors=${this.showErrors ? this.errors : []}
           .maxSubjectLength=${this.useCharCounts ? 100 : undefined}
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
