@@ -94,12 +94,12 @@ describe('ReviewForm', () => {
       ></ia-review-form>`,
     );
 
-    const errors = el.shadowRoot?.querySelector(
-      '.prefilled-errors',
-    ) as HTMLDivElement;
-    expect(errors?.innerText).to.equal(
-      'Too good of a review. Please make it worse.',
-    );
+    const errors = el.shadowRoot?.querySelectorAll(
+      '.prefilled-error',
+    ) as NodeListOf<HTMLDivElement>;
+    expect(errors.length).to.equal(2);
+    expect(errors[0].innerText).to.equal('Too good of a review.');
+    expect(errors[1].innerText).to.equal('Please make it worse.');
   });
 
   it('does not render the error div if no errors are passed in', async () => {
@@ -400,4 +400,129 @@ describe('ReviewForm', () => {
     const recaptchaErrorDiv = el.shadowRoot?.querySelector('.recaptcha-error');
     expect(recaptchaErrorDiv).not.to.exist;
   });*/
+
+  it('displays a character counter for the subject if max length specified', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .maxSubjectLength=${100}
+        .oldReview=${mockOldReview}
+      ></ia-review-form>`,
+    );
+
+    const subjectCharCounter = el.shadowRoot?.querySelector(
+      '.char-count.subject',
+    ) as HTMLDivElement;
+    expect(subjectCharCounter).to.exist;
+    expect(subjectCharCounter?.innerText).to.equal('17/100');
+  });
+
+  it('does not display a subject char counter if no max specified', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
+    );
+
+    const subjectCharCounter = el.shadowRoot?.querySelector(
+      '.char-count.subject',
+    ) as HTMLDivElement;
+    expect(subjectCharCounter).to.be.null;
+  });
+
+  it('shows the correct error states if the subject is too long', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .maxSubjectLength=${10}
+        .oldReview=${mockOldReview}
+      ></ia-review-form>`,
+    );
+
+    const subjectCharCounter = el.shadowRoot?.querySelector(
+      '.char-count.subject',
+    ) as HTMLDivElement;
+    expect(subjectCharCounter?.innerText).to.equal('17/10');
+
+    const subjectInputBox = el.shadowRoot?.getElementById('subject-input');
+    expect(subjectInputBox?.className).to.contain('error');
+
+    const submitBtn = el.shadowRoot?.querySelector('button[type="submit"');
+    expect(submitBtn?.getAttribute('disabled')).to.exist;
+  });
+
+  it('does not show the error states if the subject is not too long', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .maxSubjectLength=${100}
+        .oldReview=${mockOldReview}
+      ></ia-review-form>`,
+    );
+
+    const subjectInputBox = el.shadowRoot?.getElementById('subject-input');
+    expect(subjectInputBox?.className).not.to.contain('error');
+
+    const submitBtn = el.shadowRoot?.querySelector('button[type="submit"');
+    expect(submitBtn?.getAttribute('disabled')).not.to.exist;
+  });
+
+  it('displays a character counter for the body if max length specified', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .maxBodyLength=${100}
+        .oldReview=${mockOldReview}
+      ></ia-review-form>`,
+    );
+
+    const bodyCharCounter = el.shadowRoot?.querySelector(
+      '.char-count.body',
+    ) as HTMLDivElement;
+    expect(bodyCharCounter).to.exist;
+    expect(bodyCharCounter?.innerText).to.equal('11/100');
+  });
+
+  it('does not display a body char counter if no max specified', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
+    );
+
+    const bodyCharCounter = el.shadowRoot?.querySelector(
+      '.char-count.body',
+    ) as HTMLDivElement;
+    expect(bodyCharCounter).to.be.null;
+  });
+
+  it('shows the correct error states if the body is too long', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .maxBodyLength=${10}
+        .oldReview=${mockOldReview}
+      ></ia-review-form>`,
+    );
+
+    const bodyCharCounter = el.shadowRoot?.querySelector(
+      '.char-count.body',
+    ) as HTMLDivElement;
+    expect(bodyCharCounter?.innerText).to.equal('11/10');
+
+    const bodyInputBox = el.shadowRoot?.getElementById('body-input');
+    expect(bodyInputBox?.className).to.contain('error');
+
+    const errorMsg = bodyInputBox?.querySelector('.input-error');
+    expect(errorMsg).to.exist;
+
+    const submitBtn = el.shadowRoot?.querySelector('button[type="submit"]');
+    expect(submitBtn?.getAttribute('disabled')).to.exist;
+  });
+
+  it('does not show the error states if the body is not too long', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .maxBodyLength=${100}
+        .oldReview=${mockOldReview}
+      ></ia-review-form>`,
+    );
+
+    const bodyInputBox = el.shadowRoot?.getElementById('body-input');
+    expect(bodyInputBox?.className).not.to.contain('error');
+
+    const submitBtn = el.shadowRoot?.querySelector('button[type="submit"');
+    expect(submitBtn?.getAttribute('disabled')).not.to.exist;
+  });
 });
