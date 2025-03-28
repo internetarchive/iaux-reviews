@@ -306,6 +306,8 @@ export class ReviewForm extends LitElement {
         formData.append('g-recaptcha-response', recaptchaToken);
       }
 
+      for (const entry of formData.entries()) console.log(entry);
+
       const response = await fetch(`${this.baseHost}${this.endpointPath}`, {
         method: 'post',
         credentials: 'include',
