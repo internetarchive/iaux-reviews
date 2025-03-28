@@ -35,7 +35,7 @@ export class ReviewForm extends LitElement {
   @property({ type: String }) baseHost: string = 'https://archive.org';
 
   /* The path for the endpoint we're submitting to */
-  @property({ type: String }) endpointPath: string = '/write-review.php';
+  @property({ type: String }) endpointPath: string = '/services/reviews.php';
 
   /* The previous review to pre-fill, if any */
   @property({ type: Object }) oldReview?: Review;
