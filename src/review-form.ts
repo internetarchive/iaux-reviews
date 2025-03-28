@@ -136,7 +136,7 @@ export class ReviewForm extends LitElement {
   private get starsInputTemplate(): HTMLTemplateResult {
     return html`
       <div class="form-heading">
-        <label for="stars-field">${msg('Rating (optional)')}</label>
+        <label for="stars-input">${msg('Rating (optional)')}</label>
       </div>
       <input
         type="hidden"
@@ -161,7 +161,7 @@ export class ReviewForm extends LitElement {
         : ''
     }"
       ><div class="form-heading">
-        <label for="subject">${msg('Subject')}</label>
+        <label for="reviewtitle">${msg('Subject')}</label>
         ${
           this.maxSubjectLength
             ? html`<div class="char-count subject">
@@ -172,8 +172,8 @@ export class ReviewForm extends LitElement {
       </div>
       <input
         type="text"
-        name="subject"
-        id="subject"
+        name="reviewtitle"
+        id="reviewtitle"
         .value=${this.oldReview?.reviewtitle ?? ''}
         @input=${this.handleSubjectChanged}
         required
@@ -198,7 +198,7 @@ export class ReviewForm extends LitElement {
         ? 'error'
         : ''}"
       ><div class="form-heading">
-        <label for="body">${msg('Review')}</label>
+        <label for="reviewbody">${msg('Review')}</label>
         ${this.maxBodyLength
           ? html`<div class="char-count body">
               ${this.currentBodyLength}/${this.maxBodyLength}
@@ -206,8 +206,8 @@ export class ReviewForm extends LitElement {
           : nothing}
       </div>
       <textarea
-        name="body"
-        id="body"
+        name="reviewbody"
+        id="reviewbody"
         .value=${this.oldReview?.reviewbody ?? ''}
         rows="10"
         cols="50"
