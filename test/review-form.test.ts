@@ -119,7 +119,7 @@ describe('ReviewForm', () => {
     );
 
     const subjectInput = el.shadowRoot?.querySelector(
-      'input[name="field_reviewtitle"]',
+      'input[name="subject"]',
     ) as HTMLInputElement;
     expect(subjectInput).to.exist;
     expect(subjectInput.value).to.equal('What a cool book!');
@@ -131,7 +131,7 @@ describe('ReviewForm', () => {
     );
 
     const bodyInput = el.shadowRoot?.querySelector(
-      'textarea[name="field_reviewbody"]',
+      'textarea[name="body"]',
     ) as HTMLInputElement;
     expect(bodyInput).to.exist;
     expect(bodyInput.value).to.equal('I loved it.');
@@ -143,7 +143,7 @@ describe('ReviewForm', () => {
     );
 
     const starsInput = el.shadowRoot?.querySelector(
-      'input[name="field_stars"]',
+      'input[name="stars"]',
     ) as HTMLInputElement;
     expect(starsInput).to.exist;
     expect(starsInput.value).to.equal('5');
@@ -155,7 +155,7 @@ describe('ReviewForm', () => {
     );
 
     const starsInput = el.shadowRoot?.querySelector(
-      'input[name="field_stars"]',
+      'input[name="stars"]',
     ) as HTMLInputElement;
     expect(starsInput).to.exist;
     expect(starsInput.value).to.equal('0');

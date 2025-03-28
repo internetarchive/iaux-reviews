@@ -87,10 +87,7 @@ export class ReviewForm extends LitElement {
   private reviewForm!: HTMLFormElement;
 
   render() {
-    return html`<form
-      id="review-form"
-      @submit=${(e: Event) => e.preventDefault()}
-    >
+    return html`<form id="review-form" @submit=${this.handleSubmit}>
       ${this.prefilledErrors.length
         ? this.prefilledErrors.map(
             err => html`<div class="errors prefilled-error">${err}</div>`,
@@ -143,7 +140,7 @@ export class ReviewForm extends LitElement {
       </div>
       <input
         type="hidden"
-        name="field_stars"
+        name="stars"
         id="stars-input"
         .value=${this.currentStars.toString()}
         required
@@ -164,7 +161,7 @@ export class ReviewForm extends LitElement {
         : ''
     }"
       ><div class="form-heading">
-        <label for="field_reviewtitle">${msg('Subject')}</label>
+        <label for="subject">${msg('Subject')}</label>
         ${
           this.maxSubjectLength
             ? html`<div class="char-count subject">
@@ -175,8 +172,8 @@ export class ReviewForm extends LitElement {
       </div>
       <input
         type="text"
-        name="field_reviewtitle"
-        id="field_reviewtitle"
+        name="subject"
+        id="subject"
         .value=${this.oldReview?.reviewtitle ?? ''}
         @input=${this.handleSubjectChanged}
         required
@@ -201,7 +198,7 @@ export class ReviewForm extends LitElement {
         ? 'error'
         : ''}"
       ><div class="form-heading">
-        <label for="field_reviewbody">${msg('Review')}</label>
+        <label for="body">${msg('Review')}</label>
         ${this.maxBodyLength
           ? html`<div class="char-count body">
               ${this.currentBodyLength}/${this.maxBodyLength}
@@ -209,8 +206,8 @@ export class ReviewForm extends LitElement {
           : nothing}
       </div>
       <textarea
-        name="field_reviewbody"
-        id="field_reviewbody"
+        name="body"
+        id="body"
         .value=${this.oldReview?.reviewbody ?? ''}
         rows="10"
         cols="50"
@@ -233,11 +230,6 @@ export class ReviewForm extends LitElement {
         type="hidden"
         name="field_reviewtoken"
         .value=${this.token}
-      />
-      <input
-        type="hidden"
-        name="g-recaptcha-response"
-        .value=${this.recaptchaToken}
       />
       <!-- Indicates to backend that form submission is intended -->
       <input type="hidden" name="action" value="1" />
@@ -267,7 +259,6 @@ export class ReviewForm extends LitElement {
         class="ia-button primary"
         name="submit"
         ?disabled=${!this.formCanSubmit}
-        @click=${this.handleSubmit}
       >
         ${msg('Submit review')}
       </button>
@@ -300,37 +291,50 @@ export class ReviewForm extends LitElement {
 
   private async handleSubmit(e: Event): Promise<void> {
     e.preventDefault();
+    if (!this.formCanSubmit) return;
     if (!this.reviewForm.reportValidity()) return;
-    if (!this.bypassRecaptcha) {
-      if (!this.recaptchaWidget) {
-        this.recaptchaError = true;
-        return;
-      }
-      try {
-        this.recaptchaError = false;
-        const recaptchaToken = await this.recaptchaWidget.execute();
-        this.dispatchEvent(new Event('recaptchaFinished'));
-        this.recaptchaToken = recaptchaToken;
 
-        // Wait for recaptcha token to be added to form
-        await this.updateComplete;
-      } catch {
-        this.recaptchaError = true;
-        return;
-      }
+    const recaptchaToken = '';
+    if (!this.bypassRecaptcha) {
+      const recaptchaToken = await this.getRecaptchaToken();
+      if (!recaptchaToken) return;
     }
 
     try {
       const formData = new FormData(this.reviewForm);
-      console.log(formData);
-      const result = await fetch(`${this.baseHost}${this.endpointPath}`, {
+      if (recaptchaToken) {
+        formData.append('g-recaptcha-response', recaptchaToken);
+      }
+
+      const response = await fetch(`${this.baseHost}${this.endpointPath}`, {
         method: 'post',
+        credentials: 'include',
         body: formData,
       });
-      console.log(result);
+      const json = await response.json();
+      console.log(json);
       //this.reviewForm.requestSubmit();
     } catch (e) {
       console.log(e);
+    }
+  }
+
+  /* Executes the recaptcha widget to fetch the token */
+  private async getRecaptchaToken(): Promise<string | undefined> {
+    if (!this.recaptchaWidget) {
+      this.recaptchaError = true;
+      return;
+    }
+
+    try {
+      this.recaptchaError = false;
+      const recaptchaToken = await this.recaptchaWidget.execute();
+      this.dispatchEvent(new Event('recaptchaFinished'));
+
+      return recaptchaToken;
+    } catch {
+      this.recaptchaError = true;
+      return;
     }
   }
 
