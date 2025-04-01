@@ -31,35 +31,9 @@ describe('ReviewForm', () => {
     expect(form).to.exist;
   });
 
-  it('defaults to the correct endpoint for form submission', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form></ia-review-form>`,
-    );
-
-    const form = el.shadowRoot?.querySelector('form');
-    expect(form?.getAttribute('action')).to.contain('/write-review.php');
-  });
-
-  it('uses a custom endpoint path for form submission if desired', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form
-        .baseHost=${'https://archive.org'}
-        .endpointPath=${'/foo'}
-      ></ia-review-form>`,
-    );
-
-    const form = el.shadowRoot?.querySelector('form');
-    expect(form?.getAttribute('action')).to.equal('https://archive.org/foo');
-  });
-
   it('defaults to the prod base host for form submission', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form .identifier=${'foo'}></ia-review-form>`,
-    );
-
-    const form = el.shadowRoot?.querySelector('form');
-    expect(form?.getAttribute('action')).to.equal(
-      'https://archive.org/write-review.php',
     );
 
     const cancelBtn = el.shadowRoot?.querySelector(
@@ -76,41 +50,50 @@ describe('ReviewForm', () => {
       ></ia-review-form>`,
     );
 
-    const form = el.shadowRoot?.querySelector('form');
-    expect(form?.getAttribute('action')).to.equal(
-      'https://foo.archive.org/write-review.php',
-    );
-
     const cancelBtn = el.shadowRoot?.querySelector(
       'a[data-testid=cancel-btn]',
     ) as HTMLAnchorElement;
     expect(cancelBtn.href).to.equal('https://foo.archive.org/details/foo');
   });
 
-  it('renders any errors that are passed in', async () => {
+  it('replaces the form inputs with an error if an unrecoverable error is passed in, and disables submission', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
-        .prefilledErrors=${['Too good of a review.', 'Please make it worse.']}
+        .unrecoverableError=${'not-logged-in'}
+        .oldReview=${mockOldReview}
       ></ia-review-form>`,
     );
 
-    const errors = el.shadowRoot?.querySelectorAll(
-      '.prefilled-error',
-    ) as NodeListOf<HTMLDivElement>;
-    expect(errors.length).to.equal(2);
-    expect(errors[0].innerText).to.equal('Too good of a review.');
-    expect(errors[1].innerText).to.equal('Please make it worse.');
-  });
+    const inputs = el.shadowRoot?.querySelector('.inputs');
+    expect(inputs).to.be.null;
 
-  it('does not render the error div if no errors are passed in', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form></ia-review-form>`,
+    const errorDiv = el.shadowRoot?.querySelector('.unrecoverable-error');
+    expect(errorDiv).to.exist;
+    expect(errorDiv?.textContent).to.include(
+      'You must be logged in to write reviews.',
     );
 
-    const errors = el.shadowRoot?.querySelector(
-      '.prefilled-errors',
-    ) as HTMLDivElement;
-    expect(errors).to.be.null;
+    const submitBtn = el.shadowRoot?.querySelector('button[type="submit"]');
+    expect(submitBtn?.getAttribute('disabled')).to.exist;
+  });
+
+  it('does not replace the form inputs if a recoverable error is passed in', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .recoverableError=${'misc'}
+        .oldReview=${mockOldReview}
+      ></ia-review-form>`,
+    );
+
+    const inputs = el.shadowRoot?.querySelector('.inputs');
+    expect(inputs).to.exist;
+
+    const errorDiv = el.shadowRoot?.querySelector('.recoverable-error');
+    expect(errorDiv).to.exist;
+    expect(errorDiv?.textContent).to.include('try again');
+
+    const submitBtn = el.shadowRoot?.querySelector('button[type="submit"]');
+    expect(submitBtn?.getAttribute('disabled')).not.to.exist;
   });
 
   it('prefills the old review body if provided', async () => {
@@ -119,19 +102,19 @@ describe('ReviewForm', () => {
     );
 
     const subjectInput = el.shadowRoot?.querySelector(
-      'input[name="field_reviewtitle"]',
+      'input[name="title"]',
     ) as HTMLInputElement;
     expect(subjectInput).to.exist;
     expect(subjectInput.value).to.equal('What a cool book!');
   });
 
-  it('prefills the old review body if provided', async () => {
+  it('prefills the old review title if provided', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
     );
 
     const bodyInput = el.shadowRoot?.querySelector(
-      'textarea[name="field_reviewbody"]',
+      'textarea[name="body"]',
     ) as HTMLInputElement;
     expect(bodyInput).to.exist;
     expect(bodyInput.value).to.equal('I loved it.');
@@ -143,7 +126,7 @@ describe('ReviewForm', () => {
     );
 
     const starsInput = el.shadowRoot?.querySelector(
-      'input[name="field_stars"]',
+      'input[name="stars"]',
     ) as HTMLInputElement;
     expect(starsInput).to.exist;
     expect(starsInput.value).to.equal('5');
@@ -155,7 +138,7 @@ describe('ReviewForm', () => {
     );
 
     const starsInput = el.shadowRoot?.querySelector(
-      'input[name="field_stars"]',
+      'input[name="stars"]',
     ) as HTMLInputElement;
     expect(starsInput).to.exist;
     expect(starsInput.value).to.equal('0');
