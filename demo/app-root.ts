@@ -42,7 +42,10 @@ export class AppRoot extends LitElement {
   private bypassRecaptcha: boolean = true;
 
   @state()
-  private showErrors: boolean = false;
+  private recoverableError: boolean = false;
+
+  @state()
+  private unrecoverableError: boolean = false;
 
   @state()
   private useCharCounts: boolean = true;
@@ -63,8 +66,13 @@ export class AppRoot extends LitElement {
       <button @click=${() => (this.bypassRecaptcha = !this.bypassRecaptcha)}>
         ${!this.bypassRecaptcha ? 'Bypass' : 'Enable'} ReCaptcha
       </button>
-      <button @click=${() => (this.showErrors = !this.showErrors)}>
-        ${this.showErrors ? 'Hide' : 'Show'} pre-filled errors
+      <button @click=${() => (this.recoverableError = !this.recoverableError)}>
+        ${this.recoverableError ? 'Hide' : 'Show'} recoverable error
+      </button>
+      <button
+        @click=${() => (this.unrecoverableError = !this.unrecoverableError)}
+      >
+        ${this.unrecoverableError ? 'Hide' : 'Show'} unrecoverable error
       </button>
       <button @click=${() => (this.useCharCounts = !this.useCharCounts)}>
         ${this.useCharCounts ? 'Remove' : 'Use'} char count limits
@@ -74,7 +82,11 @@ export class AppRoot extends LitElement {
           .identifier=${'goody'}
           .oldReview=${this.mockOldReview}
           .recaptchaManager=${this.recaptchaManager}
-          .prefilledErrors=${this.showErrors ? this.errors : []}
+          .prefilledError=${this.recoverableError
+            ? 'misc'
+            : this.unrecoverableError
+              ? 'not-logged-in'
+              : undefined}
           .maxSubjectLength=${this.useCharCounts ? 100 : undefined}
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
           ?bypassRecaptcha=${this.bypassRecaptcha}
