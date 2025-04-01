@@ -88,7 +88,7 @@ describe('ReviewForm', () => {
     );
 
     const subjectInput = el.shadowRoot?.querySelector(
-      'input[name="reviewtitle"]',
+      'input[name="subject"]',
     ) as HTMLInputElement;
     expect(subjectInput).to.exist;
     expect(subjectInput.value).to.equal('What a cool book!');
@@ -100,7 +100,7 @@ describe('ReviewForm', () => {
     );
 
     const bodyInput = el.shadowRoot?.querySelector(
-      'textarea[name="reviewbody"]',
+      'textarea[name="body"]',
     ) as HTMLInputElement;
     expect(bodyInput).to.exist;
     expect(bodyInput.value).to.equal('I loved it.');
