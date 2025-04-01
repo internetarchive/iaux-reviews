@@ -400,7 +400,8 @@ export class ReviewForm extends LitElement {
   /* Map of the types and messages for different possible errors */
   private errorMessages: { [key: string]: string | HTMLTemplateResult } = {
     'not-logged-in': html`You must be logged in to write reviews.<br />
-      <a href="/account/login" class="simple-link">Log in</a> and try again.`,
+      <a class="simple-link" href="${this.baseHost}/account/login">Log in</a>
+      and try again.`,
     'rate-limit':
       'We appreciate your contributions but you have now exceeded your allotment of review posts for today. Please try again tomorrow.',
     'validation-setup-failed':
