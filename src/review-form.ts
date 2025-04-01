@@ -172,7 +172,7 @@ export class ReviewForm extends LitElement {
       </div>
       <input
         type="text"
-        name="subject"
+        name="title"
         id="subject"
         .value=${this.oldReview?.reviewtitle ?? ''}
         @input=${this.handleSubjectChanged}
