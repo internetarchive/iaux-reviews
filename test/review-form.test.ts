@@ -59,7 +59,7 @@ describe('ReviewForm', () => {
   it('replaces the form inputs with an error if an unrecoverable error is passed in, and disables submission', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
-        .prefilledError=${'not-logged-in'}
+        .unrecoverableError=${'not-logged-in'}
         .oldReview=${mockOldReview}
       ></ia-review-form>`,
     );
@@ -80,7 +80,7 @@ describe('ReviewForm', () => {
   it('does not replace the form inputs if a recoverable error is passed in', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
-        .prefilledError=${'misc'}
+        .recoverableError=${'misc'}
         .oldReview=${mockOldReview}
       ></ia-review-form>`,
     );

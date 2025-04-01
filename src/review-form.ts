@@ -20,19 +20,6 @@ import type {
   RecaptchaWidgetInterface,
 } from '@internetarchive/recaptcha-manager';
 
-export type ErrorInfo = {
-  type: 'recoverable' | 'unrecoverable';
-  message: string | HTMLTemplateResult;
-};
-
-/* Possible error message names */
-export type ErrorKey =
-  | 'not-logged-in'
-  | 'rate-limit'
-  | 'validation-setup-failed'
-  | 'spam'
-  | 'misc';
-
 /**
  * Renders a form to edit a given IA review.
  */
@@ -53,9 +40,6 @@ export class ReviewForm extends LitElement {
   /* The previous review to pre-fill, if any */
   @property({ type: Object }) oldReview?: Review;
 
-  /* Error to add to the form on first render, if applicable */
-  @property({ type: String }) prefilledError?: ErrorKey;
-
   /* Optional max length for review subject */
   @property({ type: Number }) maxSubjectLength?: number;
 
@@ -68,12 +52,19 @@ export class ReviewForm extends LitElement {
   /* Optionally avoid using recaptcha for the form */
   @property({ type: Boolean }) bypassRecaptcha: boolean = false;
 
+  /* Optional recoverable error for the form */
+  @state()
+  recoverableError?: 'spam' | 'misc';
+
+  /* Optional unrecoverable error for the form */
+  @state()
+  unrecoverableError?:
+    | 'not-logged-in'
+    | 'rate-limit'
+    | 'validation-setup-failed';
+
   /* Recaptcha widget for the form */
   private recaptchaWidget?: RecaptchaWidgetInterface;
-
-  /* Optional error info for the form */
-  @state()
-  private formError?: ErrorInfo;
 
   /* Number of stars currently selected */
   @state()
@@ -97,17 +88,19 @@ export class ReviewForm extends LitElement {
 
   render() {
     return html`<form id="review-form" @submit=${this.handleSubmit}>
-      ${this.formError?.type === 'unrecoverable'
+      ${this.unrecoverableError
         ? html`<div class="unrecoverable-error">
-            ${msg(this.formError?.message)}
+            <span class="error-msg"
+              >${msg(this.errorMessages[this.unrecoverableError])}</span
+            >
           </div>`
         : html`<span class="inputs">
             ${this.starsInputTemplate} ${this.subjectInputTemplate}
             ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
           </span>`}
-      ${this.formError?.type === 'recoverable'
+      ${this.recoverableError
         ? html`<div class="recoverable-error">
-            ${msg(this.formError?.message)}
+            ${msg(this.errorMessages[this.recoverableError])}
           </div>`
         : nothing}
       ${this.actionButtonsTemplate}
@@ -125,10 +118,6 @@ export class ReviewForm extends LitElement {
         this.currentSubjectLength = this.oldReview.reviewtitle.length;
       if (this.oldReview.reviewbody)
         this.currentBodyLength = this.oldReview.reviewbody.length;
-    }
-
-    if (changed.has('prefilledError') && this.prefilledError) {
-      this.formError = this.errorInfo[this.prefilledError];
     }
 
     if (
@@ -293,7 +282,7 @@ export class ReviewForm extends LitElement {
     try {
       this.recaptchaWidget = await this.recaptchaManager?.getRecaptchaWidget();
     } catch {
-      this.formError = this.errorInfo['validation-setup-failed'];
+      this.unrecoverableError = 'validation-setup-failed';
     }
   }
 
@@ -305,8 +294,13 @@ export class ReviewForm extends LitElement {
     const recaptchaToken = '';
     if (!this.bypassRecaptcha) {
       const recaptchaToken = await this.getRecaptchaToken();
-      if (!recaptchaToken) return;
+      if (!recaptchaToken) {
+        this.unrecoverableError = 'validation-setup-failed';
+        return;
+      }
     }
+
+    this.recoverableError = undefined;
 
     try {
       const formData = new FormData(this.reviewForm);
@@ -332,7 +326,7 @@ export class ReviewForm extends LitElement {
   /* Executes the recaptcha widget to fetch the token */
   private async getRecaptchaToken(): Promise<string | undefined> {
     if (!this.recaptchaWidget) {
-      this.formError = this.errorInfo['validation-setup-failed'];
+      this.unrecoverableError = 'validation-setup-failed';
       return;
     }
 
@@ -342,7 +336,7 @@ export class ReviewForm extends LitElement {
 
       return recaptchaToken;
     } catch {
-      this.formError = this.errorInfo['validation-setup-failed'];
+      this.unrecoverableError = 'validation-setup-failed';
       return;
     }
   }
@@ -378,7 +372,7 @@ export class ReviewForm extends LitElement {
 
   /* Checks if submission should be allowed */
   private checkSubmissionAllowed(): boolean {
-    if (this.formError && this.formError.type !== 'recoverable') {
+    if (this.unrecoverableError) {
       return false;
     }
 
@@ -404,32 +398,15 @@ export class ReviewForm extends LitElement {
   }
 
   /* Map of the types and messages for different possible errors */
-  private errorInfo: { [key: string]: ErrorInfo } = {
-    'not-logged-in': {
-      type: 'unrecoverable',
-      message: html`You must be logged in to write reviews.
-        <a href="/account/login" class="simple-link">Log in</a> and try again.`,
-    },
-    'rate-limit': {
-      type: 'unrecoverable',
-      message:
-        'We appreciate your contributions but you have now exceeded your allotment of review posts for today. Please try again tomorrow.',
-    },
-    'validation-setup-failed': {
-      type: 'unrecoverable',
-      message:
-        'We cannot validate your review at this time. Please try again later.',
-    },
-    spam: {
-      type: 'recoverable',
-      message:
-        'It looks like your review has triggered our spam detector. If this is in error, please email info@archive.org with the URL, complete Subject text, and complete Review text you entered.',
-    },
-    misc: {
-      type: 'recoverable',
-      message:
-        "There's been a temporary error. Please wait a moment and try again.",
-    },
+  private errorMessages: { [key: string]: string | HTMLTemplateResult } = {
+    'not-logged-in': html`You must be logged in to write reviews.<br />
+      <a href="/account/login" class="simple-link">Log in</a> and try again.`,
+    'rate-limit':
+      'We appreciate your contributions but you have now exceeded your allotment of review posts for today. Please try again tomorrow.',
+    'validation-setup-failed':
+      'We cannot validate your review at this time. Please try again later.',
+    spam: 'It looks like your review has triggered our spam detector. If this is in error, please email info@archive.org with the URL, complete Subject text, and complete Review text you entered.',
+    misc: "There's been a temporary error. Please wait a moment and try again.",
   };
 
   static get styles(): CSSResultGroup {
@@ -467,7 +444,8 @@ export class ReviewForm extends LitElement {
         }
 
         textarea,
-        input[type='text'] {
+        input[type='text'],
+        .unrecoverable-error {
           padding: 5px;
           width: calc(100% - 10px);
           font-family: inherit;
@@ -477,12 +455,14 @@ export class ReviewForm extends LitElement {
 
         .input-box.error input,
         .input-box.error textarea {
-          border: 2px solid var(--ia-theme-error-color, #ff0000);
+          border: 2px solid var(--ia-theme-error-color, #cc0000);
         }
 
         .input-box.error .char-count,
-        .input-error {
-          color: var(--ia-theme-error-color, #ff0000);
+        .input-error,
+        .recoverable-error,
+        .unrecoverable-error {
+          color: var(--ia-theme-error-color, #cc0000);
         }
 
         .input-error {
@@ -546,6 +526,15 @@ export class ReviewForm extends LitElement {
 
         .ia-button:disabled:hover {
           cursor: not-allowed;
+        }
+
+        .unrecoverable-error {
+          height: 350px;
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          background-color: #f5f5f7;
         }
       `,
     ];

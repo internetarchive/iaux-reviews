@@ -82,11 +82,10 @@ export class AppRoot extends LitElement {
           .identifier=${'goody'}
           .oldReview=${this.mockOldReview}
           .recaptchaManager=${this.recaptchaManager}
-          .prefilledError=${this.recoverableError
-            ? 'misc'
-            : this.unrecoverableError
-              ? 'not-logged-in'
-              : undefined}
+          .recoverableError=${this.recoverableError ? 'misc' : undefined}
+          .unrecoverableError=${this.unrecoverableError
+            ? 'not-logged-in'
+            : undefined}
           .maxSubjectLength=${this.useCharCounts ? 100 : undefined}
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
           ?bypassRecaptcha=${this.bypassRecaptcha}
