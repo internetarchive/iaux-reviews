@@ -230,14 +230,7 @@ export class ReviewForm extends LitElement {
         .value=${this.token}
       />
       <!-- Indicates to backend that form submission is intended -->
-      <input type="hidden" name="action" value="1" />
-      ${this.identifier
-        ? html`<input
-            type="hidden"
-            name="identifier"
-            .value=${this.identifier}
-          />`
-        : nothing}`;
+      <input type="hidden" name="action" value="1" />`;
   }
 
   private get actionButtonsTemplate(): HTMLTemplateResult {
@@ -310,11 +303,14 @@ export class ReviewForm extends LitElement {
       // Indicates to backend how to process the response
       formData.append('submitter', 'review-form');
 
-      const response = await fetch(`${this.baseHost}${this.endpointPath}`, {
-        method: 'post',
-        credentials: 'include',
-        body: formData,
-      });
+      const response = await fetch(
+        `${this.baseHost}${this.endpointPath}?identifier=${this.identifier}`,
+        {
+          method: 'post',
+          credentials: 'include',
+          body: formData,
+        },
+      );
       const json = await response.json();
       console.log(json);
       //this.reviewForm.requestSubmit();
