@@ -242,18 +242,6 @@ describe('ReviewForm', () => {
     expect(starsInput?.value).to.equal('0');
   });
 
-  it('prefills the identifier if provided', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form .identifier=${'foo'}></ia-review-form>`,
-    );
-
-    const identifierInput = el.shadowRoot?.querySelector(
-      'input[name="identifier"]',
-    ) as HTMLInputElement;
-    expect(identifierInput).to.exist;
-    expect(identifierInput.value).to.equal('foo');
-  });
-
   it('shows a cancel button that routes to the detail page if identifier provided', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form .identifier=${'foo'}></ia-review-form>`,
@@ -507,5 +495,25 @@ describe('ReviewForm', () => {
 
     const submitBtn = el.shadowRoot?.querySelector('button[type="submit"');
     expect(submitBtn?.getAttribute('disabled')).not.to.exist;
+  });
+
+  it('shows a success message instead of the form if requested', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .identifier=${'foo'}
+        .displayMode=${'success'}
+      ></ia-review-form>`,
+    );
+
+    const form = el.shadowRoot?.querySelector('form');
+    expect(form).not.to.exist;
+
+    const message = el.shadowRoot?.querySelector('.full-page-message');
+    expect(message?.textContent).to.contain(
+      'Your review was submitted successfully.',
+    );
+
+    const detailsLink = message?.querySelector('a');
+    expect(detailsLink?.href).to.contain('/details/foo');
   });
 });

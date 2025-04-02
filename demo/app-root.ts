@@ -48,6 +48,9 @@ export class AppRoot extends LitElement {
   private unrecoverableError: boolean = false;
 
   @state()
+  private showSuccessMessage: boolean = false;
+
+  @state()
   private useCharCounts: boolean = true;
 
   render() {
@@ -61,7 +64,7 @@ export class AppRoot extends LitElement {
               @click=${() => (this.recaptchaManager = this.badRecaptchaManager)}
             >
               Turn on ReCaptcha (bad site key)
-            </button> `
+            </button>`
         : nothing}
       <button @click=${() => (this.bypassRecaptcha = !this.bypassRecaptcha)}>
         ${!this.bypassRecaptcha ? 'Bypass' : 'Enable'} ReCaptcha
@@ -73,6 +76,11 @@ export class AppRoot extends LitElement {
         @click=${() => (this.unrecoverableError = !this.unrecoverableError)}
       >
         ${this.unrecoverableError ? 'Hide' : 'Show'} unrecoverable error
+      </button>
+      <button
+        @click=${() => (this.showSuccessMessage = !this.showSuccessMessage)}
+      >
+        ${this.showSuccessMessage ? 'Hide' : 'Show'} success message
       </button>
       <button @click=${() => (this.useCharCounts = !this.useCharCounts)}>
         ${this.useCharCounts ? 'Remove' : 'Use'} char count limits
@@ -89,6 +97,7 @@ export class AppRoot extends LitElement {
           .maxSubjectLength=${this.useCharCounts ? 100 : undefined}
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
           ?bypassRecaptcha=${this.bypassRecaptcha}
+          .displayMode=${this.showSuccessMessage ? 'success' : 'form'}
         ></ia-review-form>
       </div>`;
   }

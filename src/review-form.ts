@@ -63,6 +63,10 @@ export class ReviewForm extends LitElement {
     | 'rate-limit'
     | 'validation-setup-failed';
 
+  /* Display mode for the component. Defaults to showing the form. */
+  @state()
+  displayMode: 'form' | 'success' = 'form';
+
   /* Recaptcha widget for the form */
   private recaptchaWidget?: RecaptchaWidgetInterface;
 
@@ -87,24 +91,34 @@ export class ReviewForm extends LitElement {
   private reviewForm!: HTMLFormElement;
 
   render() {
-    return html`<form id="review-form" @submit=${this.handleSubmit}>
-      ${this.unrecoverableError
-        ? html`<div class="unrecoverable-error">
-            <span class="error-msg"
-              >${msg(this.errorMessages[this.unrecoverableError])}</span
-            >
-          </div>`
-        : html`<span class="inputs">
-            ${this.starsInputTemplate} ${this.subjectInputTemplate}
-            ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
-          </span>`}
-      ${this.recoverableError
-        ? html`<div class="recoverable-error">
-            ${msg(this.errorMessages[this.recoverableError])}
-          </div>`
-        : nothing}
-      ${this.actionButtonsTemplate}
-    </form>`;
+    return this.displayMode === 'success'
+      ? html`<p class="full-page-message">
+          Your review was submitted successfully. It will appear on the
+          <a
+            href="${this.baseHost}/details/${this.identifier}"
+            class="simple-link"
+            >details page</a
+          >
+          for the item after several minutes.
+        </p>`
+      : html`<form id="review-form" @submit=${this.handleSubmit}>
+          ${this.unrecoverableError
+            ? html`<div class="unrecoverable-error">
+                <span class="error-msg"
+                  >${msg(this.errorMessages[this.unrecoverableError])}</span
+                >
+              </div>`
+            : html`<span class="inputs">
+                ${this.starsInputTemplate} ${this.subjectInputTemplate}
+                ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
+              </span>`}
+          ${this.recoverableError
+            ? html`<div class="recoverable-error">
+                ${msg(this.errorMessages[this.recoverableError])}
+              </div>`
+            : nothing}
+          ${this.actionButtonsTemplate}
+        </form>`;
   }
 
   protected firstUpdated(): void {
@@ -313,6 +327,7 @@ export class ReviewForm extends LitElement {
       );
       const json = await response.json();
       console.log(json);
+      this.displayMode = 'success';
       //this.reviewForm.requestSubmit();
     } catch (e) {
       console.log(e);
@@ -532,6 +547,10 @@ export class ReviewForm extends LitElement {
           flex-direction: column;
           justify-content: center;
           background-color: #f5f5f7;
+        }
+
+        .full-page-message {
+          text-align: center;
         }
       `,
     ];
