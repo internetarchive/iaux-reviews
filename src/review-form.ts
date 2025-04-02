@@ -121,10 +121,6 @@ export class ReviewForm extends LitElement {
         </form>`;
   }
 
-  protected firstUpdated(): void {
-    this.formCanSubmit = this.checkSubmissionAllowed();
-  }
-
   protected updated(changed: PropertyValues): void {
     if (changed.has('oldReview') && this.oldReview) {
       if (this.oldReview.stars) this.currentStars = this.oldReview.stars;
@@ -298,29 +294,30 @@ export class ReviewForm extends LitElement {
     if (!this.formCanSubmit) return;
     if (!this.reviewForm.reportValidity()) return;
 
-    const recaptchaToken = '';
-    if (!this.bypassRecaptcha) {
-      const recaptchaToken = await this.getRecaptchaToken();
-      if (!recaptchaToken) {
-        this.unrecoverableError = 'validation-setup-failed';
-        return;
-      }
+    const recaptchaToken = await this.getRecaptchaToken();
+
+    if (!this.bypassRecaptcha && !recaptchaToken) {
+      this.unrecoverableError = 'validation-setup-failed';
+      return;
     }
 
+    // Clear temporary errors
     this.recoverableError = undefined;
 
     try {
       const formData = new FormData(this.reviewForm);
+
       if (recaptchaToken) {
         formData.append('g-recaptcha-response', recaptchaToken);
       }
+
       // Indicates to backend how to process the response
       formData.append('submitter', 'review-form');
 
       const response = await fetch(
         `${this.baseHost}${this.endpointPath}?identifier=${this.identifier}`,
         {
-          method: 'post',
+          method: 'POST',
           credentials: 'include',
           body: JSON.stringify(formData),
         },
@@ -328,28 +325,20 @@ export class ReviewForm extends LitElement {
       const json = await response.json();
       console.log(json);
       this.displayMode = 'success';
-      //this.reviewForm.requestSubmit();
     } catch (e) {
       console.log(e);
     }
   }
 
   /* Executes the recaptcha widget to fetch the token */
-  private async getRecaptchaToken(): Promise<string | undefined> {
-    if (!this.recaptchaWidget) {
-      this.unrecoverableError = 'validation-setup-failed';
-      return;
-    }
+  private async getRecaptchaToken(): Promise<string> {
+    if (this.bypassRecaptcha) return '';
+    if (!this.recaptchaWidget) return '';
 
-    try {
-      const recaptchaToken = await this.recaptchaWidget.execute();
-      this.dispatchEvent(new Event('recaptchaFinished'));
+    const recaptchaToken = await this.recaptchaWidget.execute();
+    this.dispatchEvent(new Event('recaptchaFinished'));
 
-      return recaptchaToken;
-    } catch {
-      this.unrecoverableError = 'validation-setup-failed';
-      return;
-    }
+    return recaptchaToken;
   }
 
   /* Prevents form submission and sets stars based on number clicked */
