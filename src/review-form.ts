@@ -19,6 +19,7 @@ import type {
   RecaptchaManagerInterface,
   RecaptchaWidgetInterface,
 } from '@internetarchive/recaptcha-manager';
+import '@internetarchive/ia-activity-indicator';
 
 /**
  * Renders a form to edit a given IA review.
@@ -85,6 +86,10 @@ export class ReviewForm extends LitElement {
   /* Whether to enable the submit button */
   @state()
   private formCanSubmit: boolean = false;
+
+  /* Whether to show a loading indicator for the form */
+  @state()
+  private submissionInProgress: boolean = false;
 
   /* The form to be submitted */
   @query('#review-form')
@@ -261,7 +266,11 @@ export class ReviewForm extends LitElement {
         name="submit"
         ?disabled=${!this.formCanSubmit}
       >
-        ${msg('Submit review')}
+        ${this.submissionInProgress
+          ? html`<span class="loading-indicator" alt="Loading indicator"
+              ><ia-activity-indicator></ia-activity-indicator
+            ></span>`
+          : msg('Submit review')}
       </button>
     </div>`;
   }
@@ -292,17 +301,20 @@ export class ReviewForm extends LitElement {
   private async handleSubmit(e: Event): Promise<void> {
     e.preventDefault();
     if (!this.formCanSubmit) return;
+    if (this.submissionInProgress) return;
     if (!this.reviewForm.reportValidity()) return;
+
+    // Clear temporary errors and show loading indicator
+    this.recoverableError = undefined;
+    this.submissionInProgress = true;
 
     const recaptchaToken = await this.getRecaptchaToken();
 
     if (!this.bypassRecaptcha && !recaptchaToken) {
       this.unrecoverableError = 'validation-setup-failed';
+      this.submissionInProgress = false;
       return;
     }
-
-    // Clear temporary errors
-    this.recoverableError = undefined;
 
     try {
       const formData = new FormData(this.reviewForm);
@@ -324,9 +336,11 @@ export class ReviewForm extends LitElement {
       );
       const json = await response.json();
       console.log(json);
+      this.submissionInProgress = false;
       this.displayMode = 'success';
     } catch (e) {
       console.log(e);
+      this.submissionInProgress = false;
     }
   }
 
@@ -540,6 +554,15 @@ export class ReviewForm extends LitElement {
 
         .full-page-message {
           text-align: center;
+        }
+
+        .loading-indicator {
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          margin-top: 2px;
+          --activityIndicatorLoadingRingColor: #fff;
+          --activityIndicatorLoadingDotColor: #fff;
         }
       `,
     ];
