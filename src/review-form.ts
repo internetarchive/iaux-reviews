@@ -322,7 +322,7 @@ export class ReviewForm extends LitElement {
         {
           method: 'post',
           credentials: 'include',
-          body: formData,
+          body: JSON.stringify(formData),
         },
       );
       const json = await response.json();
