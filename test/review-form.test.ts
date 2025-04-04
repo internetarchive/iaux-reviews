@@ -96,26 +96,26 @@ describe('ReviewForm', () => {
     expect(submitBtn?.getAttribute('disabled')).not.to.exist;
   });
 
-  it('prefills the old review body if provided', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
-    );
-
-    const subjectInput = el.shadowRoot?.querySelector(
-      'input[name="title"]',
-    ) as HTMLInputElement;
-    expect(subjectInput).to.exist;
-    expect(subjectInput.value).to.equal('What a cool book!');
-  });
-
   it('prefills the old review title if provided', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
     );
 
-    const bodyInput = el.shadowRoot?.querySelector(
-      'textarea[name="body"]',
+    const subjectInput = el.shadowRoot?.getElementById(
+      'subject-input',
     ) as HTMLInputElement;
+    expect(subjectInput).to.exist;
+    expect(subjectInput.value).to.equal('What a cool book!');
+  });
+
+  it('prefills the old review body if provided', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
+    );
+
+    const bodyInput = el.shadowRoot?.getElementById(
+      'body-input',
+    ) as HTMLTextAreaElement;
     expect(bodyInput).to.exist;
     expect(bodyInput.value).to.equal('I loved it.');
   });
@@ -125,8 +125,8 @@ describe('ReviewForm', () => {
       html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
     );
 
-    const starsInput = el.shadowRoot?.querySelector(
-      'input[name="stars"]',
+    const starsInput = el.shadowRoot?.getElementById(
+      'stars-input',
     ) as HTMLInputElement;
     expect(starsInput).to.exist;
     expect(starsInput.value).to.equal('5');
@@ -137,8 +137,8 @@ describe('ReviewForm', () => {
       html`<ia-review-form></ia-review-form>`,
     );
 
-    const starsInput = el.shadowRoot?.querySelector(
-      'input[name="stars"]',
+    const starsInput = el.shadowRoot?.getElementById(
+      'stars-input',
     ) as HTMLInputElement;
     expect(starsInput).to.exist;
     expect(starsInput.value).to.equal('0');
@@ -411,7 +411,7 @@ describe('ReviewForm', () => {
     ) as HTMLDivElement;
     expect(subjectCharCounter?.innerText).to.equal('17/10');
 
-    const subjectInputBox = el.shadowRoot?.getElementById('subject-input');
+    const subjectInputBox = el.shadowRoot?.querySelector('.input-box.subject');
     expect(subjectInputBox?.className).to.contain('error');
 
     const submitBtn = el.shadowRoot?.querySelector('button[type="submit"');
@@ -472,7 +472,7 @@ describe('ReviewForm', () => {
     ) as HTMLDivElement;
     expect(bodyCharCounter?.innerText).to.equal('11/10');
 
-    const bodyInputBox = el.shadowRoot?.getElementById('body-input');
+    const bodyInputBox = el.shadowRoot?.querySelector('.input-box.body');
     expect(bodyInputBox?.className).to.contain('error');
 
     const errorMsg = bodyInputBox?.querySelector('.input-error');
@@ -490,7 +490,7 @@ describe('ReviewForm', () => {
       ></ia-review-form>`,
     );
 
-    const bodyInputBox = el.shadowRoot?.getElementById('body-input');
+    const bodyInputBox = el.shadowRoot?.querySelector('.input-box.body');
     expect(bodyInputBox?.className).not.to.contain('error');
 
     const submitBtn = el.shadowRoot?.querySelector('button[type="submit"');

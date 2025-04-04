@@ -36,7 +36,7 @@ export class ReviewForm extends LitElement {
   @property({ type: String }) baseHost: string = 'https://archive.org';
 
   /* The path for the endpoint we're submitting to */
-  @property({ type: String }) endpointPath: string = '/services/reviews.php';
+  @property({ type: String }) endpointPath: string = '/write-review.php';
 
   /* The previous review to pre-fill, if any */
   @property({ type: Object }) oldReview?: Review;
@@ -149,11 +149,11 @@ export class ReviewForm extends LitElement {
   private get starsInputTemplate(): HTMLTemplateResult {
     return html`
       <div class="form-heading">
-        <label for="stars-field">${msg('Rating (optional)')}</label>
+        <label for="stars-input">${msg('Rating (optional)')}</label>
       </div>
       <input
         type="hidden"
-        name="stars"
+        name="field_stars"
         id="stars-input"
         .value=${this.currentStars.toString()}
         required
@@ -168,13 +168,13 @@ export class ReviewForm extends LitElement {
   }
 
   private get subjectInputTemplate(): HTMLTemplateResult {
-    return html`<span id="subject-input" class="input-box ${
+    return html`<span class="input-box subject ${
       this.maxSubjectLength && this.currentSubjectLength > this.maxSubjectLength
         ? 'error'
         : ''
     }"
       ><div class="form-heading">
-        <label for="subject">${msg('Subject')}</label>
+        <label for="subject-input">${msg('Subject')}</label>
         ${
           this.maxSubjectLength
             ? html`<div class="char-count subject">
@@ -185,8 +185,8 @@ export class ReviewForm extends LitElement {
       </div>
       <input
         type="text"
-        name="title"
-        id="subject"
+        name="field_reviewtitle"
+        id="subject-input"
         .value=${this.oldReview?.reviewtitle ?? ''}
         @input=${this.handleSubjectChanged}
         required
@@ -205,13 +205,12 @@ export class ReviewForm extends LitElement {
 
   private get bodyInputTemplate(): HTMLTemplateResult {
     return html`<span
-      id="body-input"
-      class="input-box ${this.maxBodyLength &&
+      class="input-box body ${this.maxBodyLength &&
       this.currentBodyLength > this.maxBodyLength
         ? 'error'
         : ''}"
       ><div class="form-heading">
-        <label for="body">${msg('Review')}</label>
+        <label for="body-input">${msg('Review')}</label>
         ${this.maxBodyLength
           ? html`<div class="char-count body">
               ${this.currentBodyLength}/${this.maxBodyLength}
@@ -219,8 +218,8 @@ export class ReviewForm extends LitElement {
           : nothing}
       </div>
       <textarea
-        name="body"
-        id="body"
+        name="field_reviewbody"
+        id="body-input"
         .value=${this.oldReview?.reviewbody ?? ''}
         rows="10"
         cols="50"
