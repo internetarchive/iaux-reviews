@@ -264,7 +264,7 @@ export class ReviewForm extends LitElement {
         type="submit"
         class="ia-button primary"
         name="submit"
-        ?disabled=${!this.formCanSubmit}
+        ?disabled=${!this.formCanSubmit || this.submissionInProgress}
       >
         ${this.submissionInProgress
           ? html`<span class="loading-indicator" alt="Loading indicator"
