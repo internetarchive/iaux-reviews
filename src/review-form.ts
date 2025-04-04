@@ -315,21 +315,20 @@ export class ReviewForm extends LitElement {
     }
 
     try {
-      const formData = new FormData(this.reviewForm);
-
-      if (recaptchaToken) {
-        formData.append('g-recaptcha-response', recaptchaToken);
+      const data = new URLSearchParams();
+      for (const pair of new FormData(this.reviewForm)) {
+        data.append(pair[0], pair[1] as string);
       }
 
-      // Indicates to backend how to process the response
-      formData.append('submitter', 'review-form');
+      if (recaptchaToken) {
+        data.append('g-recaptcha-response', recaptchaToken);
+      }
 
       const response = await fetch(
         `${this.baseHost}${this.endpointPath}?identifier=${this.identifier}`,
         {
           method: 'POST',
-          credentials: 'include',
-          body: JSON.stringify(formData),
+          body: data,
         },
       );
       const json = await response.json();
