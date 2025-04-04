@@ -299,8 +299,7 @@ export class ReviewForm extends LitElement {
 
   private async handleSubmit(e: Event): Promise<void> {
     e.preventDefault();
-    if (!this.formCanSubmit) return;
-    if (this.submissionInProgress) return;
+    if (!this.formCanSubmit || this.submissionInProgress) return;
     if (!this.reviewForm.reportValidity()) return;
 
     // Clear temporary errors and show loading indicator
@@ -536,10 +535,6 @@ export class ReviewForm extends LitElement {
 
         .ia-button:disabled {
           opacity: 0.75;
-        }
-
-        .ia-button:disabled:hover {
-          cursor: not-allowed;
         }
 
         .unrecoverable-error {
