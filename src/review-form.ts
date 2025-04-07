@@ -153,7 +153,7 @@ export class ReviewForm extends LitElement {
       </div>
       <input
         type="hidden"
-        name="field_stars"
+        name="stars"
         id="stars-input"
         .value=${this.currentStars.toString()}
         required
@@ -185,7 +185,7 @@ export class ReviewForm extends LitElement {
       </div>
       <input
         type="text"
-        name="field_reviewtitle"
+        name="title"
         id="subject-input"
         .value=${this.oldReview?.reviewtitle ?? ''}
         @input=${this.handleSubjectChanged}
@@ -218,7 +218,7 @@ export class ReviewForm extends LitElement {
           : nothing}
       </div>
       <textarea
-        name="field_reviewbody"
+        name="body"
         id="body-input"
         .value=${this.oldReview?.reviewbody ?? ''}
         rows="10"

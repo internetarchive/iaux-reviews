@@ -98,7 +98,6 @@ export class AppRoot extends LitElement {
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
           ?bypassRecaptcha=${this.bypassRecaptcha}
           .displayMode=${this.showSuccessMessage ? 'success' : 'form'}
-          .baseHost=${'https://ia-petabox-webdev-7402-adjust-write-review-endpoint.dev.archive.org'}
         ></ia-review-form>
       </div>`;
   }
