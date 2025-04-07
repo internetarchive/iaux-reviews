@@ -243,6 +243,8 @@ export class ReviewForm extends LitElement {
         name="field_reviewtoken"
         .value=${this.token}
       />
+      <!-- Indicates to the backend how to validate submission -->
+      <input type="hidden" name="submitter" .value=${'review-form'} />
       <!-- Indicates to backend that form submission is intended -->
       <input type="hidden" name="action" value="1" />`;
   }
