@@ -16,9 +16,22 @@ export class AppRoot extends LitElement {
   private mockOldReview: ReviewForRender = {
     rawValue: new Review({ stars: 5 }),
     stars: 5,
-    reviewtitle:
-      'What a cool book!What a cool book!What a cool book!What a cool book!What a cool book!What a cool book!What a cool book!What a cool book!',
+    reviewtitle: 'What a cool book!',
     reviewbody: 'I loved it.',
+    reviewer: 'Foo Bar',
+    reviewdate: new Date('03/20/2025'),
+    createdate: new Date('02/07/2025'),
+    screenname: 'Foo Bar',
+    itemname: 'foo-bar',
+    domId: '12345',
+  };
+
+  private longReview: ReviewForRender = {
+    rawValue: new Review({ stars: 5 }),
+    stars: 5,
+    reviewtitle:
+      'What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! ',
+    reviewbody: new Array(100).fill('I loved it.').join(' '),
     reviewer: 'Foo Bar',
     reviewdate: new Date('03/20/2025'),
     createdate: new Date('02/07/2025'),
@@ -58,6 +71,9 @@ export class AppRoot extends LitElement {
   @state()
   private useReviewDisplay: boolean = false;
 
+  @state()
+  private useLongReview: boolean = false;
+
   render() {
     return html`${!this.recaptchaManager
         ? html`<button
@@ -83,10 +99,15 @@ export class AppRoot extends LitElement {
       <button @click=${() => (this.useReviewDisplay = !this.useReviewDisplay)}>
         Switch to ${this.useReviewDisplay ? 'form view' : 'review view'}
       </button>
+      <button @click=${() => (this.useLongReview = !this.useLongReview)}>
+        Prefill ${this.useLongReview ? 'normal review' : 'too-long review'}
+      </button>
       <div class="container">
         <ia-review-form
           .identifier=${'goody'}
-          .oldReview=${this.mockOldReview}
+          .oldReview=${this.useLongReview
+            ? this.longReview
+            : this.mockOldReview}
           .recaptchaManager=${this.recaptchaManager}
           .prefilledErrors=${this.showErrors ? this.errors : []}
           .maxSubjectLength=${this.useCharCounts ? 100 : undefined}
