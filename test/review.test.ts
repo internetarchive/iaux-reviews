@@ -62,6 +62,33 @@ describe('IaReview', () => {
     expect(reviewerLink?.href).to.contain('/details/foo-bar');
   });
 
+  it('uses a custom basehost for the reviewer details link if requested', async () => {
+    const el = await fixture<IaReview>(
+      html`<ia-review
+        .review=${mockReview}
+        .baseHost=${'foo.archive.org'}
+      ></ia-review>`,
+    );
+
+    const reviewerLink = el.shadowRoot?.querySelector(
+      '.reviewer-link',
+    ) as HTMLAnchorElement;
+    expect(reviewerLink?.href).to.contain('foo.archive.org/details/foo-bar');
+  });
+
+  it('defaults to archive.org if no custom host requested', async () => {
+    const el = await fixture<IaReview>(
+      html`<ia-review .review=${mockReview}></ia-review>`,
+    );
+
+    const reviewerLink = el.shadowRoot?.querySelector(
+      '.reviewer-link',
+    ) as HTMLAnchorElement;
+    expect(reviewerLink?.href).to.contain(
+      'https://archive.org/details/foo-bar',
+    );
+  });
+
   it('does not add a link to the reviewer details page if itemname not provided', async () => {
     const reviewNoItemname = Object.assign({}, mockReview);
     reviewNoItemname.itemname = undefined;
@@ -153,5 +180,106 @@ describe('IaReview', () => {
     expect(body?.textContent).to.contain('I loved it.');
   });
 
-  it('truncates the review subject if too long', async () => {});
+  it('truncates the review subject if too long', async () => {
+    const el = await fixture<IaReview>(
+      html`<ia-review
+        .review=${mockReview}
+        .maxSubjectLength=${6}
+      ></ia-review>`,
+    );
+
+    const subject = el.shadowRoot?.querySelector('.subject');
+    expect(subject?.textContent).to.contain('What a...');
+  });
+
+  it('truncates the review body if too long', async () => {
+    const el = await fixture<IaReview>(
+      html`<ia-review .review=${mockReview} .maxBodyLength=${6}></ia-review>`,
+    );
+
+    const subject = el.shadowRoot?.querySelector('.body');
+    expect(subject?.textContent).to.contain('I love...');
+  });
+
+  it('shows a more button if subject/body are truncated', async () => {
+    const el = await fixture<IaReview>(
+      html`<ia-review
+        .review=${mockReview}
+        .maxSubjectLength=${6}
+        .maxBodyLength=${7}
+      ></ia-review>`,
+    );
+
+    const moreBtn = el.shadowRoot?.querySelector('.more-btn');
+    expect(moreBtn).to.exist;
+  });
+
+  it('does not show a more button if subject/body are not truncated', async () => {
+    const el = await fixture<IaReview>(
+      html`<ia-review .review=${mockReview}></ia-review>`,
+    );
+
+    const moreBtn = el.shadowRoot?.querySelector('.more-btn');
+    expect(moreBtn).not.to.exist;
+  });
+
+  it('expands text on more button click', async () => {
+    const el = await fixture<IaReview>(
+      html`<ia-review
+        .review=${mockReview}
+        .maxSubjectLength=${6}
+        .maxBodyLength=${7}
+      ></ia-review>`,
+    );
+
+    const subject = el.shadowRoot?.querySelector('.subject');
+    const body = el.shadowRoot?.querySelector('.body');
+    expect(subject?.textContent).to.contain('What a...');
+    expect(body?.textContent).to.contain('I loved...');
+
+    const moreBtn = el.shadowRoot?.querySelector(
+      '.more-btn',
+    ) as HTMLButtonElement;
+    expect(moreBtn).to.exist;
+
+    moreBtn.click();
+    await el.updateComplete;
+
+    expect(subject?.textContent).to.contain('What a cool book!');
+    expect(body?.textContent).to.contain('I loved it.');
+  });
+
+  it('hides expanded text on less button click', async () => {
+    const el = await fixture<IaReview>(
+      html`<ia-review
+        .review=${mockReview}
+        .maxSubjectLength=${6}
+        .maxBodyLength=${7}
+      ></ia-review>`,
+    );
+
+    const moreBtn = el.shadowRoot?.querySelector(
+      '.more-btn',
+    ) as HTMLButtonElement;
+    expect(moreBtn).to.exist;
+
+    moreBtn.click();
+    await el.updateComplete;
+
+    const subject = el.shadowRoot?.querySelector('.subject');
+    const body = el.shadowRoot?.querySelector('.body');
+    expect(subject?.textContent).to.contain('What a cool book!');
+    expect(body?.textContent).to.contain('I loved it.');
+
+    const lessBtn = el.shadowRoot?.querySelector(
+      '.less-btn',
+    ) as HTMLButtonElement;
+    expect(lessBtn).to.exist;
+
+    lessBtn.click();
+    await el.updateComplete;
+
+    expect(subject?.textContent).to.contain('What a...');
+    expect(body?.textContent).to.contain('I loved...');
+  });
 });

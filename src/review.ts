@@ -4,10 +4,9 @@ import {
   LitElement,
   nothing,
   HTMLTemplateResult,
-  PropertyValues,
   CSSResultGroup,
 } from 'lit';
-import { property, customElement, state, query } from 'lit/decorators.js';
+import { property, customElement, state } from 'lit/decorators.js';
 import { msg } from '@lit/localize';
 
 import { Review } from '@internetarchive/metadata-service';
@@ -29,13 +28,18 @@ export class IaReview extends LitElement {
   /* The review to be rendered */
   @property({ type: Object }) review?: ReviewForRender;
 
+  /* Maximum length for subject */
+  @property({ type: Number }) maxSubjectLength = 100;
+
+  /* Maximum length for body */
+  @property({ type: Number }) maxBodyLength = 1000;
+
+  /* Base for URLs */
+  @property({ type: String }) baseHost = 'https://archive.org';
+
   /* Whether to show truncated review title / body */
   @state()
   private showTruncatedContent: boolean = false;
-
-  /* Maximum lengths for title and body */
-  private MAX_TITLE_LENGTH = 100;
-  private MAX_BODY_LENGTH = 1000;
 
   render() {
     return !this.review
@@ -48,13 +52,59 @@ export class IaReview extends LitElement {
           <div class="subject">
             <b>${msg('Subject: ')}</b>${this.subjectTemplate}
           </div>
-          <div class="body">${this.review.reviewbody}</div>
+          <div class="body">${this.bodyTemplate}</div>
+          ${this.truncationButtonsTemplate}
         </article>`;
   }
 
-  private get subjectTemplate(): HTMLTemplateResult | typeof nothing {
-    if (!this.review?.reviewtitle) return nothing;
-    return html`${this.review.reviewtitle}`;
+  private get subjectTemplate(): string {
+    if (!this.review?.reviewtitle) return '';
+
+    return this.review.reviewtitle.length <= this.maxSubjectLength ||
+      this.showTruncatedContent
+      ? this.review.reviewtitle
+      : this.review.reviewtitle.slice(0, this.maxSubjectLength).concat('...');
+  }
+
+  private get bodyTemplate(): string {
+    if (!this.review?.reviewbody) return '';
+
+    return this.review.reviewbody.length <= this.maxBodyLength ||
+      this.showTruncatedContent
+      ? this.review.reviewbody
+      : this.review.reviewbody.slice(0, this.maxBodyLength).concat('...');
+  }
+
+  private get truncationButtonsTemplate(): HTMLTemplateResult | typeof nothing {
+    if (!this.review?.reviewtitle || !this.review?.reviewbody) return nothing;
+
+    const noTruncationNeeded =
+      this.review.reviewtitle.length <= this.maxSubjectLength &&
+      this.review.reviewbody.length <= this.maxBodyLength;
+
+    if (noTruncationNeeded) return nothing;
+
+    return this.showTruncatedContent
+      ? this.lessButtonTemplate
+      : this.moreButtonTemplate;
+  }
+
+  private get moreButtonTemplate(): HTMLTemplateResult {
+    return html`<button
+      class="simple-link more-btn"
+      @click=${() => (this.showTruncatedContent = true)}
+    >
+      ${msg('More...')}
+    </button>`;
+  }
+
+  private get lessButtonTemplate(): HTMLTemplateResult {
+    return html`<button
+      class="simple-link less-btn"
+      @click=${() => (this.showTruncatedContent = false)}
+    >
+      ${msg('...Less')}
+    </button>`;
   }
 
   private get reviewerTemplate(): HTMLTemplateResult | typeof nothing {
@@ -62,7 +112,7 @@ export class IaReview extends LitElement {
       ? nothing
       : this.review.itemname
         ? html`<a
-            href="/details/${this.review.itemname}"
+            href="${this.baseHost}/details/${this.review.itemname}"
             class="reviewer-link simple-link"
             data-event-click-tracking="ItemReviews|ReviewerLink"
             >${this.review.screenname}</a
@@ -133,6 +183,9 @@ export class IaReview extends LitElement {
       .simple-link {
         color: var(--ia-link-color, #4b64ff);
         text-decoration: none;
+        background: transparent;
+        border: none;
+        padding: 0px;
       }
 
       .simple-link:hover {
