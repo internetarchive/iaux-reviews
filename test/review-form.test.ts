@@ -4,12 +4,20 @@ import type { ReviewForm } from '../src/review-form';
 import { Review } from '@internetarchive/metadata-service';
 import '../src/review-form';
 import { MockRecaptchaManager } from './mocks/mock-recaptcha-manager';
+import { IaReview, ReviewForRender } from '../src/review';
 
-const mockOldReview = new Review({
+const mockOldReview: ReviewForRender = {
+  rawValue: new Review({ stars: 5 }),
   stars: 5,
   reviewtitle: 'What a cool book!',
   reviewbody: 'I loved it.',
-});
+  reviewer: 'Foo Bar',
+  reviewdate: new Date('03/20/2025'),
+  createdate: new Date('02/07/2025'),
+  screenname: 'Foo Bar',
+  itemname: 'foo-bar',
+  domId: '12345',
+};
 
 const mockRecaptchaManager = new MockRecaptchaManager();
 
@@ -172,11 +180,18 @@ describe('ReviewForm', () => {
   });
 
   it('shows the same number of unselected stars as rating', async () => {
-    const threeStarReview = new Review({
+    const threeStarReview = {
+      rawValue: new Review({ stars: 5 }),
       stars: 3,
       reviewtitle: 'What a cool book!',
       reviewbody: 'I loved it.',
-    });
+      reviewer: 'Foo Bar',
+      reviewdate: new Date('03/20/2025'),
+      createdate: new Date('02/07/2025'),
+      screenname: 'Foo Bar',
+      itemname: 'foo-bar',
+      domId: '12345',
+    };
 
     const el = await fixture<ReviewForm>(
       html`<ia-review-form .oldReview=${threeStarReview}></ia-review-form>`,
@@ -524,5 +539,19 @@ describe('ReviewForm', () => {
 
     const submitBtn = el.shadowRoot?.querySelector('button[type="submit"');
     expect(submitBtn?.getAttribute('disabled')).not.to.exist;
+  });
+
+  it('shows a review instead of the review form if requested', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .maxBodyLength=${100}
+        .oldReview=${mockOldReview}
+        .displayMode=${'review'}
+      ></ia-review-form>`,
+    );
+
+    const reviewElement = el.shadowRoot?.querySelector('ia-review') as IaReview;
+    expect(reviewElement).to.exist;
+    expect(reviewElement?.review).to.equal(mockOldReview);
   });
 });

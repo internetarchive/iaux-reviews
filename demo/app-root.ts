@@ -2,22 +2,30 @@ import { css, html, LitElement, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import { Review } from '@internetarchive/metadata-service';
-import '../src/review-form';
 import {
   RecaptchaManager,
   RecaptchaManagerInterface,
 } from '@internetarchive/recaptcha-manager';
 
+import type { ReviewForRender } from '../src/review';
+import '../src/review-form';
+import '../src/review';
+
 @customElement('app-root')
 export class AppRoot extends LitElement {
-  private mockOldReview = new Review({
-    stars: 3,
-    reviewtitle: 'What a cool book!',
+  private mockOldReview: ReviewForRender = {
+    rawValue: new Review({ stars: 5 }),
+    stars: 5,
+    reviewtitle:
+      'What a cool book!What a cool book!What a cool book!What a cool book!What a cool book!What a cool book!What a cool book!What a cool book!',
     reviewbody: 'I loved it.',
-    reviewer: 'foo-bar',
-    reviewdate: '2025-03-03 18:13:36',
-    createdate: '2025-02-25 14:28:19',
-  });
+    reviewer: 'Foo Bar',
+    reviewdate: new Date('03/20/2025'),
+    createdate: new Date('02/07/2025'),
+    screenname: 'Foo Bar',
+    itemname: 'foo-bar',
+    domId: '12345',
+  };
 
   private goodRecaptchaManager: RecaptchaManagerInterface =
     new RecaptchaManager({
@@ -47,6 +55,9 @@ export class AppRoot extends LitElement {
   @state()
   private useCharCounts: boolean = true;
 
+  @state()
+  private useReviewDisplay: boolean = false;
+
   render() {
     return html`${!this.recaptchaManager
         ? html`<button
@@ -69,6 +80,9 @@ export class AppRoot extends LitElement {
       <button @click=${() => (this.useCharCounts = !this.useCharCounts)}>
         ${this.useCharCounts ? 'Remove' : 'Use'} char count limits
       </button>
+      <button @click=${() => (this.useReviewDisplay = !this.useReviewDisplay)}>
+        Switch to ${this.useReviewDisplay ? 'form view' : 'review view'}
+      </button>
       <div class="container">
         <ia-review-form
           .identifier=${'goody'}
@@ -77,6 +91,7 @@ export class AppRoot extends LitElement {
           .prefilledErrors=${this.showErrors ? this.errors : []}
           .maxSubjectLength=${this.useCharCounts ? 100 : undefined}
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
+          .displayMode=${this.useReviewDisplay ? 'review' : 'form'}
           ?bypassRecaptcha=${this.bypassRecaptcha}
         ></ia-review-form>
       </div>`;
