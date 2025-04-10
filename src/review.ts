@@ -43,10 +43,12 @@ export class IaReview extends LitElement {
 
   render() {
     return !this.review
-      ? html`<div class="error">Could not render review.</div>`
+      ? html`<div class="error">
+          ${msg('This review cannot be displayed at this time.')}
+        </div>`
       : html`<article class="review" id=${this.review.domId}>
           <div class="top-line">
-            <b>${msg('Reviewer: ')}</b>${this.reviewerTemplate} -
+            <b>${msg('Reviewer:')} </b>${this.reviewerTemplate} -
             ${this.starsTemplate}${this.createDateTemplate}
           </div>
           <div class="subject">
@@ -140,10 +142,12 @@ export class IaReview extends LitElement {
       day: 'numeric',
       year: 'numeric',
     });
-    const hasBeenEdited =
-      this.review.reviewdate?.getTime() !== this.review.createdate?.getTime();
+    const editedMsg =
+      this.review.reviewdate?.getTime() !== this.review.createdate?.getTime()
+        ? '(edited)'
+        : '';
 
-    return msg(`${prettyDate} ${hasBeenEdited ? '(edited)' : ''}`);
+    return msg(`${prettyDate} ${editedMsg}`);
   }
 
   static get styles(): CSSResultGroup {

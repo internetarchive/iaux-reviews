@@ -181,7 +181,7 @@ describe('ReviewForm', () => {
 
   it('shows the same number of unselected stars as rating', async () => {
     const threeStarReview = {
-      rawValue: new Review({ stars: 5 }),
+      rawValue: new Review({ stars: 3 }),
       stars: 3,
       reviewtitle: 'What a cool book!',
       reviewbody: 'I loved it.',
