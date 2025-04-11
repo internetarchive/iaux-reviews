@@ -63,7 +63,7 @@ export class AppRoot extends LitElement {
   private bypassRecaptcha: boolean = false;
 
   @state()
-  private showErrors: boolean = false;
+  private unrecoverableError: boolean = false;
 
   @state()
   private useCharCounts: boolean = true;
@@ -76,7 +76,8 @@ export class AppRoot extends LitElement {
 
   render() {
     return html`${!this.recaptchaManager
-        ? html`<button
+        ? html`
+            <button
               @click=${() =>
                 (this.recaptchaManager = this.goodRecaptchaManager)}
             >
@@ -85,13 +86,16 @@ export class AppRoot extends LitElement {
               @click=${() => (this.recaptchaManager = this.badRecaptchaManager)}
             >
               Turn on ReCaptcha (bad site key)
-            </button> `
+            </button>
+          `
         : nothing}
       <button @click=${() => (this.bypassRecaptcha = !this.bypassRecaptcha)}>
         ${!this.bypassRecaptcha ? 'Bypass' : 'Enable'} ReCaptcha
       </button>
-      <button @click=${() => (this.showErrors = !this.showErrors)}>
-        ${this.showErrors ? 'Hide' : 'Show'} pre-filled errors
+      <button
+        @click=${() => (this.unrecoverableError = !this.unrecoverableError)}
+      >
+        ${this.unrecoverableError ? 'Hide' : 'Show'} unrecoverable error
       </button>
       <button @click=${() => (this.useCharCounts = !this.useCharCounts)}>
         ${this.useCharCounts ? 'Remove' : 'Use'} char count limits
@@ -109,7 +113,9 @@ export class AppRoot extends LitElement {
             ? this.longReview
             : this.mockOldReview}
           .recaptchaManager=${this.recaptchaManager}
-          .prefilledErrors=${this.showErrors ? this.errors : []}
+          .unrecoverableError=${this.unrecoverableError
+            ? "Sorry, you're not cool enough to write a review for this item."
+            : undefined}
           .maxSubjectLength=${this.useCharCounts ? 100 : undefined}
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
           .displayMode=${this.useReviewDisplay ? 'review' : 'form'}

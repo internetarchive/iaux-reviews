@@ -95,30 +95,40 @@ describe('ReviewForm', () => {
     expect(cancelBtn.href).to.equal('https://foo.archive.org/details/foo');
   });
 
-  it('renders any errors that are passed in', async () => {
+  it('replaces the form inputs with an error if an unrecoverable error is passed in, and disables submission', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
-        .prefilledErrors=${['Too good of a review.', 'Please make it worse.']}
+        .unrecoverableError=${'You must be logged in to write reviews.'}
+        .oldReview=${mockOldReview}
       ></ia-review-form>`,
     );
 
-    const errors = el.shadowRoot?.querySelectorAll(
-      '.prefilled-error',
-    ) as NodeListOf<HTMLDivElement>;
-    expect(errors.length).to.equal(2);
-    expect(errors[0].innerText).to.equal('Too good of a review.');
-    expect(errors[1].innerText).to.equal('Please make it worse.');
-  });
+    const inputs = el.shadowRoot?.querySelector('.inputs');
+    expect(inputs).to.be.null;
 
-  it('does not render the error div if no errors are passed in', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form></ia-review-form>`,
+    const errorDiv = el.shadowRoot?.querySelector('.unrecoverable-error');
+    expect(errorDiv).to.exist;
+    expect(errorDiv?.textContent).to.include(
+      'You must be logged in to write reviews.',
     );
 
-    const errors = el.shadowRoot?.querySelector(
-      '.prefilled-errors',
-    ) as HTMLDivElement;
-    expect(errors).to.be.null;
+    const submitBtn = el.shadowRoot?.querySelector('button[type="submit"]');
+    expect(submitBtn?.getAttribute('disabled')).to.exist;
+  });
+
+  it('does not replace the form inputs if no unrecoverable errors are passed in', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
+    );
+
+    const inputs = el.shadowRoot?.querySelector('.inputs');
+    expect(inputs).to.exist;
+
+    const errorDiv = el.shadowRoot?.querySelector('.unrecoverable-error');
+    expect(errorDiv).not.to.exist;
+
+    const submitBtn = el.shadowRoot?.querySelector('button[type="submit"]');
+    expect(submitBtn?.getAttribute('disabled')).not.to.exist;
   });
 
   it('prefills the old review body if provided', async () => {
