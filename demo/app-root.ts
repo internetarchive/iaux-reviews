@@ -55,7 +55,7 @@ export class AppRoot extends LitElement {
   private recaptchaManager?: RecaptchaManagerInterface;
 
   @state()
-  private bypassRecaptcha: boolean = false;
+  private bypassRecaptcha: boolean = true;
 
   @state()
   private unrecoverableError: boolean = false;
@@ -129,6 +129,7 @@ export class AppRoot extends LitElement {
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
           .displayMode=${this.useReviewDisplay ? 'review' : 'form'}
           ?bypassRecaptcha=${this.bypassRecaptcha}
+          ?submissionInProgress=${true}
         ></ia-review-form>
       </div>`;
   }

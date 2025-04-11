@@ -15,6 +15,7 @@ import type {
   RecaptchaManagerInterface,
   RecaptchaWidgetInterface,
 } from '@internetarchive/recaptcha-manager';
+import '@internetarchive/ia-activity-indicator';
 
 import starSelected from './assets/star-selected';
 import starUnselected from './assets/star-unselected';
@@ -86,6 +87,10 @@ export class ReviewForm extends LitElement {
   /* Whether to enable the submit button */
   @state()
   private formCanSubmit: boolean = false;
+
+  /* Whether to show a loading indicator for the form */
+  @state()
+  submissionInProgress: boolean = false;
 
   /* The form to be submitted */
   @query('#review-form')
@@ -303,10 +308,16 @@ export class ReviewForm extends LitElement {
           type="submit"
           class="ia-button primary"
           name="submit"
-          ?disabled=${!this.formCanSubmit}
+          ?disabled=${!this.formCanSubmit || this.submissionInProgress}
           @click=${this.handleSubmit}
         >
-          ${msg('Submit review')}
+          ${this.submissionInProgress
+            ? html`
+                <span class="loading-indicator" alt="Loading indicator">
+                  <ia-activity-indicator></ia-activity-indicator>
+                </span>
+              `
+            : msg('Submit review')}
         </button>
       </div>
     `;
@@ -337,7 +348,15 @@ export class ReviewForm extends LitElement {
 
   private async handleSubmit(e: Event): Promise<void> {
     e.preventDefault();
-    if (!this.reviewForm.reportValidity()) return;
+    // Don't double-submit
+    if (this.submissionInProgress) return;
+
+    this.submissionInProgress = true;
+
+    if (!this.reviewForm.reportValidity()) {
+      return this.stopSubmission();
+    }
+
     if (this.bypassRecaptcha) {
       this.reviewForm.requestSubmit();
       return;
@@ -345,7 +364,7 @@ export class ReviewForm extends LitElement {
 
     if (!this.recaptchaWidget) {
       this.recoverableError = this.RECAPTCHA_ERROR_MESSAGE;
-      return;
+      return this.stopSubmission();
     }
 
     try {
@@ -358,7 +377,13 @@ export class ReviewForm extends LitElement {
       this.reviewForm.requestSubmit();
     } catch {
       this.recoverableError = this.RECAPTCHA_ERROR_MESSAGE;
+      return this.stopSubmission();
     }
+  }
+
+  /* Handles canceled form submission */
+  private stopSubmission(): void {
+    this.submissionInProgress = false;
   }
 
   /* Prevents form submission and sets stars based on number clicked */
@@ -539,6 +564,15 @@ export class ReviewForm extends LitElement {
           flex-direction: column;
           justify-content: center;
           background-color: #f5f5f7;
+        }
+
+        .loading-indicator {
+          display: block;
+          width: 20px;
+          height: 20px;
+          margin-top: 2px;
+          --activityIndicatorLoadingRingColor: #fff;
+          --activityIndicatorLoadingDotColor: #fff;
         }
       `,
     ];

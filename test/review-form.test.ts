@@ -585,4 +585,35 @@ describe('ReviewForm', () => {
     expect(reviewElement).to.exist;
     expect(reviewElement?.review).to.equal(mockOldReview);
   });
+
+  it('shows a loading indicator and disables the button if submission is in progress', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .review=${mockOldReview}
+        .submissionInProgress=${true}
+      ></ia-review-form>`,
+    );
+
+    await el.updateComplete;
+
+    const submitBtn = el.shadowRoot?.querySelector('button[type="submit"]');
+    expect(submitBtn).to.exist;
+
+    const loadingIndicator = submitBtn?.querySelector('.loading-indicator');
+    expect(loadingIndicator).to.exist;
+    expect(submitBtn?.getAttribute('disabled')).to.exist;
+  });
+
+  it('does not show a loading indicator or disable submission by default', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .bypassRecaptcha=${true}
+        .review=${mockOldReview}
+      ></ia-review-form>`,
+    );
+
+    const submitBtn = el.shadowRoot?.querySelector('button[type="submit"]');
+    const loadingIndicator = submitBtn?.querySelector('.loading-indicator');
+    expect(loadingIndicator).not.to.exist;
+  });
 });
