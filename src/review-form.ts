@@ -10,15 +10,17 @@ import {
 import { property, customElement, state, query } from 'lit/decorators.js';
 import { msg } from '@lit/localize';
 
-import starSelected from './assets/star-selected';
-import starUnselected from './assets/star-unselected';
-
 import { iaButtonStyles } from '@internetarchive/ia-styles';
-import type { Review } from '@internetarchive/metadata-service';
 import type {
   RecaptchaManagerInterface,
   RecaptchaWidgetInterface,
 } from '@internetarchive/recaptcha-manager';
+
+import starSelected from './assets/star-selected';
+import starUnselected from './assets/star-unselected';
+
+import type { ReviewForRender } from './review';
+import './review';
 
 /**
  * Renders a form to edit a given IA review.
@@ -37,8 +39,11 @@ export class ReviewForm extends LitElement {
   /* The path for the endpoint we're submitting to */
   @property({ type: String }) endpointPath: string = '/write-review.php';
 
+  /* Whether to display the form or the editable review */
+  @property({ type: String }) displayMode: 'review' | 'form' = 'form';
+
   /* The previous review to pre-fill, if any */
-  @property({ type: Object }) oldReview?: Review;
+  @property({ type: Object }) oldReview?: ReviewForRender;
 
   /* Errors to add to the form on first render, if any */
   @property({ type: Array }) prefilledErrors: string[] = [];
@@ -87,6 +92,8 @@ export class ReviewForm extends LitElement {
   private reviewForm!: HTMLFormElement;
 
   render() {
+    if (this.displayMode === 'review')
+      return html`<ia-review .review=${this.oldReview}></ia-review>`;
     return html`<form
       id="review-form"
       action="${this.baseHost}${this.endpointPath}"
