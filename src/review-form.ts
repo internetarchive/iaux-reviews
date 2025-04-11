@@ -94,25 +94,27 @@ export class ReviewForm extends LitElement {
   render() {
     if (this.displayMode === 'review')
       return html`<ia-review .review=${this.oldReview}></ia-review>`;
-    return html`<form
-      id="review-form"
-      action="${this.baseHost}${this.endpointPath}"
-      method="post"
-    >
-      ${this.prefilledErrors.length
-        ? this.prefilledErrors.map(
-            err => html`<div class="errors prefilled-error">${err}</div>`,
-          )
-        : nothing}
-      ${this.recaptchaError
-        ? html`<div class="errors recaptcha-error">
-            ${msg('Could not validate review. Please try again later.')}
-          </div>`
-        : nothing}
-      ${this.starsInputTemplate} ${this.subjectInputTemplate}
-      ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
-      ${this.actionButtonsTemplate}
-    </form>`;
+    return html`
+      <form
+        id="review-form"
+        action="${this.baseHost}${this.endpointPath}"
+        method="post"
+      >
+        ${this.prefilledErrors.length
+          ? this.prefilledErrors.map(
+              err => html`<div class="errors prefilled-error">${err}</div>`,
+            )
+          : nothing}
+        ${this.recaptchaError
+          ? html`<div class="errors recaptcha-error">
+              ${msg('Could not validate review. Please try again later.')}
+            </div>`
+          : nothing}
+        ${this.starsInputTemplate} ${this.subjectInputTemplate}
+        ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
+        ${this.actionButtonsTemplate}
+      </form>
+    `;
   }
 
   protected firstUpdated(): void {
@@ -166,11 +168,13 @@ export class ReviewForm extends LitElement {
   }
 
   private get subjectInputTemplate(): HTMLTemplateResult {
-    return html`<span id="subject-input" class="input-box ${
-      this.maxSubjectLength && this.currentSubjectLength > this.maxSubjectLength
-        ? 'error'
-        : ''
-    }"
+    return html`
+      <span id="subject-input" class="input-box ${
+        this.maxSubjectLength &&
+        this.currentSubjectLength > this.maxSubjectLength
+          ? 'error'
+          : ''
+      }"
       ><div class="form-heading">
         <label for="field_reviewtitle">${msg('Subject')}</label>
         ${
@@ -198,50 +202,50 @@ export class ReviewForm extends LitElement {
             </div>
           `
         : nothing
-    }</div></span>`;
+    }</div></span>
+    `;
   }
 
   private get bodyInputTemplate(): HTMLTemplateResult {
-    return html`<span
-      id="body-input"
-      class="input-box ${this.maxBodyLength &&
-      this.currentBodyLength > this.maxBodyLength
-        ? 'error'
-        : ''}"
-      ><div class="form-heading">
-        <label for="field_reviewbody">${msg('Review')}</label>
+    return html`
+      <span
+        id="body-input"
+        class="input-box ${this.maxBodyLength &&
+        this.currentBodyLength > this.maxBodyLength
+          ? 'error'
+          : ''}"
+        ><div class="form-heading">
+          <label for="field_reviewbody">${msg('Review')}</label>
+          ${this.maxBodyLength
+            ? html`<div class="char-count body">
+                ${this.currentBodyLength}/${this.maxBodyLength}
+              </div>`
+            : nothing}
+        </div>
+        <textarea
+          name="field_reviewbody"
+          id="field_reviewbody"
+          .value=${this.oldReview?.reviewbody ?? ''}
+          rows="10"
+          cols="50"
+          required
+          @input=${this.handleBodyChanged}
+        ></textarea>
         ${this.maxBodyLength
-          ? html`<div class="char-count body">
-              ${this.currentBodyLength}/${this.maxBodyLength}
-            </div>`
+          ? html`
+              <div class="input-error">
+                ${msg(`Review may only have ${this.maxBodyLength} characters`)}
+              </div>
+            `
           : nothing}
-      </div>
-      <textarea
-        name="field_reviewbody"
-        id="field_reviewbody"
-        .value=${this.oldReview?.reviewbody ?? ''}
-        rows="10"
-        cols="50"
-        required
-        @input=${this.handleBodyChanged}
-      ></textarea>
-      ${this.maxBodyLength
-        ? html`
-            <div class="input-error">
-              ${msg(`Review may only have ${this.maxBodyLength} characters`)}
-            </div>
-          `
-        : nothing}
-    </span>`;
+      </span>
+    `;
   }
 
   /* Renders all the hidden inputs we use to store other information for form submission */
   private get hiddenInputsTemplate(): HTMLTemplateResult {
-    return html`<input
-        type="hidden"
-        name="field_reviewtoken"
-        .value=${this.token}
-      />
+    return html`
+      <input type="hidden" name="field_reviewtoken" .value=${this.token} />
       <input
         type="hidden"
         name="g-recaptcha-response"
@@ -255,31 +259,36 @@ export class ReviewForm extends LitElement {
             name="identifier"
             .value=${this.identifier}
           />`
-        : nothing}`;
+        : nothing}
+    `;
   }
 
   private get actionButtonsTemplate(): HTMLTemplateResult {
-    return html`<div class="action-btns">
-      ${this.identifier
-        ? html`<a
-            class="ia-button dark"
-            href="${this.baseHost}/details/${this.identifier}"
-            data-testid="cancel-btn"
-          >
-            ${msg('Cancel')}
-          </a>`
-        : nothing}
+    return html`
+      <div class="action-btns">
+        ${this.identifier
+          ? html`
+              <a
+                class="ia-button dark"
+                href="${this.baseHost}/details/${this.identifier}"
+                data-testid="cancel-btn"
+              >
+                ${msg('Cancel')}
+              </a>
+            `
+          : nothing}
 
-      <button
-        type="submit"
-        class="ia-button primary"
-        name="submit"
-        ?disabled=${!this.formCanSubmit}
-        @click=${this.handleSubmit}
-      >
-        ${msg('Submit review')}
-      </button>
-    </div>`;
+        <button
+          type="submit"
+          class="ia-button primary"
+          name="submit"
+          ?disabled=${!this.formCanSubmit}
+          @click=${this.handleSubmit}
+        >
+          ${msg('Submit review')}
+        </button>
+      </div>
+    `;
   }
 
   private renderStar(num: number): HTMLTemplateResult {
