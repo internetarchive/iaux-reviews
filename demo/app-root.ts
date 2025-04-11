@@ -51,11 +51,6 @@ export class AppRoot extends LitElement {
     },
   );
 
-  private errors: string[] = [
-    "Sorry, we couldn't submit your review.",
-    'Write a better one.',
-  ];
-
   @state()
   private recaptchaManager?: RecaptchaManagerInterface;
 
@@ -64,6 +59,9 @@ export class AppRoot extends LitElement {
 
   @state()
   private unrecoverableError: boolean = false;
+
+  @state()
+  private recoverableError: boolean = false;
 
   @state()
   private useCharCounts: boolean = true;
@@ -97,6 +95,14 @@ export class AppRoot extends LitElement {
       >
         ${this.unrecoverableError ? 'Hide' : 'Show'} unrecoverable error
       </button>
+      <button
+        @click=${() => {
+          this.unrecoverableError = false;
+          this.recoverableError = !this.recoverableError;
+        }}
+      >
+        ${this.recoverableError ? 'Hide' : 'Show'} recoverable error
+      </button>
       <button @click=${() => (this.useCharCounts = !this.useCharCounts)}>
         ${this.useCharCounts ? 'Remove' : 'Use'} char count limits
       </button>
@@ -115,6 +121,9 @@ export class AppRoot extends LitElement {
           .recaptchaManager=${this.recaptchaManager}
           .unrecoverableError=${this.unrecoverableError
             ? "Sorry, you're not cool enough to write a review for this item."
+            : undefined}
+          .recoverableError=${this.recoverableError
+            ? "Why not try submitting again? What's the worst thing that could happen?"
             : undefined}
           .maxSubjectLength=${this.useCharCounts ? 100 : undefined}
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}

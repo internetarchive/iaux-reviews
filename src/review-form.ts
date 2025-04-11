@@ -45,7 +45,7 @@ export class ReviewForm extends LitElement {
   /* The previous review to pre-fill, if any */
   @property({ type: Object }) oldReview?: ReviewForRender;
 
-  /* An optional unrecoverable error to pass in instead of rendering the form */
+  /* An optional unrecoverable error to pass in instead of rendering the form inputs */
   @property({ type: String }) unrecoverableError?: string;
 
   /* Optional max length for review subject */
@@ -79,6 +79,10 @@ export class ReviewForm extends LitElement {
   @state()
   private currentBodyLength: number = 0;
 
+  /* Any recoverable error to display for the form. Will still allow submission. */
+  @state()
+  recoverableError?: string;
+
   /* Whether to enable the submit button */
   @state()
   private formCanSubmit: boolean = false;
@@ -108,7 +112,7 @@ export class ReviewForm extends LitElement {
                     ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
                   </span>
                 `}
-            ${this.actionButtonsTemplate}
+            ${this.recoverableErrorTemplate} ${this.actionButtonsTemplate}
           </form>
         `;
   }
@@ -151,6 +155,14 @@ export class ReviewForm extends LitElement {
           <div class="unrecoverable-error">
             <span class="error-msg">${msg(this.unrecoverableError)}</span>
           </div>
+        `
+      : nothing;
+  }
+
+  private get recoverableErrorTemplate(): HTMLTemplateResult | typeof nothing {
+    return this.recoverableError
+      ? html`
+          <div class="recoverable-error">${msg(this.recoverableError)}</div>
         `
       : nothing;
   }
@@ -332,7 +344,7 @@ export class ReviewForm extends LitElement {
     }
 
     if (!this.recaptchaWidget) {
-      this.unrecoverableError = this.RECAPTCHA_ERROR_MESSAGE;
+      this.recoverableError = this.RECAPTCHA_ERROR_MESSAGE;
       return;
     }
 
@@ -345,7 +357,7 @@ export class ReviewForm extends LitElement {
       await this.updateComplete;
       this.reviewForm.requestSubmit();
     } catch {
-      this.unrecoverableError = this.RECAPTCHA_ERROR_MESSAGE;
+      this.recoverableError = this.RECAPTCHA_ERROR_MESSAGE;
     }
   }
 
@@ -420,7 +432,7 @@ export class ReviewForm extends LitElement {
           );
 
           color: var(--ia-text-color, #2c2c2c);
-          --ia-theme-error-color: #ff0000;
+          --ia-theme-error-color: #cc0000;
         }
 
         .form-heading {
@@ -457,7 +469,8 @@ export class ReviewForm extends LitElement {
 
         .input-box.error .char-count,
         .input-error,
-        .unrecoverable-error {
+        .unrecoverable-error,
+        .recoverable-error {
           color: var(--ia-theme-error-color, #cc0000);
         }
 

@@ -131,6 +131,27 @@ describe('ReviewForm', () => {
     expect(submitBtn?.getAttribute('disabled')).not.to.exist;
   });
 
+  it('adds an error div if a recoverable error is passed in, and does not disable submission', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .recoverableError=${'Something went wrong on our end. Please try again.'}
+        .oldReview=${mockOldReview}
+      ></ia-review-form>`,
+    );
+
+    const inputs = el.shadowRoot?.querySelector('.inputs');
+    expect(inputs).to.exist;
+
+    const errorDiv = el.shadowRoot?.querySelector('.recoverable-error');
+    expect(errorDiv).to.exist;
+    expect(errorDiv?.textContent).to.include(
+      'Something went wrong on our end. Please try again',
+    );
+
+    const submitBtn = el.shadowRoot?.querySelector('button[type="submit"]');
+    expect(submitBtn?.getAttribute('disabled')).not.to.exist;
+  });
+
   it('prefills the old review body if provided', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
