@@ -136,16 +136,19 @@ export class IaReview extends LitElement {
   }
 
   private get createDateTemplate(): string | typeof nothing {
-    if (!this.review) return nothing;
-    const prettyDate = this.review.createdate?.toLocaleString('en-us', {
+    if (!this.review?.createdate || !this.review?.reviewdate) return nothing;
+
+    const reviewDate = new Date(this.review.reviewdate);
+    const createDate = new Date(this.review.createdate);
+
+    const prettyDate = createDate.toLocaleString('en-us', {
       month: 'long',
       day: 'numeric',
       year: 'numeric',
     });
+
     const editedMsg =
-      this.review.reviewdate?.getTime() !== this.review.createdate?.getTime()
-        ? '(edited)'
-        : '';
+      reviewDate.getTime() !== createDate.getTime() ? '(edited)' : '';
 
     return msg(`${prettyDate} ${editedMsg}`);
   }
