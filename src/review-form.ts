@@ -297,37 +297,24 @@ export class ReviewForm extends LitElement {
   }
 
   private get actionButtonsTemplate(): HTMLTemplateResult {
-    return html`
-      <div class="action-btns">
-        ${this.identifier
-          ? html`
-              <a
-                class="ia-button dark"
-                href="${this.baseHost}/details/${this.identifier}"
-                data-testid="cancel-btn"
-              >
-                ${msg('Cancel')}
-              </a>
-            `
-          : nothing}
-
-        <button
-          type="submit"
-          class="ia-button primary"
-          name="submit"
-          ?disabled=${!this.formCanSubmit || this.submissionInProgress}
-          @click=${this.handleSubmit}
-        >
-          ${this.submissionInProgress
-            ? html`
-                <span class="loading-indicator" alt="Loading indicator">
-                  <ia-activity-indicator></ia-activity-indicator>
-                </span>
-              `
-            : msg('Submit review')}
-        </button>
-      </div>
-    `;
+    return html`<div class="action-btns">
+      <button
+        class="ia-button dark"
+        data-testid="cancel-btn"
+        @click=${() => (this.displayMode = 'review')}
+      >
+        ${msg('Cancel')}
+      </button>
+      <button
+        type="submit"
+        class="ia-button primary"
+        name="submit"
+        ?disabled=${!this.formCanSubmit || this.submissionInProgress}
+        @click=${this.handleSubmit}
+      >
+        ${msg('Submit review')}
+      </button>
+    </div>`;
   }
 
   private renderStar(num: number): HTMLTemplateResult {

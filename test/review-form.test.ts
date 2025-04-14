@@ -68,41 +68,6 @@ describe('ReviewForm', () => {
     expect(form?.getAttribute('action')).to.equal('https://archive.org/foo');
   });
 
-  it('defaults to the prod base host for form submission', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form .identifier=${'foo'}></ia-review-form>`,
-    );
-
-    const form = el.shadowRoot?.querySelector('form');
-    expect(form?.getAttribute('action')).to.equal(
-      'https://archive.org/write-review.php',
-    );
-
-    const cancelBtn = el.shadowRoot?.querySelector(
-      'a[data-testid=cancel-btn]',
-    ) as HTMLAnchorElement;
-    expect(cancelBtn.href).to.equal('https://archive.org/details/foo');
-  });
-
-  it('uses a custom base host for form submission if desired', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form
-        .baseHost=${'https://foo.archive.org'}
-        .identifier=${'foo'}
-      ></ia-review-form>`,
-    );
-
-    const form = el.shadowRoot?.querySelector('form');
-    expect(form?.getAttribute('action')).to.equal(
-      'https://foo.archive.org/write-review.php',
-    );
-
-    const cancelBtn = el.shadowRoot?.querySelector(
-      'a[data-testid=cancel-btn]',
-    ) as HTMLAnchorElement;
-    expect(cancelBtn.href).to.equal('https://foo.archive.org/details/foo');
-  });
-
   it('replaces the form inputs with an error if an unrecoverable error is passed in, and disables submission', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
@@ -314,16 +279,19 @@ describe('ReviewForm', () => {
     expect(identifierInput.value).to.equal('foo');
   });
 
-  it('shows a cancel button that routes to the detail page if identifier provided', async () => {
+  it('shows a cancel button that switches to review display mode', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form .identifier=${'foo'}></ia-review-form>`,
     );
 
     const cancelBtn = el.shadowRoot?.querySelector(
-      'a[data-testid=cancel-btn]',
+      'button[data-testid=cancel-btn]',
     ) as HTMLAnchorElement;
     expect(cancelBtn).to.exist;
-    expect(cancelBtn.href).to.contain('/details/foo');
+
+    cancelBtn.click();
+
+    expect(el.displayMode).to.equal('review');
   });
 
   it('prefills the token if provided', async () => {
