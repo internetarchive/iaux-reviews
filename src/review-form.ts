@@ -102,24 +102,22 @@ export class ReviewForm extends LitElement {
 
   render() {
     return this.displayMode === 'review'
-      ? html`<ia-review .review=${this.oldReview}></ia-review>`
-      : html`
-          <form
-            id="review-form"
-            action="${this.baseHost}${this.endpointPath}"
-            method="post"
-          >
-            ${this.unrecoverableError
-              ? this.unrecoverableErrorTemplate
-              : html`
-                  <span class="inputs">
-                    ${this.starsInputTemplate} ${this.subjectInputTemplate}
-                    ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
-                  </span>
-                `}
-            ${this.recoverableErrorTemplate} ${this.actionButtonsTemplate}
-          </form>
-        `;
+      ? this.reviewTemplate
+      : html`<form
+          id="review-form"
+          action="${this.baseHost}${this.endpointPath}"
+          method="post"
+        >
+          ${this.unrecoverableError
+            ? this.unrecoverableErrorTemplate
+            : html`
+                <span class="inputs">
+                  ${this.starsInputTemplate} ${this.subjectInputTemplate}
+                  ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
+                </span>
+              `}
+          ${this.recoverableErrorTemplate} ${this.actionButtonsTemplate}
+        </form>`;
   }
 
   protected firstUpdated(): void {
@@ -152,6 +150,15 @@ export class ReviewForm extends LitElement {
     }
   }
 
+  private get reviewTemplate(): HTMLTemplateResult | typeof nothing {
+    if (!this.oldReview) return nothing;
+    return html`
+      <div class="review-container">
+        <ia-review .review=${this.oldReview}></ia-review>
+      </div>
+    `;
+  }
+
   private get unrecoverableErrorTemplate():
     | HTMLTemplateResult
     | typeof nothing {
@@ -174,7 +181,7 @@ export class ReviewForm extends LitElement {
 
   private get starsInputTemplate(): HTMLTemplateResult {
     return html`
-      <div class="form-heading">
+      <div class="form-heading rating">
         <label for="stars-field">${msg('Rating (optional)')}</label>
       </div>
       <input
@@ -460,11 +467,23 @@ export class ReviewForm extends LitElement {
           --ia-theme-error-color: #cc0000;
         }
 
+        form,
+        .review-container {
+          border: 2px solid #979797;
+          border-radius: 5px;
+          background-color: #f5f5f7;
+          padding: 10px 30px 10px 10px;
+        }
+
         .form-heading {
           display: flex;
           flex-direction: row;
           justify-content: space-between;
           padding-top: 15px;
+        }
+
+        .form-heading.rating {
+          padding-top: 0;
         }
 
         .form-heading label {
@@ -573,6 +592,13 @@ export class ReviewForm extends LitElement {
           margin-top: 2px;
           --activityIndicatorLoadingRingColor: #fff;
           --activityIndicatorLoadingDotColor: #fff;
+        }
+
+        @media only screen and (max-width: 350px) {
+          .action-btns {
+            flex-direction: column-reverse;
+            align-items: center;
+          }
         }
       `,
     ];
