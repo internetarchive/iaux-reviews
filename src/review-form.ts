@@ -312,7 +312,13 @@ export class ReviewForm extends LitElement {
         ?disabled=${!this.formCanSubmit || this.submissionInProgress}
         @click=${this.handleSubmit}
       >
-        ${msg('Submit review')}
+        ${this.submissionInProgress
+          ? html`
+              <span class="loading-indicator" alt="Loading indicator">
+                <ia-activity-indicator></ia-activity-indicator>
+              </span>
+            `
+          : msg('Submit review')}
       </button>
     </div>`;
   }
