@@ -56,7 +56,7 @@ export class AppRoot extends LitElement {
 
   private goodRecaptchaManager: RecaptchaManagerInterface =
     new RecaptchaManager({
-      defaultSiteKey: 'demo-key',
+      defaultSiteKey: '6Ld64a8UAAAAAGbDwi1927ztGNw7YABQ-dqzvTN2',
     });
 
   private badRecaptchaManager: RecaptchaManagerInterface = new RecaptchaManager(
@@ -69,7 +69,7 @@ export class AppRoot extends LitElement {
   private recaptchaManager?: RecaptchaManagerInterface;
 
   @state()
-  private bypassRecaptcha: boolean = true;
+  private bypassRecaptcha: boolean = false;
 
   @state()
   private unrecoverableError: boolean = false;
