@@ -399,13 +399,10 @@ export class ReviewForm extends LitElement {
         formData.append(entry[0], entry[1] as string);
       }
 
-      const response = await fetch(
-        `${this.baseHost}${this.endpointPath}?identifier=${this.identifier}`,
-        {
-          method: 'POST',
-          body: formData,
-        },
-      );
+      const response = await fetch(`${this.baseHost}${this.endpointPath}`, {
+        method: 'POST',
+        body: formData,
+      });
 
       console.log(response);
       const json = await response.json();
