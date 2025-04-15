@@ -128,7 +128,7 @@ export class IaReview extends LitElement {
         class="review-stars"
         title="${msg(`${this.review.stars} out of 5 stars`)}"
       >
-        ${new Array(this.review.stars)
+        ${new Array(Number(this.review.stars))
           .fill(null)
           .map(() => html`<div class="review-star">${starBasic}</div>`)}
       </div>
