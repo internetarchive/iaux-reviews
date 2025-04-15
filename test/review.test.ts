@@ -51,6 +51,30 @@ describe('IaReview', () => {
     expect(topLine?.textContent).to.contain('Foo Bar');
   });
 
+  it('truncates the reviewer screenname if more than 40 characters', async () => {
+    const longScreennameReview = {
+      rawValue: new Review({ stars: 5 }),
+      stars: 5,
+      reviewtitle: 'What a cool book!',
+      reviewbody: 'I loved it.',
+      reviewer: 'Foo Bar',
+      reviewdate: new Date('03/20/2025'),
+      createdate: new Date('02/07/2025'),
+      screenname: 'Foo Bar 123456789123456789123456789123456789',
+      itemname: 'foo-bar',
+      domId: '12345',
+    };
+
+    const el = await fixture<IaReview>(
+      html`<ia-review .review=${longScreennameReview}></ia-review>`,
+    );
+
+    const topLine = el.shadowRoot?.querySelector('.top-line');
+    expect(topLine?.textContent).to.contain(
+      'Foo Bar 12345678912345678912345678912345...',
+    );
+  });
+
   it('adds a link to the reviewer details page if itemname provided', async () => {
     const el = await fixture<IaReview>(
       html`<ia-review .review=${mockReview}></ia-review>`,

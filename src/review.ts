@@ -12,6 +12,7 @@ import { msg } from '@lit/localize';
 import { Review } from '@internetarchive/metadata-service';
 
 import starBasic from './assets/star-basic';
+import { truncateScreenname } from './utils/truncate-screenname';
 
 /* Further properties for reviews added before render */
 export interface ReviewForRender extends Review {
@@ -43,20 +44,24 @@ export class IaReview extends LitElement {
 
   render() {
     return !this.review
-      ? html`<div class="error">
-          ${msg('This review cannot be displayed at this time.')}
-        </div>`
-      : html`<article class="review" id=${this.review.domId}>
-          <div class="top-line">
-            <b>${msg('Reviewer:')}</b> ${this.reviewerTemplate} -
-            ${this.starsTemplate}${this.createDateTemplate}
+      ? html`
+          <div class="error">
+            ${msg('This review cannot be displayed at this time.')}
           </div>
-          <div class="subject">
-            <b>${msg('Subject: ')}</b>${this.subjectTemplate}
-          </div>
-          <div class="body">${this.bodyTemplate}</div>
-          ${this.truncationButtonsTemplate}
-        </article>`;
+        `
+      : html`
+          <article class="review" id=${this.review.domId}>
+            <div class="top-line">
+              <b>${msg('Reviewer:')}</b> ${this.reviewerTemplate} -
+              ${this.starsTemplate}${this.createDateTemplate}
+            </div>
+            <div class="subject">
+              <b>${msg('Subject: ')}</b>${this.subjectTemplate}
+            </div>
+            <div class="body">${this.bodyTemplate}</div>
+            ${this.truncationButtonsTemplate}
+          </article>
+        `;
   }
 
   private get subjectTemplate(): string {
@@ -92,12 +97,14 @@ export class IaReview extends LitElement {
   }
 
   private get moreButtonTemplate(): HTMLTemplateResult {
-    return html`<button
-      class="simple-link more-btn"
-      @click=${() => (this.showTruncatedContent = true)}
-    >
-      ${msg('More...')}
-    </button>`;
+    return html`
+      <button
+        class="simple-link more-btn"
+        @click=${() => (this.showTruncatedContent = true)}
+      >
+        ${msg('More...')}
+      </button>
+    `;
   }
 
   private get lessButtonTemplate(): HTMLTemplateResult {
@@ -113,18 +120,22 @@ export class IaReview extends LitElement {
     return !this.review
       ? nothing
       : this.review.itemname
-        ? html`<a
-            href="${this.baseHost}/details/${this.review.itemname}"
-            class="reviewer-link simple-link"
-            data-event-click-tracking="ItemReviews|ReviewerLink"
-            >${this.review.screenname}</a
-          >`
+        ? html`
+            <a
+              href="${this.baseHost}/details/${this.review.itemname}"
+              class="reviewer-link simple-link"
+              data-event-click-tracking="ItemReviews|ReviewerLink"
+            >
+              ${truncateScreenname(this.review.screenname)}
+            </a>
+          `
         : html`${this.review.screenname}`;
   }
 
   private get starsTemplate(): HTMLTemplateResult | typeof nothing {
     if (!this.review || !this.review.stars) return nothing;
-    return html`<div
+    return html`
+      <div
         class="review-stars"
         title="${msg(`${this.review.stars} out of 5 stars`)}"
       >
@@ -132,7 +143,8 @@ export class IaReview extends LitElement {
           .fill(null)
           .map(() => html`<div class="review-star">${starBasic}</div>`)}
       </div>
-      - `;
+      -
+    `;
   }
 
   private get createDateTemplate(): string | typeof nothing {
