@@ -48,7 +48,7 @@ export class IaReview extends LitElement {
         </div>`
       : html`<article class="review" id=${this.review.domId}>
           <div class="top-line">
-            <b>${msg('Reviewer:')} </b>${this.reviewerTemplate} -
+            <b>${msg('Reviewer:')}</b> ${this.reviewerTemplate} -
             ${this.starsTemplate}${this.createDateTemplate}
           </div>
           <div class="subject">
@@ -172,19 +172,16 @@ export class IaReview extends LitElement {
       }
 
       .top-line {
-        display: flex;
-        flex-direction: row;
-        gap: 3px;
         margin-bottom: 0.5rem;
+      }
+
+      .top-line > * {
+        display: inline-block;
       }
 
       .review-star {
         width: 1rem;
-      }
-
-      .review-stars {
-        display: flex;
-        flex-direction: row;
+        display: inline-block;
       }
 
       .simple-link {
