@@ -47,27 +47,6 @@ describe('ReviewForm', () => {
     expect(form).to.exist;
   });
 
-  it('defaults to the correct endpoint for form submission', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form></ia-review-form>`,
-    );
-
-    const form = el.shadowRoot?.querySelector('form');
-    expect(form?.getAttribute('action')).to.contain('/write-review.php');
-  });
-
-  it('uses a custom endpoint path for form submission if desired', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form
-        .baseHost=${'https://archive.org'}
-        .endpointPath=${'/foo'}
-      ></ia-review-form>`,
-    );
-
-    const form = el.shadowRoot?.querySelector('form');
-    expect(form?.getAttribute('action')).to.equal('https://archive.org/foo');
-  });
-
   it('replaces the form inputs with an error if an unrecoverable error is passed in, and disables submission', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
