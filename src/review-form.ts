@@ -195,7 +195,11 @@ export class ReviewForm extends LitElement {
       />
       <div class="stars">
         ${[1, 2, 3, 4, 5].map(num => this.renderStar(num))}
-        <button class="clear-stars-btn" @click=${this.handleClearBtnClicked}>
+        <button
+          type="button"
+          class="clear-stars-btn"
+          @click=${this.handleClearBtnClicked}
+        >
           ${msg('Clear')}
         </button>
       </div>
@@ -297,6 +301,7 @@ export class ReviewForm extends LitElement {
   private get actionButtonsTemplate(): HTMLTemplateResult {
     return html`<div class="action-btns">
       <button
+        type="button"
         class="ia-button dark"
         data-testid="cancel-btn"
         @click=${() => (this.displayMode = 'review')}
