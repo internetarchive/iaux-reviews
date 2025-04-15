@@ -15,6 +15,7 @@ import type {
   RecaptchaManagerInterface,
   RecaptchaWidgetInterface,
 } from '@internetarchive/recaptcha-manager';
+import '@internetarchive/ia-activity-indicator';
 
 import starSelected from './assets/star-selected';
 import starUnselected from './assets/star-unselected';
@@ -45,8 +46,8 @@ export class ReviewForm extends LitElement {
   /* The previous review to pre-fill, if any */
   @property({ type: Object }) oldReview?: ReviewForRender;
 
-  /* Errors to add to the form on first render, if any */
-  @property({ type: Array }) prefilledErrors: string[] = [];
+  /* An optional unrecoverable error to pass in instead of rendering the form inputs */
+  @property({ type: String }) unrecoverableError?: string;
 
   /* Optional max length for review subject */
   @property({ type: Number }) maxSubjectLength?: number;
@@ -67,10 +68,6 @@ export class ReviewForm extends LitElement {
   @state()
   private recaptchaToken: string = '';
 
-  /* Whether something went wrong in the reCaptcha process */
-  @state()
-  private recaptchaError: boolean = false;
-
   /* Number of stars currently selected */
   @state()
   private currentStars: number = 0;
@@ -83,36 +80,46 @@ export class ReviewForm extends LitElement {
   @state()
   private currentBodyLength: number = 0;
 
+  /* Any recoverable error to display for the form. Will still allow submission. */
+  @state()
+  recoverableError?: string;
+
   /* Whether to enable the submit button */
   @state()
   private formCanSubmit: boolean = false;
+
+  /* Whether to show a loading indicator for the form */
+  @state()
+  submissionInProgress: boolean = false;
 
   /* The form to be submitted */
   @query('#review-form')
   private reviewForm!: HTMLFormElement;
 
+  /* Error to show if recaptcha cannot be loaded */
+  private RECAPTCHA_ERROR_MESSAGE =
+    'Could not validate review. Please try again later.';
+
   render() {
-    if (this.displayMode === 'review')
-      return html`<ia-review .review=${this.oldReview}></ia-review>`;
-    return html`<form
-      id="review-form"
-      action="${this.baseHost}${this.endpointPath}"
-      method="post"
-    >
-      ${this.prefilledErrors.length
-        ? this.prefilledErrors.map(
-            err => html`<div class="errors prefilled-error">${err}</div>`,
-          )
-        : nothing}
-      ${this.recaptchaError
-        ? html`<div class="errors recaptcha-error">
-            ${msg('Could not validate review. Please try again later.')}
-          </div>`
-        : nothing}
-      ${this.starsInputTemplate} ${this.subjectInputTemplate}
-      ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
-      ${this.actionButtonsTemplate}
-    </form>`;
+    return this.displayMode === 'review'
+      ? html`<ia-review .review=${this.oldReview}></ia-review>`
+      : html`
+          <form
+            id="review-form"
+            action="${this.baseHost}${this.endpointPath}"
+            method="post"
+          >
+            ${this.unrecoverableError
+              ? this.unrecoverableErrorTemplate
+              : html`
+                  <span class="inputs">
+                    ${this.starsInputTemplate} ${this.subjectInputTemplate}
+                    ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
+                  </span>
+                `}
+            ${this.recoverableErrorTemplate} ${this.actionButtonsTemplate}
+          </form>
+        `;
   }
 
   protected firstUpdated(): void {
@@ -131,7 +138,8 @@ export class ReviewForm extends LitElement {
     if (
       changed.has('recaptchaManager') &&
       !this.bypassRecaptcha &&
-      this.recaptchaManager
+      this.recaptchaManager &&
+      !this.unrecoverableError
     ) {
       this.setupRecaptcha();
     }
@@ -142,6 +150,26 @@ export class ReviewForm extends LitElement {
     ) {
       this.formCanSubmit = this.checkSubmissionAllowed();
     }
+  }
+
+  private get unrecoverableErrorTemplate():
+    | HTMLTemplateResult
+    | typeof nothing {
+    return this.unrecoverableError
+      ? html`
+          <div class="unrecoverable-error">
+            <span class="error-msg">${msg(this.unrecoverableError)}</span>
+          </div>
+        `
+      : nothing;
+  }
+
+  private get recoverableErrorTemplate(): HTMLTemplateResult | typeof nothing {
+    return this.recoverableError
+      ? html`
+          <div class="recoverable-error">${msg(this.recoverableError)}</div>
+        `
+      : nothing;
   }
 
   private get starsInputTemplate(): HTMLTemplateResult {
@@ -166,11 +194,13 @@ export class ReviewForm extends LitElement {
   }
 
   private get subjectInputTemplate(): HTMLTemplateResult {
-    return html`<span id="subject-input" class="input-box ${
-      this.maxSubjectLength && this.currentSubjectLength > this.maxSubjectLength
-        ? 'error'
-        : ''
-    }"
+    return html`
+      <span id="subject-input" class="input-box ${
+        this.maxSubjectLength &&
+        this.currentSubjectLength > this.maxSubjectLength
+          ? 'error'
+          : ''
+      }"
       ><div class="form-heading">
         <label for="field_reviewtitle">${msg('Subject')}</label>
         ${
@@ -198,50 +228,50 @@ export class ReviewForm extends LitElement {
             </div>
           `
         : nothing
-    }</div></span>`;
+    }</div></span>
+    `;
   }
 
   private get bodyInputTemplate(): HTMLTemplateResult {
-    return html`<span
-      id="body-input"
-      class="input-box ${this.maxBodyLength &&
-      this.currentBodyLength > this.maxBodyLength
-        ? 'error'
-        : ''}"
-      ><div class="form-heading">
-        <label for="field_reviewbody">${msg('Review')}</label>
+    return html`
+      <span
+        id="body-input"
+        class="input-box ${this.maxBodyLength &&
+        this.currentBodyLength > this.maxBodyLength
+          ? 'error'
+          : ''}"
+        ><div class="form-heading">
+          <label for="field_reviewbody">${msg('Review')}</label>
+          ${this.maxBodyLength
+            ? html`<div class="char-count body">
+                ${this.currentBodyLength}/${this.maxBodyLength}
+              </div>`
+            : nothing}
+        </div>
+        <textarea
+          name="field_reviewbody"
+          id="field_reviewbody"
+          .value=${this.oldReview?.reviewbody ?? ''}
+          rows="10"
+          cols="50"
+          required
+          @input=${this.handleBodyChanged}
+        ></textarea>
         ${this.maxBodyLength
-          ? html`<div class="char-count body">
-              ${this.currentBodyLength}/${this.maxBodyLength}
-            </div>`
+          ? html`
+              <div class="input-error">
+                ${msg(`Review may only have ${this.maxBodyLength} characters`)}
+              </div>
+            `
           : nothing}
-      </div>
-      <textarea
-        name="field_reviewbody"
-        id="field_reviewbody"
-        .value=${this.oldReview?.reviewbody ?? ''}
-        rows="10"
-        cols="50"
-        required
-        @input=${this.handleBodyChanged}
-      ></textarea>
-      ${this.maxBodyLength
-        ? html`
-            <div class="input-error">
-              ${msg(`Review may only have ${this.maxBodyLength} characters`)}
-            </div>
-          `
-        : nothing}
-    </span>`;
+      </span>
+    `;
   }
 
   /* Renders all the hidden inputs we use to store other information for form submission */
   private get hiddenInputsTemplate(): HTMLTemplateResult {
-    return html`<input
-        type="hidden"
-        name="field_reviewtoken"
-        .value=${this.token}
-      />
+    return html`
+      <input type="hidden" name="field_reviewtoken" .value=${this.token} />
       <input
         type="hidden"
         name="g-recaptcha-response"
@@ -255,31 +285,42 @@ export class ReviewForm extends LitElement {
             name="identifier"
             .value=${this.identifier}
           />`
-        : nothing}`;
+        : nothing}
+    `;
   }
 
   private get actionButtonsTemplate(): HTMLTemplateResult {
-    return html`<div class="action-btns">
-      ${this.identifier
-        ? html`<a
-            class="ia-button dark"
-            href="${this.baseHost}/details/${this.identifier}"
-            data-testid="cancel-btn"
-          >
-            ${msg('Cancel')}
-          </a>`
-        : nothing}
+    return html`
+      <div class="action-btns">
+        ${this.identifier
+          ? html`
+              <a
+                class="ia-button dark"
+                href="${this.baseHost}/details/${this.identifier}"
+                data-testid="cancel-btn"
+              >
+                ${msg('Cancel')}
+              </a>
+            `
+          : nothing}
 
-      <button
-        type="submit"
-        class="ia-button primary"
-        name="submit"
-        ?disabled=${!this.formCanSubmit}
-        @click=${this.handleSubmit}
-      >
-        ${msg('Submit review')}
-      </button>
-    </div>`;
+        <button
+          type="submit"
+          class="ia-button primary"
+          name="submit"
+          ?disabled=${!this.formCanSubmit || this.submissionInProgress}
+          @click=${this.handleSubmit}
+        >
+          ${this.submissionInProgress
+            ? html`
+                <span class="loading-indicator" alt="Loading indicator">
+                  <ia-activity-indicator></ia-activity-indicator>
+                </span>
+              `
+            : msg('Submit review')}
+        </button>
+      </div>
+    `;
   }
 
   private renderStar(num: number): HTMLTemplateResult {
@@ -300,23 +341,30 @@ export class ReviewForm extends LitElement {
   private async setupRecaptcha(): Promise<void> {
     try {
       this.recaptchaWidget = await this.recaptchaManager?.getRecaptchaWidget();
-      this.recaptchaError = false;
     } catch {
-      this.recaptchaError = true;
+      this.unrecoverableError = this.RECAPTCHA_ERROR_MESSAGE;
     }
   }
 
   private async handleSubmit(e: Event): Promise<void> {
     e.preventDefault();
-    if (!this.reviewForm.reportValidity()) return;
+    // Don't double-submit
+    if (this.submissionInProgress) return;
+
+    this.submissionInProgress = true;
+
+    if (!this.reviewForm.reportValidity()) {
+      return this.stopSubmission();
+    }
+
     if (this.bypassRecaptcha) {
       this.reviewForm.requestSubmit();
       return;
     }
 
     if (!this.recaptchaWidget) {
-      this.recaptchaError = true;
-      return;
+      this.recoverableError = this.RECAPTCHA_ERROR_MESSAGE;
+      return this.stopSubmission();
     }
 
     try {
@@ -328,8 +376,14 @@ export class ReviewForm extends LitElement {
       await this.updateComplete;
       this.reviewForm.requestSubmit();
     } catch {
-      this.recaptchaError = true;
+      this.recoverableError = this.RECAPTCHA_ERROR_MESSAGE;
+      return this.stopSubmission();
     }
+  }
+
+  /* Handles canceled form submission */
+  private stopSubmission(): void {
+    this.submissionInProgress = false;
   }
 
   /* Prevents form submission and sets stars based on number clicked */
@@ -363,6 +417,11 @@ export class ReviewForm extends LitElement {
 
   /* Checks if submission should be allowed */
   private checkSubmissionAllowed(): boolean {
+    // Form must not have an unrecoverable error
+    if (this.unrecoverableError) {
+      return false;
+    }
+
     // Subject and body must not be empty
     if (!this.currentBodyLength || !this.currentSubjectLength) {
       return false;
@@ -398,7 +457,7 @@ export class ReviewForm extends LitElement {
           );
 
           color: var(--ia-text-color, #2c2c2c);
-          --ia-theme-error-color: #ff0000;
+          --ia-theme-error-color: #cc0000;
         }
 
         .form-heading {
@@ -419,7 +478,8 @@ export class ReviewForm extends LitElement {
         }
 
         textarea,
-        input[type='text'] {
+        input[type='text'],
+        .unrecoverable-error {
           padding: 5px;
           width: calc(100% - 10px);
           font-family: inherit;
@@ -429,12 +489,14 @@ export class ReviewForm extends LitElement {
 
         .input-box.error input,
         .input-box.error textarea {
-          border: 2px solid var(--ia-theme-error-color, #ff0000);
+          border: 2px solid var(--ia-theme-error-color, #cc0000);
         }
 
         .input-box.error .char-count,
-        .input-error {
-          color: var(--ia-theme-error-color, #ff0000);
+        .input-error,
+        .unrecoverable-error,
+        .recoverable-error {
+          color: var(--ia-theme-error-color, #cc0000);
         }
 
         .input-error {
@@ -495,13 +557,22 @@ export class ReviewForm extends LitElement {
           cursor: not-allowed;
         }
 
-        .errors {
-          padding: 15px;
-          border: 1px solid #ebccd1;
-          color: #a94442;
-          background-color: #f2dede;
-          border-radius: 4px;
-          margin-bottom: 10px;
+        .unrecoverable-error {
+          height: 350px;
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          background-color: #f5f5f7;
+        }
+
+        .loading-indicator {
+          display: block;
+          width: 20px;
+          height: 20px;
+          margin-top: 2px;
+          --activityIndicatorLoadingRingColor: #fff;
+          --activityIndicatorLoadingDotColor: #fff;
         }
       `,
     ];
