@@ -100,14 +100,13 @@ export class ReviewForm extends LitElement {
   private RECAPTCHA_ERROR_MESSAGE =
     'Could not validate review. Please try again later.';
 
+  private GENERIC_ERROR_MESSAGE =
+    "There's been a temporary error. Please wait a moment and try again.";
+
   render() {
     return this.displayMode === 'review'
       ? this.reviewTemplate
-      : html`<form
-          id="review-form"
-          action="${this.baseHost}${this.endpointPath}"
-          method="post"
-        >
+      : html`<form id="review-form" @submit=${this.handleSubmit}>
           ${this.unrecoverableError
             ? this.unrecoverableErrorTemplate
             : html`
@@ -320,7 +319,6 @@ export class ReviewForm extends LitElement {
         class="ia-button primary"
         name="submit"
         ?disabled=${!this.formCanSubmit || this.submissionInProgress}
-        @click=${this.handleSubmit}
       >
         ${this.submissionInProgress
           ? html`
@@ -371,47 +369,83 @@ export class ReviewForm extends LitElement {
   /** Handles validation and recaptcha execution on form submission */
   private async handleSubmit(e: Event): Promise<void> {
     e.preventDefault();
-    // Don't double-submit
-    if (this.submissionInProgress) return;
 
+    // Prevent disallowed or double submission
+    if (!this.formCanSubmit || this.submissionInProgress) return;
+
+    // Set loading behavior
     this.submissionInProgress = true;
+    this.recoverableError = '';
 
     // Check for HTML errors
     if (!this.reviewForm.reportValidity()) {
       return this.stopSubmission();
     }
 
-    // If we're bypassing recaptcha, can go ahead and try submitting
-    if (this.bypassRecaptcha) {
-      this.submitForm();
-      return;
-    }
+    try {
+      const formData = new URLSearchParams();
 
+      if (!this.bypassRecaptcha) {
+        const recaptchaToken = await this.getRecaptchaToken();
+
+        if (!this.recaptchaToken) {
+          return this.handleRecaptchaError();
+        }
+
+        formData.append('g-recaptcha-response', recaptchaToken ?? '');
+      }
+
+      for (const entry of new FormData(this.reviewForm)) {
+        formData.append(entry[0], entry[1] as string);
+      }
+
+      await fetch(
+        `${this.baseHost}${this.endpointPath}?identifier=${this.identifier}`,
+        {
+          method: 'POST',
+          body: formData,
+        },
+      );
+
+      this.submissionInProgress = false;
+      this.displayMode = 'review';
+    } catch (e) {
+      console.log(e);
+      this.recoverableError = this.GENERIC_ERROR_MESSAGE;
+      this.stopSubmission();
+    }
+  }
+
+  /**
+   * Executes the ReCaptcha challenge for the form.
+   * Attempts form submission on success.
+   * */
+  private async getRecaptchaToken(): Promise<string | undefined> {
     if (!this.recaptchaWidget) {
-      this.recoverableError = this.RECAPTCHA_ERROR_MESSAGE;
-      return this.stopSubmission();
+      this.handleRecaptchaError();
+      return;
     }
 
     try {
       const recaptchaToken = await this.recaptchaWidget.execute();
-      this.dispatchEvent(new Event('recaptchaFinished'));
-      this.recaptchaToken = recaptchaToken;
-
-      // Wait for recaptcha token to be added to form
-      await this.updateComplete;
-      this.reviewForm.requestSubmit();
+      return recaptchaToken;
     } catch {
-      this.recoverableError = this.RECAPTCHA_ERROR_MESSAGE;
-      return this.stopSubmission();
+      this.handleRecaptchaError();
+      return;
     }
   }
 
-  /** Submits the form's data to the provided endpoint */
-  private async submitForm(): Promise<void> {}
+  /* Handles a recaptcha error during submission */
+  private handleRecaptchaError(): void {
+    this.recoverableError = this.RECAPTCHA_ERROR_MESSAGE;
+    this.stopSubmission();
+  }
 
   /* Handles canceled form submission */
   private stopSubmission(): void {
-    this.submissionInProgress = false;
+    if (this.submissionInProgress) {
+      this.submissionInProgress = false;
+    }
   }
 
   /* Prevents form submission and sets stars based on number clicked */
