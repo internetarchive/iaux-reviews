@@ -461,6 +461,7 @@ export class ReviewForm extends LitElement {
           border-radius: 5px;
           background-color: #f5f5f7;
           padding: 10px 30px 10px 10px;
+          margin-bottom: 20px;
         }
 
         .form-heading {
