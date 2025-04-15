@@ -1,64 +1,64 @@
-(function(){const e=document.createElement("link").relList;if(e&&e.supports&&e.supports("modulepreload"))return;for(const r of document.querySelectorAll('link[rel="modulepreload"]'))n(r);new MutationObserver(r=>{for(const s of r)if(s.type==="childList")for(const a of s.addedNodes)a.tagName==="LINK"&&a.rel==="modulepreload"&&n(a)}).observe(document,{childList:!0,subtree:!0});function t(r){const s={};return r.integrity&&(s.integrity=r.integrity),r.referrerPolicy&&(s.referrerPolicy=r.referrerPolicy),r.crossOrigin==="use-credentials"?s.credentials="include":r.crossOrigin==="anonymous"?s.credentials="omit":s.credentials="same-origin",s}function n(r){if(r.ep)return;r.ep=!0;const s=t(r);fetch(r.href,s)}})();function l(i,e,t,n){var r=arguments.length,s=r<3?e:n===null?n=Object.getOwnPropertyDescriptor(e,t):n,a;if(typeof Reflect=="object"&&typeof Reflect.decorate=="function")s=Reflect.decorate(i,e,t,n);else for(var d=i.length-1;d>=0;d--)(a=i[d])&&(s=(r<3?a(s):r>3?a(e,t,s):a(e,t))||s);return r>3&&s&&Object.defineProperty(e,t,s),s}function ae(i,e,t,n){function r(s){return s instanceof t?s:new t(function(a){a(s)})}return new(t||(t=Promise))(function(s,a){function d(h){try{u(n.next(h))}catch(f){a(f)}}function o(h){try{u(n.throw(h))}catch(f){a(f)}}function u(h){h.done?s(h.value):r(h.value).then(d,o)}u((n=n.apply(i,e||[])).next())})}/**
+(function(){const e=document.createElement("link").relList;if(e&&e.supports&&e.supports("modulepreload"))return;for(const n of document.querySelectorAll('link[rel="modulepreload"]'))r(n);new MutationObserver(n=>{for(const s of n)if(s.type==="childList")for(const a of s.addedNodes)a.tagName==="LINK"&&a.rel==="modulepreload"&&r(a)}).observe(document,{childList:!0,subtree:!0});function t(n){const s={};return n.integrity&&(s.integrity=n.integrity),n.referrerPolicy&&(s.referrerPolicy=n.referrerPolicy),n.crossOrigin==="use-credentials"?s.credentials="include":n.crossOrigin==="anonymous"?s.credentials="omit":s.credentials="same-origin",s}function r(n){if(n.ep)return;n.ep=!0;const s=t(n);fetch(n.href,s)}})();function l(i,e,t,r){var n=arguments.length,s=n<3?e:r===null?r=Object.getOwnPropertyDescriptor(e,t):r,a;if(typeof Reflect=="object"&&typeof Reflect.decorate=="function")s=Reflect.decorate(i,e,t,r);else for(var d=i.length-1;d>=0;d--)(a=i[d])&&(s=(n<3?a(s):n>3?a(e,t,s):a(e,t))||s);return n>3&&s&&Object.defineProperty(e,t,s),s}function oe(i,e,t,r){function n(s){return s instanceof t?s:new t(function(a){a(s)})}return new(t||(t=Promise))(function(s,a){function d(h){try{u(r.next(h))}catch(f){a(f)}}function o(h){try{u(r.throw(h))}catch(f){a(f)}}function u(h){h.done?s(h.value):n(h.value).then(d,o)}u((r=r.apply(i,e||[])).next())})}/**
  * @license
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */const oe=window,Ie=oe.ShadowRoot&&(oe.ShadyCSS===void 0||oe.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,Fe=Symbol(),De=new WeakMap;let gt=class{constructor(e,t,n){if(this._$cssResult$=!0,n!==Fe)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=e,this.t=t}get styleSheet(){let e=this.o;const t=this.t;if(Ie&&e===void 0){const n=t!==void 0&&t.length===1;n&&(e=De.get(t)),e===void 0&&((this.o=e=new CSSStyleSheet).replaceSync(this.cssText),n&&De.set(t,e))}return e}toString(){return this.cssText}};const Bt=i=>new gt(typeof i=="string"?i:i+"",void 0,Fe),$=(i,...e)=>{const t=i.length===1?i[0]:e.reduce((n,r,s)=>n+(a=>{if(a._$cssResult$===!0)return a.cssText;if(typeof a=="number")return a;throw Error("Value passed to 'css' function must be a 'css' function result: "+a+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(r)+i[s+1],i[0]);return new gt(t,i,Fe)},Lt=(i,e)=>{Ie?i.adoptedStyleSheets=e.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet):e.forEach(t=>{const n=document.createElement("style"),r=oe.litNonce;r!==void 0&&n.setAttribute("nonce",r),n.textContent=t.cssText,i.appendChild(n)})},We=Ie?i=>i:i=>i instanceof CSSStyleSheet?(e=>{let t="";for(const n of e.cssRules)t+=n.cssText;return Bt(t)})(i):i;/**
+ */const le=window,We=le.ShadowRoot&&(le.ShadyCSS===void 0||le.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,qe=Symbol(),Ge=new WeakMap;let vt=class{constructor(e,t,r){if(this._$cssResult$=!0,r!==qe)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=e,this.t=t}get styleSheet(){let e=this.o;const t=this.t;if(We&&e===void 0){const r=t!==void 0&&t.length===1;r&&(e=Ge.get(t)),e===void 0&&((this.o=e=new CSSStyleSheet).replaceSync(this.cssText),r&&Ge.set(t,e))}return e}toString(){return this.cssText}};const Nt=i=>new vt(typeof i=="string"?i:i+"",void 0,qe),b=(i,...e)=>{const t=i.length===1?i[0]:e.reduce((r,n,s)=>r+(a=>{if(a._$cssResult$===!0)return a.cssText;if(typeof a=="number")return a;throw Error("Value passed to 'css' function must be a 'css' function result: "+a+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(n)+i[s+1],i[0]);return new vt(t,i,qe)},Ht=(i,e)=>{We?i.adoptedStyleSheets=e.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet):e.forEach(t=>{const r=document.createElement("style"),n=le.litNonce;n!==void 0&&r.setAttribute("nonce",n),r.textContent=t.cssText,i.appendChild(r)})},Ze=We?i=>i:i=>i instanceof CSSStyleSheet?(e=>{let t="";for(const r of e.cssRules)t+=r.cssText;return Nt(t)})(i):i;/**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */var we;const le=window,qe=le.trustedTypes,Nt=qe?qe.emptyScript:"",Ke=le.reactiveElementPolyfillSupport,Ne={toAttribute(i,e){switch(e){case Boolean:i=i?Nt:null;break;case Object:case Array:i=i==null?i:JSON.stringify(i)}return i},fromAttribute(i,e){let t=i;switch(e){case Boolean:t=i!==null;break;case Number:t=i===null?null:Number(i);break;case Object:case Array:try{t=JSON.parse(i)}catch{t=null}}return t}},mt=(i,e)=>e!==i&&(e==e||i==i),$e={attribute:!0,type:String,converter:Ne,reflect:!1,hasChanged:mt},Te="finalized";let I=class extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this._$Eu()}static addInitializer(e){var t;this.finalize(),((t=this.h)!==null&&t!==void 0?t:this.h=[]).push(e)}static get observedAttributes(){this.finalize();const e=[];return this.elementProperties.forEach((t,n)=>{const r=this._$Ep(n,t);r!==void 0&&(this._$Ev.set(r,n),e.push(r))}),e}static createProperty(e,t=$e){if(t.state&&(t.attribute=!1),this.finalize(),this.elementProperties.set(e,t),!t.noAccessor&&!this.prototype.hasOwnProperty(e)){const n=typeof e=="symbol"?Symbol():"__"+e,r=this.getPropertyDescriptor(e,n,t);r!==void 0&&Object.defineProperty(this.prototype,e,r)}}static getPropertyDescriptor(e,t,n){return{get(){return this[t]},set(r){const s=this[e];this[t]=r,this.requestUpdate(e,s,n)},configurable:!0,enumerable:!0}}static getPropertyOptions(e){return this.elementProperties.get(e)||$e}static finalize(){if(this.hasOwnProperty(Te))return!1;this[Te]=!0;const e=Object.getPrototypeOf(this);if(e.finalize(),e.h!==void 0&&(this.h=[...e.h]),this.elementProperties=new Map(e.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,n=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const r of n)this.createProperty(r,t[r])}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(e){const t=[];if(Array.isArray(e)){const n=new Set(e.flat(1/0).reverse());for(const r of n)t.unshift(We(r))}else e!==void 0&&t.push(We(e));return t}static _$Ep(e,t){const n=t.attribute;return n===!1?void 0:typeof n=="string"?n:typeof e=="string"?e.toLowerCase():void 0}_$Eu(){var e;this._$E_=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$Eg(),this.requestUpdate(),(e=this.constructor.h)===null||e===void 0||e.forEach(t=>t(this))}addController(e){var t,n;((t=this._$ES)!==null&&t!==void 0?t:this._$ES=[]).push(e),this.renderRoot!==void 0&&this.isConnected&&((n=e.hostConnected)===null||n===void 0||n.call(e))}removeController(e){var t;(t=this._$ES)===null||t===void 0||t.splice(this._$ES.indexOf(e)>>>0,1)}_$Eg(){this.constructor.elementProperties.forEach((e,t)=>{this.hasOwnProperty(t)&&(this._$Ei.set(t,this[t]),delete this[t])})}createRenderRoot(){var e;const t=(e=this.shadowRoot)!==null&&e!==void 0?e:this.attachShadow(this.constructor.shadowRootOptions);return Lt(t,this.constructor.elementStyles),t}connectedCallback(){var e;this.renderRoot===void 0&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),(e=this._$ES)===null||e===void 0||e.forEach(t=>{var n;return(n=t.hostConnected)===null||n===void 0?void 0:n.call(t)})}enableUpdating(e){}disconnectedCallback(){var e;(e=this._$ES)===null||e===void 0||e.forEach(t=>{var n;return(n=t.hostDisconnected)===null||n===void 0?void 0:n.call(t)})}attributeChangedCallback(e,t,n){this._$AK(e,n)}_$EO(e,t,n=$e){var r;const s=this.constructor._$Ep(e,n);if(s!==void 0&&n.reflect===!0){const a=(((r=n.converter)===null||r===void 0?void 0:r.toAttribute)!==void 0?n.converter:Ne).toAttribute(t,n.type);this._$El=e,a==null?this.removeAttribute(s):this.setAttribute(s,a),this._$El=null}}_$AK(e,t){var n;const r=this.constructor,s=r._$Ev.get(e);if(s!==void 0&&this._$El!==s){const a=r.getPropertyOptions(s),d=typeof a.converter=="function"?{fromAttribute:a.converter}:((n=a.converter)===null||n===void 0?void 0:n.fromAttribute)!==void 0?a.converter:Ne;this._$El=s,this[s]=d.fromAttribute(t,a.type),this._$El=null}}requestUpdate(e,t,n){let r=!0;e!==void 0&&(((n=n||this.constructor.getPropertyOptions(e)).hasChanged||mt)(this[e],t)?(this._$AL.has(e)||this._$AL.set(e,t),n.reflect===!0&&this._$El!==e&&(this._$EC===void 0&&(this._$EC=new Map),this._$EC.set(e,n))):r=!1),!this.isUpdatePending&&r&&(this._$E_=this._$Ej())}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_}catch(t){Promise.reject(t)}const e=this.scheduleUpdate();return e!=null&&await e,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var e;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach((r,s)=>this[s]=r),this._$Ei=void 0);let t=!1;const n=this._$AL;try{t=this.shouldUpdate(n),t?(this.willUpdate(n),(e=this._$ES)===null||e===void 0||e.forEach(r=>{var s;return(s=r.hostUpdate)===null||s===void 0?void 0:s.call(r)}),this.update(n)):this._$Ek()}catch(r){throw t=!1,this._$Ek(),r}t&&this._$AE(n)}willUpdate(e){}_$AE(e){var t;(t=this._$ES)===null||t===void 0||t.forEach(n=>{var r;return(r=n.hostUpdated)===null||r===void 0?void 0:r.call(n)}),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(e)),this.updated(e)}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(e){return!0}update(e){this._$EC!==void 0&&(this._$EC.forEach((t,n)=>this._$EO(n,this[n],t)),this._$EC=void 0),this._$Ek()}updated(e){}firstUpdated(e){}};I[Te]=!0,I.elementProperties=new Map,I.elementStyles=[],I.shadowRootOptions={mode:"open"},Ke==null||Ke({ReactiveElement:I}),((we=le.reactiveElementVersions)!==null&&we!==void 0?we:le.reactiveElementVersions=[]).push("1.6.3");/**
+ */var ve;const de=window,Je=de.trustedTypes,Pt=Je?Je.emptyScript:"",Qe=de.reactiveElementPolyfillSupport,He={toAttribute(i,e){switch(e){case Boolean:i=i?Pt:null;break;case Object:case Array:i=i==null?i:JSON.stringify(i)}return i},fromAttribute(i,e){let t=i;switch(e){case Boolean:t=i!==null;break;case Number:t=i===null?null:Number(i);break;case Object:case Array:try{t=JSON.parse(i)}catch{t=null}}return t}},$t=(i,e)=>e!==i&&(e==e||i==i),$e={attribute:!0,type:String,converter:He,reflect:!1,hasChanged:$t},Pe="finalized";let F=class extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this._$Eu()}static addInitializer(e){var t;this.finalize(),((t=this.h)!==null&&t!==void 0?t:this.h=[]).push(e)}static get observedAttributes(){this.finalize();const e=[];return this.elementProperties.forEach((t,r)=>{const n=this._$Ep(r,t);n!==void 0&&(this._$Ev.set(n,r),e.push(n))}),e}static createProperty(e,t=$e){if(t.state&&(t.attribute=!1),this.finalize(),this.elementProperties.set(e,t),!t.noAccessor&&!this.prototype.hasOwnProperty(e)){const r=typeof e=="symbol"?Symbol():"__"+e,n=this.getPropertyDescriptor(e,r,t);n!==void 0&&Object.defineProperty(this.prototype,e,n)}}static getPropertyDescriptor(e,t,r){return{get(){return this[t]},set(n){const s=this[e];this[t]=n,this.requestUpdate(e,s,r)},configurable:!0,enumerable:!0}}static getPropertyOptions(e){return this.elementProperties.get(e)||$e}static finalize(){if(this.hasOwnProperty(Pe))return!1;this[Pe]=!0;const e=Object.getPrototypeOf(this);if(e.finalize(),e.h!==void 0&&(this.h=[...e.h]),this.elementProperties=new Map(e.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,r=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const n of r)this.createProperty(n,t[n])}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(e){const t=[];if(Array.isArray(e)){const r=new Set(e.flat(1/0).reverse());for(const n of r)t.unshift(Ze(n))}else e!==void 0&&t.push(Ze(e));return t}static _$Ep(e,t){const r=t.attribute;return r===!1?void 0:typeof r=="string"?r:typeof e=="string"?e.toLowerCase():void 0}_$Eu(){var e;this._$E_=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$Eg(),this.requestUpdate(),(e=this.constructor.h)===null||e===void 0||e.forEach(t=>t(this))}addController(e){var t,r;((t=this._$ES)!==null&&t!==void 0?t:this._$ES=[]).push(e),this.renderRoot!==void 0&&this.isConnected&&((r=e.hostConnected)===null||r===void 0||r.call(e))}removeController(e){var t;(t=this._$ES)===null||t===void 0||t.splice(this._$ES.indexOf(e)>>>0,1)}_$Eg(){this.constructor.elementProperties.forEach((e,t)=>{this.hasOwnProperty(t)&&(this._$Ei.set(t,this[t]),delete this[t])})}createRenderRoot(){var e;const t=(e=this.shadowRoot)!==null&&e!==void 0?e:this.attachShadow(this.constructor.shadowRootOptions);return Ht(t,this.constructor.elementStyles),t}connectedCallback(){var e;this.renderRoot===void 0&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),(e=this._$ES)===null||e===void 0||e.forEach(t=>{var r;return(r=t.hostConnected)===null||r===void 0?void 0:r.call(t)})}enableUpdating(e){}disconnectedCallback(){var e;(e=this._$ES)===null||e===void 0||e.forEach(t=>{var r;return(r=t.hostDisconnected)===null||r===void 0?void 0:r.call(t)})}attributeChangedCallback(e,t,r){this._$AK(e,r)}_$EO(e,t,r=$e){var n;const s=this.constructor._$Ep(e,r);if(s!==void 0&&r.reflect===!0){const a=(((n=r.converter)===null||n===void 0?void 0:n.toAttribute)!==void 0?r.converter:He).toAttribute(t,r.type);this._$El=e,a==null?this.removeAttribute(s):this.setAttribute(s,a),this._$El=null}}_$AK(e,t){var r;const n=this.constructor,s=n._$Ev.get(e);if(s!==void 0&&this._$El!==s){const a=n.getPropertyOptions(s),d=typeof a.converter=="function"?{fromAttribute:a.converter}:((r=a.converter)===null||r===void 0?void 0:r.fromAttribute)!==void 0?a.converter:He;this._$El=s,this[s]=d.fromAttribute(t,a.type),this._$El=null}}requestUpdate(e,t,r){let n=!0;e!==void 0&&(((r=r||this.constructor.getPropertyOptions(e)).hasChanged||$t)(this[e],t)?(this._$AL.has(e)||this._$AL.set(e,t),r.reflect===!0&&this._$El!==e&&(this._$EC===void 0&&(this._$EC=new Map),this._$EC.set(e,r))):n=!1),!this.isUpdatePending&&n&&(this._$E_=this._$Ej())}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_}catch(t){Promise.reject(t)}const e=this.scheduleUpdate();return e!=null&&await e,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var e;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach((n,s)=>this[s]=n),this._$Ei=void 0);let t=!1;const r=this._$AL;try{t=this.shouldUpdate(r),t?(this.willUpdate(r),(e=this._$ES)===null||e===void 0||e.forEach(n=>{var s;return(s=n.hostUpdate)===null||s===void 0?void 0:s.call(n)}),this.update(r)):this._$Ek()}catch(n){throw t=!1,this._$Ek(),n}t&&this._$AE(r)}willUpdate(e){}_$AE(e){var t;(t=this._$ES)===null||t===void 0||t.forEach(r=>{var n;return(n=r.hostUpdated)===null||n===void 0?void 0:n.call(r)}),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(e)),this.updated(e)}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(e){return!0}update(e){this._$EC!==void 0&&(this._$EC.forEach((t,r)=>this._$EO(r,this[r],t)),this._$EC=void 0),this._$Ek()}updated(e){}firstUpdated(e){}};F[Pe]=!0,F.elementProperties=new Map,F.elementStyles=[],F.shadowRootOptions={mode:"open"},Qe==null||Qe({ReactiveElement:F}),((ve=de.reactiveElementVersions)!==null&&ve!==void 0?ve:de.reactiveElementVersions=[]).push("1.6.3");/**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */var be;const de=window,D=de.trustedTypes,Ze=D?D.createPolicy("lit-html",{createHTML:i=>i}):void 0,He="$lit$",B=`lit$${(Math.random()+"").slice(9)}$`,yt="?"+B,Tt=`<${yt}>`,U=document,ue=()=>U.createComment(""),X=i=>i===null||typeof i!="object"&&typeof i!="function",wt=Array.isArray,Ht=i=>wt(i)||typeof(i==null?void 0:i[Symbol.iterator])=="function",_e=`[ 	
-\f\r]`,J=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,Ge=/-->/g,Je=/>/g,T=RegExp(`>|${_e}(?:([^\\s"'>=/]+)(${_e}*=${_e}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`,"g"),Qe=/'/g,Xe=/"/g,$t=/^(?:script|style|textarea|title)$/i,Y=Symbol.for("lit-noChange"),_=Symbol.for("lit-nothing"),Ye=new WeakMap,P=U.createTreeWalker(U,129,null,!1);function bt(i,e){if(!Array.isArray(i)||!i.hasOwnProperty("raw"))throw Error("invalid template strings array");return Ze!==void 0?Ze.createHTML(e):e}const Pt=(i,e)=>{const t=i.length-1,n=[];let r,s=e===2?"<svg>":"",a=J;for(let d=0;d<t;d++){const o=i[d];let u,h,f=-1,g=0;for(;g<o.length&&(a.lastIndex=g,h=a.exec(o),h!==null);)g=a.lastIndex,a===J?h[1]==="!--"?a=Ge:h[1]!==void 0?a=Je:h[2]!==void 0?($t.test(h[2])&&(r=RegExp("</"+h[2],"g")),a=T):h[3]!==void 0&&(a=T):a===T?h[0]===">"?(a=r??J,f=-1):h[1]===void 0?f=-2:(f=a.lastIndex-h[2].length,u=h[1],a=h[3]===void 0?T:h[3]==='"'?Xe:Qe):a===Xe||a===Qe?a=T:a===Ge||a===Je?a=J:(a=T,r=void 0);const w=a===T&&i[d+1].startsWith("/>")?" ":"";s+=a===J?o+Tt:f>=0?(n.push(u),o.slice(0,f)+He+o.slice(f)+B+w):o+B+(f===-2?(n.push(void 0),d):w)}return[bt(i,s+(i[t]||"<?>")+(e===2?"</svg>":"")),n]};let Pe=class _t{constructor({strings:e,_$litType$:t},n){let r;this.parts=[];let s=0,a=0;const d=e.length-1,o=this.parts,[u,h]=Pt(e,t);if(this.el=_t.createElement(u,n),P.currentNode=this.el.content,t===2){const f=this.el.content,g=f.firstChild;g.remove(),f.append(...g.childNodes)}for(;(r=P.nextNode())!==null&&o.length<d;){if(r.nodeType===1){if(r.hasAttributes()){const f=[];for(const g of r.getAttributeNames())if(g.endsWith(He)||g.startsWith(B)){const w=h[a++];if(f.push(g),w!==void 0){const ye=r.getAttribute(w.toLowerCase()+He).split(B),C=/([.?@])?(.*)/.exec(w);o.push({type:1,index:s,name:C[2],strings:ye,ctor:C[1]==="."?Ot:C[1]==="?"?jt:C[1]==="@"?zt:ge})}else o.push({type:6,index:s})}for(const g of f)r.removeAttribute(g)}if($t.test(r.tagName)){const f=r.textContent.split(B),g=f.length-1;if(g>0){r.textContent=D?D.emptyScript:"";for(let w=0;w<g;w++)r.append(f[w],ue()),P.nextNode(),o.push({type:2,index:++s});r.append(f[g],ue())}}}else if(r.nodeType===8)if(r.data===yt)o.push({type:2,index:s});else{let f=-1;for(;(f=r.data.indexOf(B,f+1))!==-1;)o.push({type:7,index:s}),f+=B.length-1}s++}}static createElement(e,t){const n=U.createElement("template");return n.innerHTML=e,n}};function W(i,e,t=i,n){var r,s,a,d;if(e===Y)return e;let o=n!==void 0?(r=t._$Co)===null||r===void 0?void 0:r[n]:t._$Cl;const u=X(e)?void 0:e._$litDirective$;return(o==null?void 0:o.constructor)!==u&&((s=o==null?void 0:o._$AO)===null||s===void 0||s.call(o,!1),u===void 0?o=void 0:(o=new u(i),o._$AT(i,t,n)),n!==void 0?((a=(d=t)._$Co)!==null&&a!==void 0?a:d._$Co=[])[n]=o:t._$Cl=o),o!==void 0&&(e=W(i,o._$AS(i,e.values),o,n)),e}let Vt=class{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){var t;const{el:{content:n},parts:r}=this._$AD,s=((t=e==null?void 0:e.creationScope)!==null&&t!==void 0?t:U).importNode(n,!0);P.currentNode=s;let a=P.nextNode(),d=0,o=0,u=r[0];for(;u!==void 0;){if(d===u.index){let h;u.type===2?h=new vt(a,a.nextSibling,this,e):u.type===1?h=new u.ctor(a,u.name,u.strings,this,e):u.type===6&&(h=new It(a,this,e)),this._$AV.push(h),u=r[++o]}d!==(u==null?void 0:u.index)&&(a=P.nextNode(),d++)}return P.currentNode=U,s}v(e){let t=0;for(const n of this._$AV)n!==void 0&&(n.strings!==void 0?(n._$AI(e,n,t),t+=n.strings.length-2):n._$AI(e[t])),t++}},vt=class At{constructor(e,t,n,r){var s;this.type=2,this._$AH=_,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=n,this.options=r,this._$Cp=(s=r==null?void 0:r.isConnected)===null||s===void 0||s}get _$AU(){var e,t;return(t=(e=this._$AM)===null||e===void 0?void 0:e._$AU)!==null&&t!==void 0?t:this._$Cp}get parentNode(){let e=this._$AA.parentNode;const t=this._$AM;return t!==void 0&&(e==null?void 0:e.nodeType)===11&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=W(this,e,t),X(e)?e===_||e==null||e===""?(this._$AH!==_&&this._$AR(),this._$AH=_):e!==this._$AH&&e!==Y&&this._(e):e._$litType$!==void 0?this.g(e):e.nodeType!==void 0?this.$(e):Ht(e)?this.T(e):this._(e)}k(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}$(e){this._$AH!==e&&(this._$AR(),this._$AH=this.k(e))}_(e){this._$AH!==_&&X(this._$AH)?this._$AA.nextSibling.data=e:this.$(U.createTextNode(e)),this._$AH=e}g(e){var t;const{values:n,_$litType$:r}=e,s=typeof r=="number"?this._$AC(e):(r.el===void 0&&(r.el=Pe.createElement(bt(r.h,r.h[0]),this.options)),r);if(((t=this._$AH)===null||t===void 0?void 0:t._$AD)===s)this._$AH.v(n);else{const a=new Vt(s,this),d=a.u(this.options);a.v(n),this.$(d),this._$AH=a}}_$AC(e){let t=Ye.get(e.strings);return t===void 0&&Ye.set(e.strings,t=new Pe(e)),t}T(e){wt(this._$AH)||(this._$AH=[],this._$AR());const t=this._$AH;let n,r=0;for(const s of e)r===t.length?t.push(n=new At(this.k(ue()),this.k(ue()),this,this.options)):n=t[r],n._$AI(s),r++;r<t.length&&(this._$AR(n&&n._$AB.nextSibling,r),t.length=r)}_$AR(e=this._$AA.nextSibling,t){var n;for((n=this._$AP)===null||n===void 0||n.call(this,!1,!0,t);e&&e!==this._$AB;){const r=e.nextSibling;e.remove(),e=r}}setConnected(e){var t;this._$AM===void 0&&(this._$Cp=e,(t=this._$AP)===null||t===void 0||t.call(this,e))}},ge=class{constructor(e,t,n,r,s){this.type=1,this._$AH=_,this._$AN=void 0,this.element=e,this.name=t,this._$AM=r,this.options=s,n.length>2||n[0]!==""||n[1]!==""?(this._$AH=Array(n.length-1).fill(new String),this.strings=n):this._$AH=_}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(e,t=this,n,r){const s=this.strings;let a=!1;if(s===void 0)e=W(this,e,t,0),a=!X(e)||e!==this._$AH&&e!==Y,a&&(this._$AH=e);else{const d=e;let o,u;for(e=s[0],o=0;o<s.length-1;o++)u=W(this,d[n+o],t,o),u===Y&&(u=this._$AH[o]),a||(a=!X(u)||u!==this._$AH[o]),u===_?e=_:e!==_&&(e+=(u??"")+s[o+1]),this._$AH[o]=u}a&&!r&&this.j(e)}j(e){e===_?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}},Ot=class extends ge{constructor(){super(...arguments),this.type=3}j(e){this.element[this.name]=e===_?void 0:e}};const Ut=D?D.emptyScript:"";let jt=class extends ge{constructor(){super(...arguments),this.type=4}j(e){e&&e!==_?this.element.setAttribute(this.name,Ut):this.element.removeAttribute(this.name)}},zt=class extends ge{constructor(e,t,n,r,s){super(e,t,n,r,s),this.type=5}_$AI(e,t=this){var n;if((e=(n=W(this,e,t,0))!==null&&n!==void 0?n:_)===Y)return;const r=this._$AH,s=e===_&&r!==_||e.capture!==r.capture||e.once!==r.once||e.passive!==r.passive,a=e!==_&&(r===_||s);s&&this.element.removeEventListener(this.name,this,r),a&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){var t,n;typeof this._$AH=="function"?this._$AH.call((n=(t=this.options)===null||t===void 0?void 0:t.host)!==null&&n!==void 0?n:this.element,e):this._$AH.handleEvent(e)}},It=class{constructor(e,t,n){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=n}get _$AU(){return this._$AM._$AU}_$AI(e){W(this,e)}};const et=de.litHtmlPolyfillSupport;et==null||et(Pe,vt),((be=de.litHtmlVersions)!==null&&be!==void 0?be:de.litHtmlVersions=[]).push("2.8.0");/**
+ */var _e;const ue=window,W=ue.trustedTypes,Xe=W?W.createPolicy("lit-html",{createHTML:i=>i}):void 0,Ie="$lit$",T=`lit$${(Math.random()+"").slice(9)}$`,_t="?"+T,It=`<${_t}>`,U=document,ce=()=>U.createComment(""),ee=i=>i===null||typeof i!="object"&&typeof i!="function",At=Array.isArray,Vt=i=>At(i)||typeof(i==null?void 0:i[Symbol.iterator])=="function",Ae=`[ 	
+\f\r]`,X=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,Ye=/-->/g,et=/>/g,P=RegExp(`>|${Ae}(?:([^\\s"'>=/]+)(${Ae}*=${Ae}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`,"g"),tt=/'/g,rt=/"/g,xt=/^(?:script|style|textarea|title)$/i,te=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),nt=new WeakMap,V=U.createTreeWalker(U,129,null,!1);function St(i,e){if(!Array.isArray(i)||!i.hasOwnProperty("raw"))throw Error("invalid template strings array");return Xe!==void 0?Xe.createHTML(e):e}const jt=(i,e)=>{const t=i.length-1,r=[];let n,s=e===2?"<svg>":"",a=X;for(let d=0;d<t;d++){const o=i[d];let u,h,f=-1,g=0;for(;g<o.length&&(a.lastIndex=g,h=a.exec(o),h!==null);)g=a.lastIndex,a===X?h[1]==="!--"?a=Ye:h[1]!==void 0?a=et:h[2]!==void 0?(xt.test(h[2])&&(n=RegExp("</"+h[2],"g")),a=P):h[3]!==void 0&&(a=P):a===P?h[0]===">"?(a=n??X,f=-1):h[1]===void 0?f=-2:(f=a.lastIndex-h[2].length,u=h[1],a=h[3]===void 0?P:h[3]==='"'?rt:tt):a===rt||a===tt?a=P:a===Ye||a===et?a=X:(a=P,n=void 0);const v=a===P&&i[d+1].startsWith("/>")?" ":"";s+=a===X?o+It:f>=0?(r.push(u),o.slice(0,f)+Ie+o.slice(f)+T+v):o+T+(f===-2?(r.push(void 0),d):v)}return[St(i,s+(i[t]||"<?>")+(e===2?"</svg>":"")),r]};let Ve=class Et{constructor({strings:e,_$litType$:t},r){let n;this.parts=[];let s=0,a=0;const d=e.length-1,o=this.parts,[u,h]=jt(e,t);if(this.el=Et.createElement(u,r),V.currentNode=this.el.content,t===2){const f=this.el.content,g=f.firstChild;g.remove(),f.append(...g.childNodes)}for(;(n=V.nextNode())!==null&&o.length<d;){if(n.nodeType===1){if(n.hasAttributes()){const f=[];for(const g of n.getAttributeNames())if(g.endsWith(Ie)||g.startsWith(T)){const v=h[a++];if(f.push(g),v!==void 0){const be=n.getAttribute(v.toLowerCase()+Ie).split(T),R=/([.?@])?(.*)/.exec(v);o.push({type:1,index:s,name:R[2],strings:be,ctor:R[1]==="."?Ut:R[1]==="?"?zt:R[1]==="@"?Ft:me})}else o.push({type:6,index:s})}for(const g of f)n.removeAttribute(g)}if(xt.test(n.tagName)){const f=n.textContent.split(T),g=f.length-1;if(g>0){n.textContent=W?W.emptyScript:"";for(let v=0;v<g;v++)n.append(f[v],ce()),V.nextNode(),o.push({type:2,index:++s});n.append(f[g],ce())}}}else if(n.nodeType===8)if(n.data===_t)o.push({type:2,index:s});else{let f=-1;for(;(f=n.data.indexOf(T,f+1))!==-1;)o.push({type:7,index:s}),f+=T.length-1}s++}}static createElement(e,t){const r=U.createElement("template");return r.innerHTML=e,r}};function q(i,e,t=i,r){var n,s,a,d;if(e===te)return e;let o=r!==void 0?(n=t._$Co)===null||n===void 0?void 0:n[r]:t._$Cl;const u=ee(e)?void 0:e._$litDirective$;return(o==null?void 0:o.constructor)!==u&&((s=o==null?void 0:o._$AO)===null||s===void 0||s.call(o,!1),u===void 0?o=void 0:(o=new u(i),o._$AT(i,t,r)),r!==void 0?((a=(d=t)._$Co)!==null&&a!==void 0?a:d._$Co=[])[r]=o:t._$Cl=o),o!==void 0&&(e=q(i,o._$AS(i,e.values),o,r)),e}let Ot=class{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){var t;const{el:{content:r},parts:n}=this._$AD,s=((t=e==null?void 0:e.creationScope)!==null&&t!==void 0?t:U).importNode(r,!0);V.currentNode=s;let a=V.nextNode(),d=0,o=0,u=n[0];for(;u!==void 0;){if(d===u.index){let h;u.type===2?h=new Mt(a,a.nextSibling,this,e):u.type===1?h=new u.ctor(a,u.name,u.strings,this,e):u.type===6&&(h=new Wt(a,this,e)),this._$AV.push(h),u=n[++o]}d!==(u==null?void 0:u.index)&&(a=V.nextNode(),d++)}return V.currentNode=U,s}v(e){let t=0;for(const r of this._$AV)r!==void 0&&(r.strings!==void 0?(r._$AI(e,r,t),t+=r.strings.length-2):r._$AI(e[t])),t++}},Mt=class Ct{constructor(e,t,r,n){var s;this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=r,this.options=n,this._$Cp=(s=n==null?void 0:n.isConnected)===null||s===void 0||s}get _$AU(){var e,t;return(t=(e=this._$AM)===null||e===void 0?void 0:e._$AU)!==null&&t!==void 0?t:this._$Cp}get parentNode(){let e=this._$AA.parentNode;const t=this._$AM;return t!==void 0&&(e==null?void 0:e.nodeType)===11&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=q(this,e,t),ee(e)?e===A||e==null||e===""?(this._$AH!==A&&this._$AR(),this._$AH=A):e!==this._$AH&&e!==te&&this._(e):e._$litType$!==void 0?this.g(e):e.nodeType!==void 0?this.$(e):Vt(e)?this.T(e):this._(e)}k(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}$(e){this._$AH!==e&&(this._$AR(),this._$AH=this.k(e))}_(e){this._$AH!==A&&ee(this._$AH)?this._$AA.nextSibling.data=e:this.$(U.createTextNode(e)),this._$AH=e}g(e){var t;const{values:r,_$litType$:n}=e,s=typeof n=="number"?this._$AC(e):(n.el===void 0&&(n.el=Ve.createElement(St(n.h,n.h[0]),this.options)),n);if(((t=this._$AH)===null||t===void 0?void 0:t._$AD)===s)this._$AH.v(r);else{const a=new Ot(s,this),d=a.u(this.options);a.v(r),this.$(d),this._$AH=a}}_$AC(e){let t=nt.get(e.strings);return t===void 0&&nt.set(e.strings,t=new Ve(e)),t}T(e){At(this._$AH)||(this._$AH=[],this._$AR());const t=this._$AH;let r,n=0;for(const s of e)n===t.length?t.push(r=new Ct(this.k(ce()),this.k(ce()),this,this.options)):r=t[n],r._$AI(s),n++;n<t.length&&(this._$AR(r&&r._$AB.nextSibling,n),t.length=n)}_$AR(e=this._$AA.nextSibling,t){var r;for((r=this._$AP)===null||r===void 0||r.call(this,!1,!0,t);e&&e!==this._$AB;){const n=e.nextSibling;e.remove(),e=n}}setConnected(e){var t;this._$AM===void 0&&(this._$Cp=e,(t=this._$AP)===null||t===void 0||t.call(this,e))}},me=class{constructor(e,t,r,n,s){this.type=1,this._$AH=A,this._$AN=void 0,this.element=e,this.name=t,this._$AM=n,this.options=s,r.length>2||r[0]!==""||r[1]!==""?(this._$AH=Array(r.length-1).fill(new String),this.strings=r):this._$AH=A}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(e,t=this,r,n){const s=this.strings;let a=!1;if(s===void 0)e=q(this,e,t,0),a=!ee(e)||e!==this._$AH&&e!==te,a&&(this._$AH=e);else{const d=e;let o,u;for(e=s[0],o=0;o<s.length-1;o++)u=q(this,d[r+o],t,o),u===te&&(u=this._$AH[o]),a||(a=!ee(u)||u!==this._$AH[o]),u===A?e=A:e!==A&&(e+=(u??"")+s[o+1]),this._$AH[o]=u}a&&!n&&this.j(e)}j(e){e===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}},Ut=class extends me{constructor(){super(...arguments),this.type=3}j(e){this.element[this.name]=e===A?void 0:e}};const Dt=W?W.emptyScript:"";let zt=class extends me{constructor(){super(...arguments),this.type=4}j(e){e&&e!==A?this.element.setAttribute(this.name,Dt):this.element.removeAttribute(this.name)}},Ft=class extends me{constructor(e,t,r,n,s){super(e,t,r,n,s),this.type=5}_$AI(e,t=this){var r;if((e=(r=q(this,e,t,0))!==null&&r!==void 0?r:A)===te)return;const n=this._$AH,s=e===A&&n!==A||e.capture!==n.capture||e.once!==n.once||e.passive!==n.passive,a=e!==A&&(n===A||s);s&&this.element.removeEventListener(this.name,this,n),a&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){var t,r;typeof this._$AH=="function"?this._$AH.call((r=(t=this.options)===null||t===void 0?void 0:t.host)!==null&&r!==void 0?r:this.element,e):this._$AH.handleEvent(e)}},Wt=class{constructor(e,t,r){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=r}get _$AU(){return this._$AM._$AU}_$AI(e){q(this,e)}};const it=ue.litHtmlPolyfillSupport;it==null||it(Ve,Mt),((_e=ue.litHtmlVersions)!==null&&_e!==void 0?_e:ue.litHtmlVersions=[]).push("2.8.0");/**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */var ve;const ce=window,q=ce.trustedTypes,tt=q?q.createPolicy("lit-html",{createHTML:i=>i}):void 0,Ve="$lit$",L=`lit$${(Math.random()+"").slice(9)}$`,xt="?"+L,Ft=`<${xt}>`,j=document,ee=()=>j.createComment(""),te=i=>i===null||typeof i!="object"&&typeof i!="function",St=Array.isArray,Dt=i=>St(i)||typeof(i==null?void 0:i[Symbol.iterator])=="function",Ae=`[ 	
-\f\r]`,Q=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,nt=/-->/g,rt=/>/g,H=RegExp(`>|${Ae}(?:([^\\s"'>=/]+)(${Ae}*=${Ae}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`,"g"),it=/'/g,st=/"/g,Mt=/^(?:script|style|textarea|title)$/i,Et=i=>(e,...t)=>({_$litType$:i,strings:e,values:t}),v=Et(1),kt=Et(2),K=Symbol.for("lit-noChange"),y=Symbol.for("lit-nothing"),at=new WeakMap,V=j.createTreeWalker(j,129,null,!1);function Ct(i,e){if(!Array.isArray(i)||!i.hasOwnProperty("raw"))throw Error("invalid template strings array");return tt!==void 0?tt.createHTML(e):e}const Wt=(i,e)=>{const t=i.length-1,n=[];let r,s=e===2?"<svg>":"",a=Q;for(let d=0;d<t;d++){const o=i[d];let u,h,f=-1,g=0;for(;g<o.length&&(a.lastIndex=g,h=a.exec(o),h!==null);)g=a.lastIndex,a===Q?h[1]==="!--"?a=nt:h[1]!==void 0?a=rt:h[2]!==void 0?(Mt.test(h[2])&&(r=RegExp("</"+h[2],"g")),a=H):h[3]!==void 0&&(a=H):a===H?h[0]===">"?(a=r??Q,f=-1):h[1]===void 0?f=-2:(f=a.lastIndex-h[2].length,u=h[1],a=h[3]===void 0?H:h[3]==='"'?st:it):a===st||a===it?a=H:a===nt||a===rt?a=Q:(a=H,r=void 0);const w=a===H&&i[d+1].startsWith("/>")?" ":"";s+=a===Q?o+Ft:f>=0?(n.push(u),o.slice(0,f)+Ve+o.slice(f)+L+w):o+L+(f===-2?(n.push(void 0),d):w)}return[Ct(i,s+(i[t]||"<?>")+(e===2?"</svg>":"")),n]};class ne{constructor({strings:e,_$litType$:t},n){let r;this.parts=[];let s=0,a=0;const d=e.length-1,o=this.parts,[u,h]=Wt(e,t);if(this.el=ne.createElement(u,n),V.currentNode=this.el.content,t===2){const f=this.el.content,g=f.firstChild;g.remove(),f.append(...g.childNodes)}for(;(r=V.nextNode())!==null&&o.length<d;){if(r.nodeType===1){if(r.hasAttributes()){const f=[];for(const g of r.getAttributeNames())if(g.endsWith(Ve)||g.startsWith(L)){const w=h[a++];if(f.push(g),w!==void 0){const ye=r.getAttribute(w.toLowerCase()+Ve).split(L),C=/([.?@])?(.*)/.exec(w);o.push({type:1,index:s,name:C[2],strings:ye,ctor:C[1]==="."?Kt:C[1]==="?"?Gt:C[1]==="@"?Jt:me})}else o.push({type:6,index:s})}for(const g of f)r.removeAttribute(g)}if(Mt.test(r.tagName)){const f=r.textContent.split(L),g=f.length-1;if(g>0){r.textContent=q?q.emptyScript:"";for(let w=0;w<g;w++)r.append(f[w],ee()),V.nextNode(),o.push({type:2,index:++s});r.append(f[g],ee())}}}else if(r.nodeType===8)if(r.data===xt)o.push({type:2,index:s});else{let f=-1;for(;(f=r.data.indexOf(L,f+1))!==-1;)o.push({type:7,index:s}),f+=L.length-1}s++}}static createElement(e,t){const n=j.createElement("template");return n.innerHTML=e,n}}function Z(i,e,t=i,n){var r,s,a,d;if(e===K)return e;let o=n!==void 0?(r=t._$Co)===null||r===void 0?void 0:r[n]:t._$Cl;const u=te(e)?void 0:e._$litDirective$;return(o==null?void 0:o.constructor)!==u&&((s=o==null?void 0:o._$AO)===null||s===void 0||s.call(o,!1),u===void 0?o=void 0:(o=new u(i),o._$AT(i,t,n)),n!==void 0?((a=(d=t)._$Co)!==null&&a!==void 0?a:d._$Co=[])[n]=o:t._$Cl=o),o!==void 0&&(e=Z(i,o._$AS(i,e.values),o,n)),e}class qt{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){var t;const{el:{content:n},parts:r}=this._$AD,s=((t=e==null?void 0:e.creationScope)!==null&&t!==void 0?t:j).importNode(n,!0);V.currentNode=s;let a=V.nextNode(),d=0,o=0,u=r[0];for(;u!==void 0;){if(d===u.index){let h;u.type===2?h=new ie(a,a.nextSibling,this,e):u.type===1?h=new u.ctor(a,u.name,u.strings,this,e):u.type===6&&(h=new Qt(a,this,e)),this._$AV.push(h),u=r[++o]}d!==(u==null?void 0:u.index)&&(a=V.nextNode(),d++)}return V.currentNode=j,s}v(e){let t=0;for(const n of this._$AV)n!==void 0&&(n.strings!==void 0?(n._$AI(e,n,t),t+=n.strings.length-2):n._$AI(e[t])),t++}}class ie{constructor(e,t,n,r){var s;this.type=2,this._$AH=y,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=n,this.options=r,this._$Cp=(s=r==null?void 0:r.isConnected)===null||s===void 0||s}get _$AU(){var e,t;return(t=(e=this._$AM)===null||e===void 0?void 0:e._$AU)!==null&&t!==void 0?t:this._$Cp}get parentNode(){let e=this._$AA.parentNode;const t=this._$AM;return t!==void 0&&(e==null?void 0:e.nodeType)===11&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=Z(this,e,t),te(e)?e===y||e==null||e===""?(this._$AH!==y&&this._$AR(),this._$AH=y):e!==this._$AH&&e!==K&&this._(e):e._$litType$!==void 0?this.g(e):e.nodeType!==void 0?this.$(e):Dt(e)?this.T(e):this._(e)}k(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}$(e){this._$AH!==e&&(this._$AR(),this._$AH=this.k(e))}_(e){this._$AH!==y&&te(this._$AH)?this._$AA.nextSibling.data=e:this.$(j.createTextNode(e)),this._$AH=e}g(e){var t;const{values:n,_$litType$:r}=e,s=typeof r=="number"?this._$AC(e):(r.el===void 0&&(r.el=ne.createElement(Ct(r.h,r.h[0]),this.options)),r);if(((t=this._$AH)===null||t===void 0?void 0:t._$AD)===s)this._$AH.v(n);else{const a=new qt(s,this),d=a.u(this.options);a.v(n),this.$(d),this._$AH=a}}_$AC(e){let t=at.get(e.strings);return t===void 0&&at.set(e.strings,t=new ne(e)),t}T(e){St(this._$AH)||(this._$AH=[],this._$AR());const t=this._$AH;let n,r=0;for(const s of e)r===t.length?t.push(n=new ie(this.k(ee()),this.k(ee()),this,this.options)):n=t[r],n._$AI(s),r++;r<t.length&&(this._$AR(n&&n._$AB.nextSibling,r),t.length=r)}_$AR(e=this._$AA.nextSibling,t){var n;for((n=this._$AP)===null||n===void 0||n.call(this,!1,!0,t);e&&e!==this._$AB;){const r=e.nextSibling;e.remove(),e=r}}setConnected(e){var t;this._$AM===void 0&&(this._$Cp=e,(t=this._$AP)===null||t===void 0||t.call(this,e))}}class me{constructor(e,t,n,r,s){this.type=1,this._$AH=y,this._$AN=void 0,this.element=e,this.name=t,this._$AM=r,this.options=s,n.length>2||n[0]!==""||n[1]!==""?(this._$AH=Array(n.length-1).fill(new String),this.strings=n):this._$AH=y}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(e,t=this,n,r){const s=this.strings;let a=!1;if(s===void 0)e=Z(this,e,t,0),a=!te(e)||e!==this._$AH&&e!==K,a&&(this._$AH=e);else{const d=e;let o,u;for(e=s[0],o=0;o<s.length-1;o++)u=Z(this,d[n+o],t,o),u===K&&(u=this._$AH[o]),a||(a=!te(u)||u!==this._$AH[o]),u===y?e=y:e!==y&&(e+=(u??"")+s[o+1]),this._$AH[o]=u}a&&!r&&this.j(e)}j(e){e===y?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}}class Kt extends me{constructor(){super(...arguments),this.type=3}j(e){this.element[this.name]=e===y?void 0:e}}const Zt=q?q.emptyScript:"";class Gt extends me{constructor(){super(...arguments),this.type=4}j(e){e&&e!==y?this.element.setAttribute(this.name,Zt):this.element.removeAttribute(this.name)}}class Jt extends me{constructor(e,t,n,r,s){super(e,t,n,r,s),this.type=5}_$AI(e,t=this){var n;if((e=(n=Z(this,e,t,0))!==null&&n!==void 0?n:y)===K)return;const r=this._$AH,s=e===y&&r!==y||e.capture!==r.capture||e.once!==r.once||e.passive!==r.passive,a=e!==y&&(r===y||s);s&&this.element.removeEventListener(this.name,this,r),a&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){var t,n;typeof this._$AH=="function"?this._$AH.call((n=(t=this.options)===null||t===void 0?void 0:t.host)!==null&&n!==void 0?n:this.element,e):this._$AH.handleEvent(e)}}class Qt{constructor(e,t,n){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=n}get _$AU(){return this._$AM._$AU}_$AI(e){Z(this,e)}}const ot=ce.litHtmlPolyfillSupport;ot==null||ot(ne,ie),((ve=ce.litHtmlVersions)!==null&&ve!==void 0?ve:ce.litHtmlVersions=[]).push("2.8.0");const Xt=(i,e,t)=>{var n,r;const s=(n=t==null?void 0:t.renderBefore)!==null&&n!==void 0?n:e;let a=s._$litPart$;if(a===void 0){const d=(r=t==null?void 0:t.renderBefore)!==null&&r!==void 0?r:null;s._$litPart$=a=new ie(e.insertBefore(ee(),d),d,void 0,t??{})}return a._$AI(i),a};/**
+ */var xe;const he=window,K=he.trustedTypes,st=K?K.createPolicy("lit-html",{createHTML:i=>i}):void 0,je="$lit$",B=`lit$${(Math.random()+"").slice(9)}$`,kt="?"+B,qt=`<${kt}>`,D=document,re=()=>D.createComment(""),ne=i=>i===null||typeof i!="object"&&typeof i!="function",Rt=Array.isArray,Kt=i=>Rt(i)||typeof(i==null?void 0:i[Symbol.iterator])=="function",Se=`[ 	
+\f\r]`,Y=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,at=/-->/g,ot=/>/g,I=RegExp(`>|${Se}(?:([^\\s"'>=/]+)(${Se}*=${Se}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`,"g"),lt=/'/g,dt=/"/g,Lt=/^(?:script|style|textarea|title)$/i,Tt=i=>(e,...t)=>({_$litType$:i,strings:e,values:t}),y=Tt(1),Ke=Tt(2),G=Symbol.for("lit-noChange"),m=Symbol.for("lit-nothing"),ut=new WeakMap,j=D.createTreeWalker(D,129,null,!1);function Bt(i,e){if(!Array.isArray(i)||!i.hasOwnProperty("raw"))throw Error("invalid template strings array");return st!==void 0?st.createHTML(e):e}const Gt=(i,e)=>{const t=i.length-1,r=[];let n,s=e===2?"<svg>":"",a=Y;for(let d=0;d<t;d++){const o=i[d];let u,h,f=-1,g=0;for(;g<o.length&&(a.lastIndex=g,h=a.exec(o),h!==null);)g=a.lastIndex,a===Y?h[1]==="!--"?a=at:h[1]!==void 0?a=ot:h[2]!==void 0?(Lt.test(h[2])&&(n=RegExp("</"+h[2],"g")),a=I):h[3]!==void 0&&(a=I):a===I?h[0]===">"?(a=n??Y,f=-1):h[1]===void 0?f=-2:(f=a.lastIndex-h[2].length,u=h[1],a=h[3]===void 0?I:h[3]==='"'?dt:lt):a===dt||a===lt?a=I:a===at||a===ot?a=Y:(a=I,n=void 0);const v=a===I&&i[d+1].startsWith("/>")?" ":"";s+=a===Y?o+qt:f>=0?(r.push(u),o.slice(0,f)+je+o.slice(f)+B+v):o+B+(f===-2?(r.push(void 0),d):v)}return[Bt(i,s+(i[t]||"<?>")+(e===2?"</svg>":"")),r]};class ie{constructor({strings:e,_$litType$:t},r){let n;this.parts=[];let s=0,a=0;const d=e.length-1,o=this.parts,[u,h]=Gt(e,t);if(this.el=ie.createElement(u,r),j.currentNode=this.el.content,t===2){const f=this.el.content,g=f.firstChild;g.remove(),f.append(...g.childNodes)}for(;(n=j.nextNode())!==null&&o.length<d;){if(n.nodeType===1){if(n.hasAttributes()){const f=[];for(const g of n.getAttributeNames())if(g.endsWith(je)||g.startsWith(B)){const v=h[a++];if(f.push(g),v!==void 0){const be=n.getAttribute(v.toLowerCase()+je).split(B),R=/([.?@])?(.*)/.exec(v);o.push({type:1,index:s,name:R[2],strings:be,ctor:R[1]==="."?Jt:R[1]==="?"?Xt:R[1]==="@"?Yt:ye})}else o.push({type:6,index:s})}for(const g of f)n.removeAttribute(g)}if(Lt.test(n.tagName)){const f=n.textContent.split(B),g=f.length-1;if(g>0){n.textContent=K?K.emptyScript:"";for(let v=0;v<g;v++)n.append(f[v],re()),j.nextNode(),o.push({type:2,index:++s});n.append(f[g],re())}}}else if(n.nodeType===8)if(n.data===kt)o.push({type:2,index:s});else{let f=-1;for(;(f=n.data.indexOf(B,f+1))!==-1;)o.push({type:7,index:s}),f+=B.length-1}s++}}static createElement(e,t){const r=D.createElement("template");return r.innerHTML=e,r}}function Z(i,e,t=i,r){var n,s,a,d;if(e===G)return e;let o=r!==void 0?(n=t._$Co)===null||n===void 0?void 0:n[r]:t._$Cl;const u=ne(e)?void 0:e._$litDirective$;return(o==null?void 0:o.constructor)!==u&&((s=o==null?void 0:o._$AO)===null||s===void 0||s.call(o,!1),u===void 0?o=void 0:(o=new u(i),o._$AT(i,t,r)),r!==void 0?((a=(d=t)._$Co)!==null&&a!==void 0?a:d._$Co=[])[r]=o:t._$Cl=o),o!==void 0&&(e=Z(i,o._$AS(i,e.values),o,r)),e}class Zt{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){var t;const{el:{content:r},parts:n}=this._$AD,s=((t=e==null?void 0:e.creationScope)!==null&&t!==void 0?t:D).importNode(r,!0);j.currentNode=s;let a=j.nextNode(),d=0,o=0,u=n[0];for(;u!==void 0;){if(d===u.index){let h;u.type===2?h=new ae(a,a.nextSibling,this,e):u.type===1?h=new u.ctor(a,u.name,u.strings,this,e):u.type===6&&(h=new er(a,this,e)),this._$AV.push(h),u=n[++o]}d!==(u==null?void 0:u.index)&&(a=j.nextNode(),d++)}return j.currentNode=D,s}v(e){let t=0;for(const r of this._$AV)r!==void 0&&(r.strings!==void 0?(r._$AI(e,r,t),t+=r.strings.length-2):r._$AI(e[t])),t++}}class ae{constructor(e,t,r,n){var s;this.type=2,this._$AH=m,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=r,this.options=n,this._$Cp=(s=n==null?void 0:n.isConnected)===null||s===void 0||s}get _$AU(){var e,t;return(t=(e=this._$AM)===null||e===void 0?void 0:e._$AU)!==null&&t!==void 0?t:this._$Cp}get parentNode(){let e=this._$AA.parentNode;const t=this._$AM;return t!==void 0&&(e==null?void 0:e.nodeType)===11&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=Z(this,e,t),ne(e)?e===m||e==null||e===""?(this._$AH!==m&&this._$AR(),this._$AH=m):e!==this._$AH&&e!==G&&this._(e):e._$litType$!==void 0?this.g(e):e.nodeType!==void 0?this.$(e):Kt(e)?this.T(e):this._(e)}k(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}$(e){this._$AH!==e&&(this._$AR(),this._$AH=this.k(e))}_(e){this._$AH!==m&&ne(this._$AH)?this._$AA.nextSibling.data=e:this.$(D.createTextNode(e)),this._$AH=e}g(e){var t;const{values:r,_$litType$:n}=e,s=typeof n=="number"?this._$AC(e):(n.el===void 0&&(n.el=ie.createElement(Bt(n.h,n.h[0]),this.options)),n);if(((t=this._$AH)===null||t===void 0?void 0:t._$AD)===s)this._$AH.v(r);else{const a=new Zt(s,this),d=a.u(this.options);a.v(r),this.$(d),this._$AH=a}}_$AC(e){let t=ut.get(e.strings);return t===void 0&&ut.set(e.strings,t=new ie(e)),t}T(e){Rt(this._$AH)||(this._$AH=[],this._$AR());const t=this._$AH;let r,n=0;for(const s of e)n===t.length?t.push(r=new ae(this.k(re()),this.k(re()),this,this.options)):r=t[n],r._$AI(s),n++;n<t.length&&(this._$AR(r&&r._$AB.nextSibling,n),t.length=n)}_$AR(e=this._$AA.nextSibling,t){var r;for((r=this._$AP)===null||r===void 0||r.call(this,!1,!0,t);e&&e!==this._$AB;){const n=e.nextSibling;e.remove(),e=n}}setConnected(e){var t;this._$AM===void 0&&(this._$Cp=e,(t=this._$AP)===null||t===void 0||t.call(this,e))}}class ye{constructor(e,t,r,n,s){this.type=1,this._$AH=m,this._$AN=void 0,this.element=e,this.name=t,this._$AM=n,this.options=s,r.length>2||r[0]!==""||r[1]!==""?(this._$AH=Array(r.length-1).fill(new String),this.strings=r):this._$AH=m}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(e,t=this,r,n){const s=this.strings;let a=!1;if(s===void 0)e=Z(this,e,t,0),a=!ne(e)||e!==this._$AH&&e!==G,a&&(this._$AH=e);else{const d=e;let o,u;for(e=s[0],o=0;o<s.length-1;o++)u=Z(this,d[r+o],t,o),u===G&&(u=this._$AH[o]),a||(a=!ne(u)||u!==this._$AH[o]),u===m?e=m:e!==m&&(e+=(u??"")+s[o+1]),this._$AH[o]=u}a&&!n&&this.j(e)}j(e){e===m?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}}class Jt extends ye{constructor(){super(...arguments),this.type=3}j(e){this.element[this.name]=e===m?void 0:e}}const Qt=K?K.emptyScript:"";class Xt extends ye{constructor(){super(...arguments),this.type=4}j(e){e&&e!==m?this.element.setAttribute(this.name,Qt):this.element.removeAttribute(this.name)}}class Yt extends ye{constructor(e,t,r,n,s){super(e,t,r,n,s),this.type=5}_$AI(e,t=this){var r;if((e=(r=Z(this,e,t,0))!==null&&r!==void 0?r:m)===G)return;const n=this._$AH,s=e===m&&n!==m||e.capture!==n.capture||e.once!==n.once||e.passive!==n.passive,a=e!==m&&(n===m||s);s&&this.element.removeEventListener(this.name,this,n),a&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){var t,r;typeof this._$AH=="function"?this._$AH.call((r=(t=this.options)===null||t===void 0?void 0:t.host)!==null&&r!==void 0?r:this.element,e):this._$AH.handleEvent(e)}}class er{constructor(e,t,r){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=r}get _$AU(){return this._$AM._$AU}_$AI(e){Z(this,e)}}const ct=he.litHtmlPolyfillSupport;ct==null||ct(ie,ae),((xe=he.litHtmlVersions)!==null&&xe!==void 0?xe:he.litHtmlVersions=[]).push("2.8.0");const tr=(i,e,t)=>{var r,n;const s=(r=t==null?void 0:t.renderBefore)!==null&&r!==void 0?r:e;let a=s._$litPart$;if(a===void 0){const d=(n=t==null?void 0:t.renderBefore)!==null&&n!==void 0?n:null;s._$litPart$=a=new ae(e.insertBefore(re(),d),d,void 0,t??{})}return a._$AI(i),a};/**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */var xe,Se;class F extends I{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){var e,t;const n=super.createRenderRoot();return(e=(t=this.renderOptions).renderBefore)!==null&&e!==void 0||(t.renderBefore=n.firstChild),n}update(e){const t=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(e),this._$Do=Xt(t,this.renderRoot,this.renderOptions)}connectedCallback(){var e;super.connectedCallback(),(e=this._$Do)===null||e===void 0||e.setConnected(!0)}disconnectedCallback(){var e;super.disconnectedCallback(),(e=this._$Do)===null||e===void 0||e.setConnected(!1)}render(){return K}}F.finalized=!0,F._$litElement$=!0,(xe=globalThis.litElementHydrateSupport)===null||xe===void 0||xe.call(globalThis,{LitElement:F});const lt=globalThis.litElementPolyfillSupport;lt==null||lt({LitElement:F});((Se=globalThis.litElementVersions)!==null&&Se!==void 0?Se:globalThis.litElementVersions=[]).push("3.3.3");/**
+ */var Ee,Me;class N extends F{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){var e,t;const r=super.createRenderRoot();return(e=(t=this.renderOptions).renderBefore)!==null&&e!==void 0||(t.renderBefore=r.firstChild),r}update(e){const t=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(e),this._$Do=tr(t,this.renderRoot,this.renderOptions)}connectedCallback(){var e;super.connectedCallback(),(e=this._$Do)===null||e===void 0||e.setConnected(!0)}disconnectedCallback(){var e;super.disconnectedCallback(),(e=this._$Do)===null||e===void 0||e.setConnected(!1)}render(){return G}}N.finalized=!0,N._$litElement$=!0,(Ee=globalThis.litElementHydrateSupport)===null||Ee===void 0||Ee.call(globalThis,{LitElement:N});const ht=globalThis.litElementPolyfillSupport;ht==null||ht({LitElement:N});((Me=globalThis.litElementVersions)!==null&&Me!==void 0?Me:globalThis.litElementVersions=[]).push("3.3.3");/**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */const Rt=i=>e=>typeof e=="function"?((t,n)=>(customElements.define(t,n),n))(i,e):((t,n)=>{const{kind:r,elements:s}=n;return{kind:r,elements:s,finisher(a){customElements.define(t,a)}}})(i,e);/**
+ */const we=i=>e=>typeof e=="function"?((t,r)=>(customElements.define(t,r),r))(i,e):((t,r)=>{const{kind:n,elements:s}=r;return{kind:n,elements:s,finisher(a){customElements.define(t,a)}}})(i,e);/**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */const Yt=(i,e)=>e.kind==="method"&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(t){t.createProperty(e.key,i)}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){typeof e.initializer=="function"&&(this[e.key]=e.initializer.call(this))},finisher(t){t.createProperty(e.key,i)}},en=(i,e,t)=>{e.constructor.createProperty(t,i)};function S(i){return(e,t)=>t!==void 0?en(i,e,t):Yt(i,e)}/**
+ */const rr=(i,e)=>e.kind==="method"&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(t){t.createProperty(e.key,i)}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){typeof e.initializer=="function"&&(this[e.key]=e.initializer.call(this))},finisher(t){t.createProperty(e.key,i)}},nr=(i,e,t)=>{e.constructor.createProperty(t,i)};function x(i){return(e,t)=>t!==void 0?nr(i,e,t):rr(i,e)}/**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */function k(i){return S({...i,state:!0})}/**
+ */function S(i){return x({...i,state:!0})}/**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */const tn=({finisher:i,descriptor:e})=>(t,n)=>{var r;if(n===void 0){const s=(r=t.originalKey)!==null&&r!==void 0?r:t.key,a=e!=null?{kind:"method",placement:"prototype",key:s,descriptor:e(t.key)}:{...t,key:s};return i!=null&&(a.finisher=function(d){i(d,s)}),a}{const s=t.constructor;e!==void 0&&Object.defineProperty(t,n,e(n)),i==null||i(s,n)}};/**
+ */const ir=({finisher:i,descriptor:e})=>(t,r)=>{var n;if(r===void 0){const s=(n=t.originalKey)!==null&&n!==void 0?n:t.key,a=e!=null?{kind:"method",placement:"prototype",key:s,descriptor:e(t.key)}:{...t,key:s};return i!=null&&(a.finisher=function(d){i(d,s)}),a}{const s=t.constructor;e!==void 0&&Object.defineProperty(t,r,e(r)),i==null||i(s,r)}};/**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */function nn(i,e){return tn({descriptor:t=>({get(){var r,s;return(s=(r=this.renderRoot)===null||r===void 0?void 0:r.querySelector(i))!==null&&s!==void 0?s:null},enumerable:!0,configurable:!0})})}/**
+ */function sr(i,e){return ir({descriptor:t=>({get(){var n,s;return(s=(n=this.renderRoot)===null||n===void 0?void 0:n.querySelector(i))!==null&&s!==void 0?s:null},enumerable:!0,configurable:!0})})}/**
  * @license
  * Copyright 2021 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */var Me;((Me=window.HTMLSlotElement)===null||Me===void 0?void 0:Me.prototype.assignedElements)!=null;function c(i){let e,t,n;return e=i,(r,s,a)=>{if(a.value!=null)a.value=dt(a.value,e,t,n);else if(a.get!=null)a.get=dt(a.get,e,t,n);else throw"Only put a Memoize() decorator on a method or get accessor."}}const Ee=new Map;function dt(i,e,t=0,n){const r=Symbol("__memoized_map__");return function(...s){let a;this.hasOwnProperty(r)||Object.defineProperty(this,r,{configurable:!1,enumerable:!1,writable:!1,value:new Map});let d=this[r];if(Array.isArray(n))for(const o of n)Ee.has(o)?Ee.get(o).push(d):Ee.set(o,[d]);if(e||s.length>0||t>0){let o;e===!0?o=s.map(f=>f.toString()).join("!"):e?o=e.apply(this,s):o=s[0];const u=`${o}__timestamp`;let h=!1;if(t>0)if(!d.has(u))h=!0;else{let f=d.get(u);h=Date.now()-f>t}d.has(o)&&!h?a=d.get(o):(a=i.apply(this,s),d.set(o,a),t>0&&d.set(u,Date.now()))}else{const o=this;d.has(o)?a=d.get(o):(a=i.apply(this,s),d.set(o,a))}return a}}class Oe{parseValue(e){return typeof e=="string"&&(e==="false"||e==="0")?!1:!!e}}Oe.shared=new Oe;class N{parseValue(e){if(typeof e=="number")return e;if(typeof e=="boolean")return;const t=parseFloat(e);if(!Number.isNaN(t))return t}}N.shared=new N;class he{parseValue(e){return N.shared.parseValue(e)}}he.shared=new he;class re{parseValue(e){return this.parseJSDate(e)||this.parseBracketDate(e)}parseBracketDate(e){if(typeof e!="string")return;const t=e.match(/\[([0-9]{4})\]/);if(!(!t||t.length<2))return this.parseJSDate(t[1])}parseJSDate(e){if(typeof e!="string")return;let t=e;t.match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}\s{1}[0-9]{2}:[0-9]{2}:[0-9]{2}$/)&&(t=t.replace(" ","T"));const n=Date.parse(t);if(Number.isNaN(n))return;let r=new Date(t);return(t.indexOf("Z")>-1||t.indexOf("+")>-1||t.match(/^[0-9]{4}$/)||t.match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/)||t.match(/^.*?-[0-9]{2}:[0-9]{2}$/)||t.match(/^.*?-[0-9]{4}$/))&&(r=new Date(r.getTime()+r.getTimezoneOffset()*1e3*60)),r}}re.shared=new re;class pe{parseValue(e){if(typeof e=="number")return e;if(typeof e=="boolean")return;const t=e.split(":");let n;return t.length===1?n=this.parseNumberFormat(t[0]):n=this.parseColonSeparatedFormat(t),n}parseNumberFormat(e){let t=parseFloat(e);return Number.isNaN(t)&&(t=void 0),t}parseColonSeparatedFormat(e){let t=!1;const n=e.map((r,s)=>{const a=parseFloat(r);if(Number.isNaN(a))return t=!0,0;const o=60**(e.length-1-s);return a*Math.floor(o)}).reduce((r,s)=>r+s,0);return t?void 0:n}}pe.shared=new pe;class Ue{parseValue(e){if(typeof e=="string")return e}}Ue.shared=new Ue;class rn{constructor(e,t){this.separators=[";",","],this.parser=e,t&&t.separators&&(this.separators=t.separators)}parseValue(e){const t=String(e);let n=[];for(const r of this.separators)if(n=t.split(r),n.length>1)break;return this.parseListValues(n)}parseListValues(e){const n=e.map(s=>s.trim()).map(s=>this.parser.parseValue(s)),r=[];return n.forEach(s=>{s!==void 0&&r.push(s)}),r}}class je{parseValue(e){if(typeof e=="string")return e}}je.shared=new je;class fe{parseValue(e){return String(e)}}fe.shared=new fe;class M{get values(){return this.parseRawValue()}get value(){return this.values[0]}constructor(e,t){this.parser=e,this.rawValue=t}parseRawValue(){const e=Array.isArray(this.rawValue)?this.rawValue:[this.rawValue],t=[];return e.forEach(n=>{const r=this.parser.parseValue(n);Array.isArray(r)?t.push(...r):r!==void 0&&t.push(r)}),t}}l([c()],M.prototype,"values",null);l([c()],M.prototype,"value",null);class sn extends M{constructor(e){super(Oe.shared,e)}}class R extends M{constructor(e){super(re.shared,e)}}class ke extends M{constructor(e){super(pe.shared,e)}}class A extends M{constructor(e){super(N.shared,e)}}class m extends M{constructor(e){super(fe.shared,e)}}class an extends M{constructor(e){super(je.shared,e)}}class ut extends M{constructor(e){super(he.shared,e)}}class on extends M{constructor(e){super(Ue.shared,e)}}class ln extends M{constructor(e,t){super(t,e)}}class dn extends ln{constructor(e){const t=new rn(fe.shared);super(e,t)}}class p{get identifier(){return this.rawMetadata.identifier}get addeddate(){return this.rawMetadata.addeddate!=null?new R(this.rawMetadata.addeddate):void 0}get audio_codec(){return this.rawMetadata.audio_codec!=null?new m(this.rawMetadata.audio_codec):void 0}get audio_sample_rate(){return this.rawMetadata.audio_sample_rate!=null?new A(this.rawMetadata.audio_sample_rate):void 0}get avg_rating(){return this.rawMetadata.avg_rating!=null?new A(this.rawMetadata.avg_rating):void 0}get collection(){return this.rawMetadata.collection!=null?new m(this.rawMetadata.collection):void 0}get collections_raw(){return this.rawMetadata.collections_raw!=null?new m(this.rawMetadata.collections_raw):void 0}get collection_size(){return this.rawMetadata.collection_size!=null?new ut(this.rawMetadata.collection_size):void 0}get contributor(){return this.rawMetadata.contributor!=null?new m(this.rawMetadata.contributor):void 0}get coverage(){return this.rawMetadata.coverage!=null?new m(this.rawMetadata.coverage):void 0}get creator(){return this.rawMetadata.creator!=null?new m(this.rawMetadata.creator):void 0}get collection_layout(){return this.rawMetadata.collection_layout!=null?new m(this.rawMetadata.collection_layout):void 0}get date(){return this.rawMetadata.date!=null?new R(this.rawMetadata.date):void 0}get description(){return this.rawMetadata.description!=null?new m(this.rawMetadata.description):void 0}get downloads(){return this.rawMetadata.downloads!=null?new A(this.rawMetadata.downloads):void 0}get duration(){return this.rawMetadata.duration!=null?new ke(this.rawMetadata.duration):void 0}get external_identifier(){return this.rawMetadata["external-identifier"]!=null?new m(this.rawMetadata["external-identifier"]):void 0}get files_count(){return this.rawMetadata.files_count!=null?new A(this.rawMetadata.files_count):void 0}get indexdate(){return this.rawMetadata.indexdate!=null?new R(this.rawMetadata.indexdate):void 0}get isbn(){return this.rawMetadata.isbn!=null?new m(this.rawMetadata.isbn):void 0}get issue(){return this.rawMetadata.issue!=null?new m(this.rawMetadata.issue):void 0}get item_count(){return this.rawMetadata.item_count!=null?new A(this.rawMetadata.item_count):void 0}get item_size(){return this.rawMetadata.item_size!=null?new ut(this.rawMetadata.item_size):void 0}get language(){return this.rawMetadata.language!=null?new m(this.rawMetadata.language):void 0}get length(){return this.rawMetadata.length!=null?new ke(this.rawMetadata.length):void 0}get lineage(){return this.rawMetadata.lineage!=null?new m(this.rawMetadata.lineage):void 0}get month(){return this.rawMetadata.month!=null?new A(this.rawMetadata.month):void 0}get mediatype(){return this.rawMetadata.mediatype!=null?new on(this.rawMetadata.mediatype):void 0}get noindex(){return this.rawMetadata.noindex!=null?new sn(this.rawMetadata.noindex):void 0}get notes(){return this.rawMetadata.notes!=null?new m(this.rawMetadata.notes):void 0}get num_favorites(){return this.rawMetadata.num_favorites!=null?new A(this.rawMetadata.num_favorites):void 0}get num_reviews(){return this.rawMetadata.num_reviews!=null?new A(this.rawMetadata.num_reviews):void 0}get openlibrary_edition(){return this.rawMetadata.openlibrary_edition!=null?new m(this.rawMetadata.openlibrary_edition):void 0}get openlibrary_work(){return this.rawMetadata.openlibrary_work!=null?new m(this.rawMetadata.openlibrary_work):void 0}get page_progression(){return this.rawMetadata.page_progression!=null?new an(this.rawMetadata.page_progression):void 0}get partner(){return this.rawMetadata.partner!=null?new m(this.rawMetadata.partner):void 0}get ppi(){return this.rawMetadata.ppi!=null?new A(this.rawMetadata.ppi):void 0}get publicdate(){return this.rawMetadata.publicdate!=null?new R(this.rawMetadata.publicdate):void 0}get publisher(){return this.rawMetadata.publisher!=null?new m(this.rawMetadata.publisher):void 0}get reviewdate(){return this.rawMetadata.reviewdate!=null?new R(this.rawMetadata.reviewdate):void 0}get runtime(){return this.rawMetadata.runtime!=null?new ke(this.rawMetadata.runtime):void 0}get scanner(){return this.rawMetadata.scanner!=null?new m(this.rawMetadata.scanner):void 0}get source(){return this.rawMetadata.source!=null?new m(this.rawMetadata.source):void 0}get start_localtime(){return this.rawMetadata.start_localtime!=null?new R(this.rawMetadata.start_localtime):void 0}get start_time(){return this.rawMetadata.start_time!=null?new R(this.rawMetadata.start_time):void 0}get stop_time(){return this.rawMetadata.stop_time!=null?new R(this.rawMetadata.stop_time):void 0}get subject(){return this.rawMetadata.subject!=null?new dn(this.rawMetadata.subject):void 0}get taper(){return this.rawMetadata.taper!=null?new m(this.rawMetadata.taper):void 0}get title(){return this.rawMetadata.title!=null?new m(this.rawMetadata.title):void 0}get transferer(){return this.rawMetadata.transferer!=null?new m(this.rawMetadata.transferer):void 0}get track(){return this.rawMetadata.track!=null?new A(this.rawMetadata.track):void 0}get type(){return this.rawMetadata.type!=null?new m(this.rawMetadata.type):void 0}get uploader(){return this.rawMetadata.uploader!=null?new m(this.rawMetadata.uploader):void 0}get utc_offset(){return this.rawMetadata.utc_offset!=null?new A(this.rawMetadata.utc_offset):void 0}get venue(){return this.rawMetadata.venue!=null?new m(this.rawMetadata.venue):void 0}get volume(){return this.rawMetadata.volume!=null?new m(this.rawMetadata.volume):void 0}get week(){return this.rawMetadata.week!=null?new A(this.rawMetadata.week):void 0}get year(){return this.rawMetadata.year!=null?new A(this.rawMetadata.year):void 0}constructor(e={}){this.rawMetadata=e}}l([c()],p.prototype,"addeddate",null);l([c()],p.prototype,"audio_codec",null);l([c()],p.prototype,"audio_sample_rate",null);l([c()],p.prototype,"avg_rating",null);l([c()],p.prototype,"collection",null);l([c()],p.prototype,"collections_raw",null);l([c()],p.prototype,"collection_size",null);l([c()],p.prototype,"contributor",null);l([c()],p.prototype,"coverage",null);l([c()],p.prototype,"creator",null);l([c()],p.prototype,"collection_layout",null);l([c()],p.prototype,"date",null);l([c()],p.prototype,"description",null);l([c()],p.prototype,"downloads",null);l([c()],p.prototype,"duration",null);l([c()],p.prototype,"external_identifier",null);l([c()],p.prototype,"files_count",null);l([c()],p.prototype,"indexdate",null);l([c()],p.prototype,"isbn",null);l([c()],p.prototype,"issue",null);l([c()],p.prototype,"item_count",null);l([c()],p.prototype,"item_size",null);l([c()],p.prototype,"language",null);l([c()],p.prototype,"length",null);l([c()],p.prototype,"lineage",null);l([c()],p.prototype,"month",null);l([c()],p.prototype,"mediatype",null);l([c()],p.prototype,"noindex",null);l([c()],p.prototype,"notes",null);l([c()],p.prototype,"num_favorites",null);l([c()],p.prototype,"num_reviews",null);l([c()],p.prototype,"openlibrary_edition",null);l([c()],p.prototype,"openlibrary_work",null);l([c()],p.prototype,"page_progression",null);l([c()],p.prototype,"partner",null);l([c()],p.prototype,"ppi",null);l([c()],p.prototype,"publicdate",null);l([c()],p.prototype,"publisher",null);l([c()],p.prototype,"reviewdate",null);l([c()],p.prototype,"runtime",null);l([c()],p.prototype,"scanner",null);l([c()],p.prototype,"source",null);l([c()],p.prototype,"start_localtime",null);l([c()],p.prototype,"start_time",null);l([c()],p.prototype,"stop_time",null);l([c()],p.prototype,"subject",null);l([c()],p.prototype,"taper",null);l([c()],p.prototype,"title",null);l([c()],p.prototype,"transferer",null);l([c()],p.prototype,"track",null);l([c()],p.prototype,"type",null);l([c()],p.prototype,"uploader",null);l([c()],p.prototype,"utc_offset",null);l([c()],p.prototype,"venue",null);l([c()],p.prototype,"volume",null);l([c()],p.prototype,"week",null);l([c()],p.prototype,"year",null);class G{get name(){return this.rawValue.name}get source(){return this.rawValue.source}get btih(){return this.rawValue.btih}get md5(){return this.rawValue.md5}get format(){return this.rawValue.format}get mtime(){return this.rawValue.mtime}get crc32(){return this.rawValue.crc32}get sha1(){return this.rawValue.sha1}get original(){return this.rawValue.original}get size(){return this.rawValue.size!=null?he.shared.parseValue(this.rawValue.size):void 0}get title(){return this.rawValue.title}get length(){return this.rawValue.length!=null?pe.shared.parseValue(this.rawValue.length):void 0}get height(){return this.rawValue.height!=null?N.shared.parseValue(this.rawValue.height):void 0}get width(){return this.rawValue.width!=null?N.shared.parseValue(this.rawValue.width):void 0}get track(){return this.rawValue.track!=null?N.shared.parseValue(this.rawValue.track):void 0}get external_identifier(){return this.rawValue.external_identifier}get creator(){return this.rawValue.creator}get album(){return this.rawValue.album}constructor(e={}){this.rawValue=e}}l([c()],G.prototype,"size",null);l([c()],G.prototype,"length",null);l([c()],G.prototype,"height",null);l([c()],G.prototype,"width",null);l([c()],G.prototype,"track",null);class se{get reviewbody(){return this.rawValue.reviewbody}get reviewtitle(){return this.rawValue.reviewtitle}get reviewer(){return this.rawValue.reviewer}get reviewdate(){return this.rawValue.reviewdate!=null?re.shared.parseValue(this.rawValue.reviewdate):void 0}get createdate(){return this.rawValue.createdate!=null?re.shared.parseValue(this.rawValue.createdate):void 0}get stars(){return this.rawValue.stars!=null?N.shared.parseValue(this.rawValue.stars):void 0}constructor(e={}){this.rawValue=e}}l([c()],se.prototype,"reviewdate",null);l([c()],se.prototype,"createdate",null);l([c()],se.prototype,"stars",null);class un{constructor(e){var t,n;this.rawResponse=e,this.created=e.created,this.d1=e.d1,this.d2=e.d2,this.dir=e.dir,this.files=(t=e.files)===null||t===void 0?void 0:t.map(r=>new G(r)),this.files_count=e.files_count,this.item_last_updated=e.item_last_updated,this.item_size=e.item_size,this.metadata=new p(e.metadata),this.server=e.server,this.uniq=e.uniq,this.workable_servers=e.workable_servers,this.speech_vs_music_asr=e.speech_vs_music_asr,this.reviews=(n=e.reviews)===null||n===void 0?void 0:n.map(r=>new se(r))}}var O;(function(i){i.networkError="MetadataService.NetworkError",i.itemNotFound="MetadataService.ItemNotFound",i.decodingError="MetadataService.DecodingError",i.searchEngineError="MetadataService.SearchEngineError"})(O||(O={}));class ze extends Error{constructor(e,t,n){super(t),this.name=e,this.type=e,this.details=n}}class cn{constructor(e){var t;if(this.baseUrl=(t=e==null?void 0:e.baseUrl)!==null&&t!==void 0?t:"archive.org",(e==null?void 0:e.includeCredentials)!==void 0?this.includeCredentials=e.includeCredentials:this.includeCredentials=window.location.href.match(/^https?:\/\/.*archive\.org(:[0-9]+)?/)!==null,(e==null?void 0:e.scope)!==void 0)this.requestScope=e.scope;else{const r=new URL(window.location.href).searchParams.get("scope");r&&(this.requestScope=r)}}async fetchMetadata(e,t){const n=t?`/${t}`:"",r=`https://${this.baseUrl}/metadata/${e}${n}`;return this.fetchUrl(r,{requestOptions:{credentials:"omit"}})}async fetchUrl(e,t){var n;const r=new URL(e);this.requestScope&&r.searchParams.set("scope",this.requestScope);let s;try{const a=(n=t==null?void 0:t.requestOptions)!==null&&n!==void 0?n:{credentials:this.includeCredentials?"include":"same-origin"};s=await fetch(r.href,a)}catch(a){const d=a instanceof Error?a.message:typeof a=="string"?a:"Unknown error";return this.getErrorResult(O.networkError,d)}try{const a=await s.json(),d=a.error;if(d){const o=a.forensics;return this.getErrorResult(O.searchEngineError,d,o)}else return{success:a}}catch(a){const d=a instanceof Error?a.message:typeof a=="string"?a:"Unknown error";return this.getErrorResult(O.decodingError,d)}}getErrorResult(e,t,n){return{error:new ze(e,t,n)}}}class ct{constructor(e){this.backend=e}async fetchMetadata(e){var t;const n=await this.backend.fetchMetadata(e);return n.error?n:((t=n.success)===null||t===void 0?void 0:t.metadata)===void 0?{error:new ze(O.itemNotFound)}:{success:new un(n.success)}}async fetchMetadataValue(e,t){var n;const r=await this.backend.fetchMetadata(e,t);return r.error?r:((n=r.success)===null||n===void 0?void 0:n.result)===void 0?{error:new ze(O.itemNotFound)}:{success:r.success.result}}}ct.default=new ct(new cn);/**
+ */var Ce;((Ce=window.HTMLSlotElement)===null||Ce===void 0?void 0:Ce.prototype.assignedElements)!=null;function c(i){let e,t,r;return e=i,(n,s,a)=>{if(a.value!=null)a.value=pt(a.value,e,t,r);else if(a.get!=null)a.get=pt(a.get,e,t,r);else throw"Only put a Memoize() decorator on a method or get accessor."}}const ke=new Map;function pt(i,e,t=0,r){const n=Symbol("__memoized_map__");return function(...s){let a;this.hasOwnProperty(n)||Object.defineProperty(this,n,{configurable:!1,enumerable:!1,writable:!1,value:new Map});let d=this[n];if(Array.isArray(r))for(const o of r)ke.has(o)?ke.get(o).push(d):ke.set(o,[d]);if(e||s.length>0||t>0){let o;e===!0?o=s.map(f=>f.toString()).join("!"):e?o=e.apply(this,s):o=s[0];const u=`${o}__timestamp`;let h=!1;if(t>0)if(!d.has(u))h=!0;else{let f=d.get(u);h=Date.now()-f>t}d.has(o)&&!h?a=d.get(o):(a=i.apply(this,s),d.set(o,a),t>0&&d.set(u,Date.now()))}else{const o=this;d.has(o)?a=d.get(o):(a=i.apply(this,s),d.set(o,a))}return a}}class Oe{parseValue(e){return typeof e=="string"&&(e==="false"||e==="0")?!1:!!e}}Oe.shared=new Oe;class H{parseValue(e){if(typeof e=="number")return e;if(typeof e=="boolean")return;const t=parseFloat(e);if(!Number.isNaN(t))return t}}H.shared=new H;class pe{parseValue(e){return H.shared.parseValue(e)}}pe.shared=new pe;class se{parseValue(e){return this.parseJSDate(e)||this.parseBracketDate(e)}parseBracketDate(e){if(typeof e!="string")return;const t=e.match(/\[([0-9]{4})\]/);if(!(!t||t.length<2))return this.parseJSDate(t[1])}parseJSDate(e){if(typeof e!="string")return;let t=e;t.match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}\s{1}[0-9]{2}:[0-9]{2}:[0-9]{2}$/)&&(t=t.replace(" ","T"));const r=Date.parse(t);if(Number.isNaN(r))return;let n=new Date(t);return(t.indexOf("Z")>-1||t.indexOf("+")>-1||t.match(/^[0-9]{4}$/)||t.match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/)||t.match(/^.*?-[0-9]{2}:[0-9]{2}$/)||t.match(/^.*?-[0-9]{4}$/))&&(n=new Date(n.getTime()+n.getTimezoneOffset()*1e3*60)),n}}se.shared=new se;class fe{parseValue(e){if(typeof e=="number")return e;if(typeof e=="boolean")return;const t=e.split(":");let r;return t.length===1?r=this.parseNumberFormat(t[0]):r=this.parseColonSeparatedFormat(t),r}parseNumberFormat(e){let t=parseFloat(e);return Number.isNaN(t)&&(t=void 0),t}parseColonSeparatedFormat(e){let t=!1;const r=e.map((n,s)=>{const a=parseFloat(n);if(Number.isNaN(a))return t=!0,0;const o=60**(e.length-1-s);return a*Math.floor(o)}).reduce((n,s)=>n+s,0);return t?void 0:r}}fe.shared=new fe;class Ue{parseValue(e){if(typeof e=="string")return e}}Ue.shared=new Ue;class ar{constructor(e,t){this.separators=[";",","],this.parser=e,t&&t.separators&&(this.separators=t.separators)}parseValue(e){const t=String(e);let r=[];for(const n of this.separators)if(r=t.split(n),r.length>1)break;return this.parseListValues(r)}parseListValues(e){const r=e.map(s=>s.trim()).map(s=>this.parser.parseValue(s)),n=[];return r.forEach(s=>{s!==void 0&&n.push(s)}),n}}class De{parseValue(e){if(typeof e=="string")return e}}De.shared=new De;class ge{parseValue(e){return String(e)}}ge.shared=new ge;class M{get values(){return this.parseRawValue()}get value(){return this.values[0]}constructor(e,t){this.parser=e,this.rawValue=t}parseRawValue(){const e=Array.isArray(this.rawValue)?this.rawValue:[this.rawValue],t=[];return e.forEach(r=>{const n=this.parser.parseValue(r);Array.isArray(n)?t.push(...n):n!==void 0&&t.push(n)}),t}}l([c()],M.prototype,"values",null);l([c()],M.prototype,"value",null);class or extends M{constructor(e){super(Oe.shared,e)}}class L extends M{constructor(e){super(se.shared,e)}}class Re extends M{constructor(e){super(fe.shared,e)}}class E extends M{constructor(e){super(H.shared,e)}}class w extends M{constructor(e){super(ge.shared,e)}}class lr extends M{constructor(e){super(De.shared,e)}}class ft extends M{constructor(e){super(pe.shared,e)}}class dr extends M{constructor(e){super(Ue.shared,e)}}class ur extends M{constructor(e,t){super(t,e)}}class cr extends ur{constructor(e){const t=new ar(ge.shared);super(e,t)}}class p{get identifier(){return this.rawMetadata.identifier}get addeddate(){return this.rawMetadata.addeddate!=null?new L(this.rawMetadata.addeddate):void 0}get audio_codec(){return this.rawMetadata.audio_codec!=null?new w(this.rawMetadata.audio_codec):void 0}get audio_sample_rate(){return this.rawMetadata.audio_sample_rate!=null?new E(this.rawMetadata.audio_sample_rate):void 0}get avg_rating(){return this.rawMetadata.avg_rating!=null?new E(this.rawMetadata.avg_rating):void 0}get collection(){return this.rawMetadata.collection!=null?new w(this.rawMetadata.collection):void 0}get collections_raw(){return this.rawMetadata.collections_raw!=null?new w(this.rawMetadata.collections_raw):void 0}get collection_size(){return this.rawMetadata.collection_size!=null?new ft(this.rawMetadata.collection_size):void 0}get contributor(){return this.rawMetadata.contributor!=null?new w(this.rawMetadata.contributor):void 0}get coverage(){return this.rawMetadata.coverage!=null?new w(this.rawMetadata.coverage):void 0}get creator(){return this.rawMetadata.creator!=null?new w(this.rawMetadata.creator):void 0}get collection_layout(){return this.rawMetadata.collection_layout!=null?new w(this.rawMetadata.collection_layout):void 0}get date(){return this.rawMetadata.date!=null?new L(this.rawMetadata.date):void 0}get description(){return this.rawMetadata.description!=null?new w(this.rawMetadata.description):void 0}get downloads(){return this.rawMetadata.downloads!=null?new E(this.rawMetadata.downloads):void 0}get duration(){return this.rawMetadata.duration!=null?new Re(this.rawMetadata.duration):void 0}get external_identifier(){return this.rawMetadata["external-identifier"]!=null?new w(this.rawMetadata["external-identifier"]):void 0}get files_count(){return this.rawMetadata.files_count!=null?new E(this.rawMetadata.files_count):void 0}get indexdate(){return this.rawMetadata.indexdate!=null?new L(this.rawMetadata.indexdate):void 0}get isbn(){return this.rawMetadata.isbn!=null?new w(this.rawMetadata.isbn):void 0}get issue(){return this.rawMetadata.issue!=null?new w(this.rawMetadata.issue):void 0}get item_count(){return this.rawMetadata.item_count!=null?new E(this.rawMetadata.item_count):void 0}get item_size(){return this.rawMetadata.item_size!=null?new ft(this.rawMetadata.item_size):void 0}get language(){return this.rawMetadata.language!=null?new w(this.rawMetadata.language):void 0}get length(){return this.rawMetadata.length!=null?new Re(this.rawMetadata.length):void 0}get lineage(){return this.rawMetadata.lineage!=null?new w(this.rawMetadata.lineage):void 0}get month(){return this.rawMetadata.month!=null?new E(this.rawMetadata.month):void 0}get mediatype(){return this.rawMetadata.mediatype!=null?new dr(this.rawMetadata.mediatype):void 0}get noindex(){return this.rawMetadata.noindex!=null?new or(this.rawMetadata.noindex):void 0}get notes(){return this.rawMetadata.notes!=null?new w(this.rawMetadata.notes):void 0}get num_favorites(){return this.rawMetadata.num_favorites!=null?new E(this.rawMetadata.num_favorites):void 0}get num_reviews(){return this.rawMetadata.num_reviews!=null?new E(this.rawMetadata.num_reviews):void 0}get openlibrary_edition(){return this.rawMetadata.openlibrary_edition!=null?new w(this.rawMetadata.openlibrary_edition):void 0}get openlibrary_work(){return this.rawMetadata.openlibrary_work!=null?new w(this.rawMetadata.openlibrary_work):void 0}get page_progression(){return this.rawMetadata.page_progression!=null?new lr(this.rawMetadata.page_progression):void 0}get partner(){return this.rawMetadata.partner!=null?new w(this.rawMetadata.partner):void 0}get ppi(){return this.rawMetadata.ppi!=null?new E(this.rawMetadata.ppi):void 0}get publicdate(){return this.rawMetadata.publicdate!=null?new L(this.rawMetadata.publicdate):void 0}get publisher(){return this.rawMetadata.publisher!=null?new w(this.rawMetadata.publisher):void 0}get reviewdate(){return this.rawMetadata.reviewdate!=null?new L(this.rawMetadata.reviewdate):void 0}get runtime(){return this.rawMetadata.runtime!=null?new Re(this.rawMetadata.runtime):void 0}get scanner(){return this.rawMetadata.scanner!=null?new w(this.rawMetadata.scanner):void 0}get source(){return this.rawMetadata.source!=null?new w(this.rawMetadata.source):void 0}get start_localtime(){return this.rawMetadata.start_localtime!=null?new L(this.rawMetadata.start_localtime):void 0}get start_time(){return this.rawMetadata.start_time!=null?new L(this.rawMetadata.start_time):void 0}get stop_time(){return this.rawMetadata.stop_time!=null?new L(this.rawMetadata.stop_time):void 0}get subject(){return this.rawMetadata.subject!=null?new cr(this.rawMetadata.subject):void 0}get taper(){return this.rawMetadata.taper!=null?new w(this.rawMetadata.taper):void 0}get title(){return this.rawMetadata.title!=null?new w(this.rawMetadata.title):void 0}get transferer(){return this.rawMetadata.transferer!=null?new w(this.rawMetadata.transferer):void 0}get track(){return this.rawMetadata.track!=null?new E(this.rawMetadata.track):void 0}get type(){return this.rawMetadata.type!=null?new w(this.rawMetadata.type):void 0}get uploader(){return this.rawMetadata.uploader!=null?new w(this.rawMetadata.uploader):void 0}get utc_offset(){return this.rawMetadata.utc_offset!=null?new E(this.rawMetadata.utc_offset):void 0}get venue(){return this.rawMetadata.venue!=null?new w(this.rawMetadata.venue):void 0}get volume(){return this.rawMetadata.volume!=null?new w(this.rawMetadata.volume):void 0}get week(){return this.rawMetadata.week!=null?new E(this.rawMetadata.week):void 0}get year(){return this.rawMetadata.year!=null?new E(this.rawMetadata.year):void 0}constructor(e={}){this.rawMetadata=e}}l([c()],p.prototype,"addeddate",null);l([c()],p.prototype,"audio_codec",null);l([c()],p.prototype,"audio_sample_rate",null);l([c()],p.prototype,"avg_rating",null);l([c()],p.prototype,"collection",null);l([c()],p.prototype,"collections_raw",null);l([c()],p.prototype,"collection_size",null);l([c()],p.prototype,"contributor",null);l([c()],p.prototype,"coverage",null);l([c()],p.prototype,"creator",null);l([c()],p.prototype,"collection_layout",null);l([c()],p.prototype,"date",null);l([c()],p.prototype,"description",null);l([c()],p.prototype,"downloads",null);l([c()],p.prototype,"duration",null);l([c()],p.prototype,"external_identifier",null);l([c()],p.prototype,"files_count",null);l([c()],p.prototype,"indexdate",null);l([c()],p.prototype,"isbn",null);l([c()],p.prototype,"issue",null);l([c()],p.prototype,"item_count",null);l([c()],p.prototype,"item_size",null);l([c()],p.prototype,"language",null);l([c()],p.prototype,"length",null);l([c()],p.prototype,"lineage",null);l([c()],p.prototype,"month",null);l([c()],p.prototype,"mediatype",null);l([c()],p.prototype,"noindex",null);l([c()],p.prototype,"notes",null);l([c()],p.prototype,"num_favorites",null);l([c()],p.prototype,"num_reviews",null);l([c()],p.prototype,"openlibrary_edition",null);l([c()],p.prototype,"openlibrary_work",null);l([c()],p.prototype,"page_progression",null);l([c()],p.prototype,"partner",null);l([c()],p.prototype,"ppi",null);l([c()],p.prototype,"publicdate",null);l([c()],p.prototype,"publisher",null);l([c()],p.prototype,"reviewdate",null);l([c()],p.prototype,"runtime",null);l([c()],p.prototype,"scanner",null);l([c()],p.prototype,"source",null);l([c()],p.prototype,"start_localtime",null);l([c()],p.prototype,"start_time",null);l([c()],p.prototype,"stop_time",null);l([c()],p.prototype,"subject",null);l([c()],p.prototype,"taper",null);l([c()],p.prototype,"title",null);l([c()],p.prototype,"transferer",null);l([c()],p.prototype,"track",null);l([c()],p.prototype,"type",null);l([c()],p.prototype,"uploader",null);l([c()],p.prototype,"utc_offset",null);l([c()],p.prototype,"venue",null);l([c()],p.prototype,"volume",null);l([c()],p.prototype,"week",null);l([c()],p.prototype,"year",null);class Q{get name(){return this.rawValue.name}get source(){return this.rawValue.source}get btih(){return this.rawValue.btih}get md5(){return this.rawValue.md5}get format(){return this.rawValue.format}get mtime(){return this.rawValue.mtime}get crc32(){return this.rawValue.crc32}get sha1(){return this.rawValue.sha1}get original(){return this.rawValue.original}get size(){return this.rawValue.size!=null?pe.shared.parseValue(this.rawValue.size):void 0}get title(){return this.rawValue.title}get length(){return this.rawValue.length!=null?fe.shared.parseValue(this.rawValue.length):void 0}get height(){return this.rawValue.height!=null?H.shared.parseValue(this.rawValue.height):void 0}get width(){return this.rawValue.width!=null?H.shared.parseValue(this.rawValue.width):void 0}get track(){return this.rawValue.track!=null?H.shared.parseValue(this.rawValue.track):void 0}get external_identifier(){return this.rawValue.external_identifier}get creator(){return this.rawValue.creator}get album(){return this.rawValue.album}constructor(e={}){this.rawValue=e}}l([c()],Q.prototype,"size",null);l([c()],Q.prototype,"length",null);l([c()],Q.prototype,"height",null);l([c()],Q.prototype,"width",null);l([c()],Q.prototype,"track",null);class J{get reviewbody(){return this.rawValue.reviewbody}get reviewtitle(){return this.rawValue.reviewtitle}get reviewer(){return this.rawValue.reviewer}get reviewdate(){return this.rawValue.reviewdate!=null?se.shared.parseValue(this.rawValue.reviewdate):void 0}get createdate(){return this.rawValue.createdate!=null?se.shared.parseValue(this.rawValue.createdate):void 0}get stars(){return this.rawValue.stars!=null?H.shared.parseValue(this.rawValue.stars):void 0}constructor(e={}){this.rawValue=e}}l([c()],J.prototype,"reviewdate",null);l([c()],J.prototype,"createdate",null);l([c()],J.prototype,"stars",null);class hr{constructor(e){var t,r;this.rawResponse=e,this.created=e.created,this.d1=e.d1,this.d2=e.d2,this.dir=e.dir,this.files=(t=e.files)===null||t===void 0?void 0:t.map(n=>new Q(n)),this.files_count=e.files_count,this.item_last_updated=e.item_last_updated,this.item_size=e.item_size,this.metadata=new p(e.metadata),this.server=e.server,this.uniq=e.uniq,this.workable_servers=e.workable_servers,this.speech_vs_music_asr=e.speech_vs_music_asr,this.reviews=(r=e.reviews)===null||r===void 0?void 0:r.map(n=>new J(n))}}var O;(function(i){i.networkError="MetadataService.NetworkError",i.itemNotFound="MetadataService.ItemNotFound",i.decodingError="MetadataService.DecodingError",i.searchEngineError="MetadataService.SearchEngineError"})(O||(O={}));class ze extends Error{constructor(e,t,r){super(t),this.name=e,this.type=e,this.details=r}}class pr{constructor(e){var t;if(this.baseUrl=(t=e==null?void 0:e.baseUrl)!==null&&t!==void 0?t:"archive.org",(e==null?void 0:e.includeCredentials)!==void 0?this.includeCredentials=e.includeCredentials:this.includeCredentials=window.location.href.match(/^https?:\/\/.*archive\.org(:[0-9]+)?/)!==null,(e==null?void 0:e.scope)!==void 0)this.requestScope=e.scope;else{const n=new URL(window.location.href).searchParams.get("scope");n&&(this.requestScope=n)}}async fetchMetadata(e,t){const r=t?`/${t}`:"",n=`https://${this.baseUrl}/metadata/${e}${r}`;return this.fetchUrl(n,{requestOptions:{credentials:"omit"}})}async fetchUrl(e,t){var r;const n=new URL(e);this.requestScope&&n.searchParams.set("scope",this.requestScope);let s;try{const a=(r=t==null?void 0:t.requestOptions)!==null&&r!==void 0?r:{credentials:this.includeCredentials?"include":"same-origin"};s=await fetch(n.href,a)}catch(a){const d=a instanceof Error?a.message:typeof a=="string"?a:"Unknown error";return this.getErrorResult(O.networkError,d)}try{const a=await s.json(),d=a.error;if(d){const o=a.forensics;return this.getErrorResult(O.searchEngineError,d,o)}else return{success:a}}catch(a){const d=a instanceof Error?a.message:typeof a=="string"?a:"Unknown error";return this.getErrorResult(O.decodingError,d)}}getErrorResult(e,t,r){return{error:new ze(e,t,r)}}}class gt{constructor(e){this.backend=e}async fetchMetadata(e){var t;const r=await this.backend.fetchMetadata(e);return r.error?r:((t=r.success)===null||t===void 0?void 0:t.metadata)===void 0?{error:new ze(O.itemNotFound)}:{success:new hr(r.success)}}async fetchMetadataValue(e,t){var r;const n=await this.backend.fetchMetadata(e,t);return n.error?n:((r=n.success)===null||r===void 0?void 0:r.result)===void 0?{error:new ze(O.itemNotFound)}:{success:n.success.result}}}gt.default=new gt(new pr);let fr=()=>({events:{},emit(i,...e){(this.events[i]||[]).forEach(t=>t(...e))},on(i,e){return(this.events[i]=this.events[i]||[]).push(e),()=>this.events[i]=(this.events[i]||[]).filter(t=>t!==e)}});function gr(i){return new Promise(e=>setTimeout(e,i))}var C;(function(i){i.retryNumber="retryNumber",i.owner="owner",i.dynamicImportLoaded="dynamicImportLoaded",i.hasBeenRetried="hasBeenRetried"})(C||(C={}));const mt="lazyLoaderService";class mr{constructor(e){var t,r,n;this.emitter=fr(),this.container=(t=e==null?void 0:e.container)!==null&&t!==void 0?t:document.head,this.retryCount=(r=e==null?void 0:e.retryCount)!==null&&r!==void 0?r:2,this.retryInterval=(n=e==null?void 0:e.retryInterval)!==null&&n!==void 0?n:1}on(e,t){return this.emitter.on(e,t)}loadBundle(e){return oe(this,void 0,void 0,function*(){let t,r;return e.module&&(t=this.loadScript({src:e.module,bundleType:"module"})),e.nomodule&&(r=this.loadScript({src:e.nomodule,bundleType:"nomodule"})),Promise.race([t,r])})}loadScript(e){return oe(this,void 0,void 0,function*(){return this.doLoad(e)})}doLoad(e){var t;return oe(this,void 0,void 0,function*(){const r=(t=e.retryNumber)!==null&&t!==void 0?t:0,n=`script[src='${e.src}'][async][${C.owner}='${mt}'][${C.retryNumber}='${r}']`;let s=this.container.querySelector(n);return s||(s=this.getScriptTag(Object.assign(Object.assign({},e),{retryNumber:r})),this.container.appendChild(s)),new Promise((a,d)=>{if(s.getAttribute(C.dynamicImportLoaded)){a();return}const o=e.scriptBeingRetried,u=s.onload||(o==null?void 0:o.onload);s.onload=f=>{u==null||u(f),s.setAttribute(C.dynamicImportLoaded,"true"),a()};const h=s.onerror||(o==null?void 0:o.onerror);s.onerror=f=>oe(this,void 0,void 0,function*(){const g=s.getAttribute(C.hasBeenRetried);if(r<this.retryCount&&!g){s.setAttribute(C.hasBeenRetried,"true"),yield gr(this.retryInterval*1e3);const v=r+1;this.emitter.emit("scriptLoadRetried",e.src,v),this.doLoad(Object.assign(Object.assign({},e),{retryNumber:v,scriptBeingRetried:s}))}else g||this.emitter.emit("scriptLoadFailed",e.src,f),h==null||h(f),d(f)})})})}getScriptTag(e){var t;const r=e.src.replace("'",'"'),n=document.createElement("script"),s=e.retryNumber;n.setAttribute(C.owner,mt),n.setAttribute("src",r),n.setAttribute(C.retryNumber,s.toString()),n.async=!0;const a=(t=e.attributes)!==null&&t!==void 0?t:{};switch(Object.keys(a).forEach(d=>{n.setAttribute(d,a[d])}),e.bundleType){case"module":n.setAttribute("type",e.bundleType);break;case"nomodule":n.setAttribute(e.bundleType,"");break}return n}}class yr{constructor(e,t){this.widgetId=null,this.isExecuting=!1,this.siteKey=e.siteKey,this.grecaptchaLibrary=e.grecaptchaLibrary;const r=this.createContainer();this.setup(r,t)}async execute(){const{widgetId:e}=this;if(e===null)throw new Error("Recaptcha is not setup");return this.isExecuting&&this.finishExecution(),this.isExecuting=!0,new Promise((t,r)=>{this.executionSuccessBlock=n=>{this.finishExecution(),t(n)},this.executionExpiredBlock=()=>{this.finishExecution(),r(new Error("expired"))},this.executionErrorBlock=()=>{this.finishExecution(),r(new Error("error"))},this.grecaptchaLibrary.execute(e)})}finishExecution(){this.isExecuting=!1;const{widgetId:e}=this;e!==null&&this.grecaptchaLibrary.reset(e)}setup(e,t){var r;this.widgetId=this.grecaptchaLibrary.render(e,{callback:this.responseHandler.bind(this),"expired-callback":this.expiredHandler.bind(this),"error-callback":this.errorHandler.bind(this),sitekey:this.siteKey,tabindex:t==null?void 0:t.tabindex,theme:t==null?void 0:t.theme,type:t==null?void 0:t.type,size:(r=t==null?void 0:t.size)!==null&&r!==void 0?r:"invisible",badge:t==null?void 0:t.badge})}createContainer(e){const t=`recaptchaManager-${this.siteKey}`;let r=document.getElementById(t);return r||(r=document.createElement("div"),r.id=t,r.style.position="fixed",r.style.top="50%",r.style.left="50%",r.style.zIndex=e?`${e}`:"10",document.body.appendChild(r)),r}responseHandler(e){this.executionSuccessBlock&&(this.executionSuccessBlock(e),this.executionSuccessBlock=void 0)}expiredHandler(){this.executionExpiredBlock&&(this.executionExpiredBlock(),this.executionExpiredBlock=void 0)}errorHandler(){this.executionErrorBlock&&(this.executionErrorBlock(),this.executionErrorBlock=void 0)}}class yt{constructor(e){var t;this.recaptchaCache={},this.defaultSiteKey=e==null?void 0:e.defaultSiteKey,this.lazyLoader=(t=e==null?void 0:e.lazyLoader)!==null&&t!==void 0?t:new mr,this.grecaptchaLibraryCache=e==null?void 0:e.grecaptchaLibrary}async getRecaptchaWidget(e){var t;const r=(t=e==null?void 0:e.siteKey)!==null&&t!==void 0?t:this.defaultSiteKey;if(!r)throw new Error("The reCaptcha widget requires a site key");const n=this.recaptchaCache[r];if(n)return n;const s=await this.getRecaptchaLibrary(),a=new yr({siteKey:r,grecaptchaLibrary:s},e==null?void 0:e.recaptchaParams);return this.recaptchaCache[r]=a,a}async getRecaptchaLibrary(){return this.grecaptchaLibraryCache?this.grecaptchaLibraryCache:new Promise(e=>{window.grecaptchaLoadedCallback=()=>{setTimeout(()=>{delete window.grecaptchaLoadedCallback},10),this.grecaptchaLibraryCache=window.grecaptcha,e(window.grecaptcha)},this.lazyLoader.loadScript({src:"https://www.google.com/recaptcha/api.js?onload=grecaptchaLoadedCallback&render=explicit"})})}}/**
  * @license
  * Copyright 2021 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */const hn=i=>typeof i!="string"&&"strTag"in i,pn=(i,e,t)=>{let n=i[0];for(let r=1;r<i.length;r++)n+=e[r-1],n+=i[r];return n};/**
+ */const wr=i=>typeof i!="string"&&"strTag"in i,br=(i,e,t)=>{let r=i[0];for(let n=1;n<i.length;n++)r+=e[n-1],r+=i[n];return r};/**
  * @license
  * Copyright 2021 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */const fn=i=>hn(i)?pn(i.strings,i.values):i;let x=fn;/**
+ */const vr=i=>wr(i)?br(i.strings,i.values):i;let _=vr;/**
  * @license
  * Copyright 2020 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */class gn{constructor(){this.settled=!1,this.promise=new Promise((e,t)=>{this._resolve=e,this._reject=t})}resolve(e){this.settled=!0,this._resolve(e)}reject(e){this.settled=!0,this._reject(e)}}/**
+ */class $r{constructor(){this.settled=!1,this.promise=new Promise((e,t)=>{this._resolve=e,this._reject=t})}resolve(e){this.settled=!0,this._resolve(e)}reject(e){this.settled=!0,this._reject(e)}}/**
  * @license
  * Copyright 2014 Travis Webb
  * SPDX-License-Identifier: MIT
@@ -66,23 +66,11 @@
  * @license
  * Copyright 2021 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */let mn=new gn;mn.resolve();const yn=kt`
-  <svg class="star-selected" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <path
-    d="m81.0388846 100-30.9636029-22.5595033-30.7410319 22.5595033 10.6670595-37.3922042-30.0013093-25.2155916h37.5556428l12.5196389-37.3922042 12.3690754 37.3922042h37.5556429l-29.7034563 25.2155916z"
-    fill="#f0b445"
-  />
-</svg>`,wn=kt`
-  <svg class="star-unselected" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <path
-    d="m81.0388846 100-30.9636029-22.5595033-30.7410319 22.5595033 10.6670595-37.3922042-30.0013093-25.2155916h37.5556428l12.5196389-37.3922042 12.3690754 37.3922042h37.5556429l-29.7034563 25.2155916z"
-    fill="#e0e0e0"
-  />
-</svg>`,ht=$`var(--white, #fff)`,$n=$`var(--ia-theme-link-color, #4b64ff)`,bn=$`var(--primaryDisableCTAFill, #767676)`,_n=$`var(--secondaryCTABorder, #999)`,vn=$`var(--primaryCTAFill, #194880)`,Ce=$`var(--primaryCTAFillRGB, 25, 72, 128)`,An=$`var(--primaryCTABorder, #c5d1df)`,xn=$`var(--primaryErrorCTAFill, #d9534f)`,Re=$`var(--primaryErrorCTAFillRGB, 229, 28, 38)`,Sn=$`var(--primaryErrorCTABorder, #d43f3a)`,Mn=$`var(--secondaryCTAFill, #333)`,Be=$`var(--secondaryCTAFillRGB, 51, 51, 51)`,En=$`var(--primaryCTABorder, #979797)`,kn=$`var(---primaryWarningFill, #ee8950)`,Le=$`var(--primaryWarningFillRGB, 238, 137, 80)`,Cn=$`var(--primaryWarningBorder, #ec7939)`,Rn=$`
+ */let _r=new $r;_r.resolve();const wt=b`var(--white, #fff)`,Ar=b`var(--ia-theme-link-color, #4b64ff)`,xr=b`var(--primaryDisableCTAFill, #767676)`,Sr=b`var(--secondaryCTABorder, #999)`,Er=b`var(--primaryCTAFill, #194880)`,Le=b`var(--primaryCTAFillRGB, 25, 72, 128)`,Mr=b`var(--primaryCTABorder, #c5d1df)`,Cr=b`var(--primaryErrorCTAFill, #d9534f)`,Te=b`var(--primaryErrorCTAFillRGB, 229, 28, 38)`,kr=b`var(--primaryErrorCTABorder, #d43f3a)`,Rr=b`var(--secondaryCTAFill, #333)`,Be=b`var(--secondaryCTAFillRGB, 51, 51, 51)`,Lr=b`var(--primaryCTABorder, #979797)`,Tr=b`var(---primaryWarningFill, #ee8950)`,Ne=b`var(--primaryWarningFillRGB, 238, 137, 80)`,Br=b`var(--primaryWarningBorder, #ec7939)`,Nr=b`
   .ia-button {
     min-height: 3rem;
     cursor: pointer;
-    color: ${ht};
+    color: ${wt};
     line-height: normal;
     border-radius: 0.4rem;
     font-size: 1.4rem;
@@ -96,7 +84,7 @@
     transition: all 0.1s ease 0s;
     vertical-align: middle;
     padding: 0 3rem;
-    outline-color: ${ht};
+    outline-color: ${wt};
     outline-offset: -4px;
     user-select: none;
     text-decoration: none;
@@ -111,8 +99,8 @@
   }
   .ia-button:disabled {
     cursor: not-allowed;
-    background-color: ${bn};
-    border: 1px solid ${_n};
+    background-color: ${xr};
+    border: 1px solid ${Sr};
   }
   .ia-button.transparent {
     background-color: transparent;
@@ -126,50 +114,50 @@
   }
 
   .ia-button.primary {
-    background-color: ${vn};
-    border-color: ${An};
+    background-color: ${Er};
+    border-color: ${Mr};
   }
   .ia-button.primary:hover {
-    background-color: rgba(${Ce}, 0.9);
-  }
-  .ia-button.primary:focus-visible {
-    background-color: rgba(${Ce}, 0.8);
-  }
-  .ia-button.primary:active {
-    background-color: rgba(${Ce}, 0.7);
-  }
-
-  .ia-button.danger {
-    background-color: ${xn};
-    border-color: ${Sn};
-  }
-  .ia-button.danger:hover {
-    background-color: rgba(${Re}, 0.9);
-  }
-  .ia-button.danger:focus-visible {
-    background-color: rgba(${Re}, 0.8);
-  }
-  .ia-button.danger:active {
-    background-color: rgba(${Re}, 0.7);
-  }
-
-  .ia-button.warning {
-    background-color: ${kn};
-    border-color: ${Cn};
-  }
-  .ia-button.warning:hover {
     background-color: rgba(${Le}, 0.9);
   }
-  .ia-button.warning:focus-visible {
+  .ia-button.primary:focus-visible {
     background-color: rgba(${Le}, 0.8);
   }
-  .ia-button.warning:active {
+  .ia-button.primary:active {
     background-color: rgba(${Le}, 0.7);
   }
 
+  .ia-button.danger {
+    background-color: ${Cr};
+    border-color: ${kr};
+  }
+  .ia-button.danger:hover {
+    background-color: rgba(${Te}, 0.9);
+  }
+  .ia-button.danger:focus-visible {
+    background-color: rgba(${Te}, 0.8);
+  }
+  .ia-button.danger:active {
+    background-color: rgba(${Te}, 0.7);
+  }
+
+  .ia-button.warning {
+    background-color: ${Tr};
+    border-color: ${Br};
+  }
+  .ia-button.warning:hover {
+    background-color: rgba(${Ne}, 0.9);
+  }
+  .ia-button.warning:focus-visible {
+    background-color: rgba(${Ne}, 0.8);
+  }
+  .ia-button.warning:active {
+    background-color: rgba(${Ne}, 0.7);
+  }
+
   .ia-button.dark {
-    background-color: ${Mn};
-    border-color: ${En};
+    background-color: ${Rr};
+    border-color: ${Lr};
   }
   .ia-button.dark:hover {
     background-color: rgba(${Be}, 0.9);
@@ -187,14 +175,14 @@
     border: 0;
     appearance: none;
     background: none;
-    color: ${$n};
+    color: ${Ar};
     text-decoration: none;
     cursor: pointer;
   }
   .ia-button.link:hover {
     text-decoration: underline;
   }
-`;$`
+`;b`
   .sr-only {
     position: absolute !important;
     width: 1px !important;
@@ -209,21 +197,263 @@
     clip-path: inset(50%) !important;
     user-select: none !important;
   }
-`;let b=class extends F{constructor(){super(...arguments),this.token="",this.baseHost="https://archive.org",this.endpointPath="/write-review.php",this.prefilledErrors=[],this.bypassRecaptcha=!1,this.recaptchaToken="",this.recaptchaError=!1,this.currentStars=0,this.currentSubjectLength=0,this.currentBodyLength=0,this.formCanSubmit=!1}render(){return v`<form
-      id="review-form"
-      action="${this.baseHost}${this.endpointPath}"
-      method="post"
+`;var bt;(function(i){i.processing="processing",i.complete="complete"})(bt||(bt={}));let Fe=class extends N{constructor(){super(...arguments),this.mode="processing"}render(){return y`
+      <div class="${this.mode}">
+        <svg
+          viewBox="0 0 120 120"
+          preserveAspectRatio="none"
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          aria-labelledby="indicatorTitle indicatorDescription"
+        >
+          <title id="indicatorTitle">Activity Indicator</title>
+          <desc id="indicatorDescription">
+            A rotating activity indicator with three dots in the middle.
+          </desc>
+          <g
+            id="icons/check-ring---squared"
+            stroke="none"
+            stroke-width="1"
+            fill="none"
+            fill-rule="evenodd"
+          >
+            <path
+              id="completed-ring"
+              class="loaded-indicator"
+              d="M60,10 C70.5816709,10 80.3955961,13.2871104 88.4763646,18.8959201 L78.3502633,29.0214223 C72.9767592,25.8315427 66.7022695,24 60,24 C40.117749,24 24,40.117749 24,60 C24,79.882251 40.117749,96 60,96 C79.882251,96 96,79.882251 96,60 L95.995,59.46 L108.327675,47.128668 C109.350926,50.9806166 109.925886,55.015198 109.993301,59.1731586 L110,60 C110,87.6142375 87.6142375,110 60,110 C32.3857625,110 10,87.6142375 10,60 C10,32.3857625 32.3857625,10 60,10 Z"
+            ></path>
+            <polygon
+              id="check"
+              class="loaded-indicator"
+              transform="translate(75.000000, 41.500000) rotate(44.000000) translate(-75.000000, -41.500000) "
+              points="96 85 54 85 54 65 76 64.999 76 -2 96 -2"
+            ></polygon>
+            <path
+              id="activity-ring"
+              class="activity-indicator"
+              d="M60,10 C69.8019971,10 78.9452178,12.8205573 86.6623125,17.6943223 L76.4086287,27.9484118 C71.4880919,25.4243078 65.9103784,24 60,24 C40.117749,24 24,40.117749 24,60 C24,79.882251 40.117749,96 60,96 C79.882251,96 96,79.882251 96,60 C96,53.3014663 94.1704984,47.0302355 90.9839104,41.6587228 L101.110332,31.5326452 C106.715332,39.6116982 110,49.4222615 110,60 C110,87.6142375 87.6142375,110 60,110 C32.3857625,110 10,87.6142375 10,60 C10,32.3857625 32.3857625,10 60,10 Z"
+            ></path>
+            <g
+              id="activity-dots"
+              class="activity-indicator"
+              transform="translate(40.000000, 55.000000)"
+            >
+              <circle id="left-dot" cx="5" cy="5" r="5"></circle>
+              <circle id="middle-dot" cx="20" cy="5" r="5"></circle>
+              <circle id="right-dot" cx="35" cy="5" r="5"></circle>
+            </g>
+          </g>
+        </svg>
+      </div>
+    `}static get styles(){const e=b`var(--activityIndicatorCheckmarkColor, #31A481)`,t=b`var(--activityIndicatorCompletedRingColor, #31A481)`,r=b`var(--activityIndicatorLoadingRingColor, #333333)`,n=b`var(--activityIndicatorLoadingDotColor, #333333)`;return b`
+      #completed-ring {
+        fill: ${t};
+      }
+
+      #check {
+        fill: ${e};
+      }
+
+      #activity-ring {
+        fill: ${r};
+      }
+
+      #activity-dots {
+        fill: ${n};
+      }
+
+      .activity-indicator {
+        opacity: 0;
+        transition: opacity 0.25s ease-out;
+      }
+
+      .processing .activity-indicator {
+        opacity: 1;
+      }
+
+      .loaded-indicator {
+        opacity: 1;
+        transition: opacity 0.25s ease-out;
+      }
+
+      .processing .loaded-indicator {
+        opacity: 0;
+      }
+
+      .image {
+        border: 1px solid red;
+        display: inline-block;
+      }
+
+      .processing #activity-ring {
+        animation: rotate 1.3s infinite linear;
+        transform-origin: 50px 50px;
+        transform-box: fill-box;
+      }
+
+      .processing #left-dot {
+        opacity: 0;
+        animation: dot 1.3s infinite;
+        animation-delay: 0.2s;
+      }
+
+      .processing #middle-dot {
+        opacity: 0;
+        animation: dot 1.3s infinite;
+        animation-delay: 0.4s;
+      }
+
+      .processing #right-dot {
+        opacity: 0;
+        animation: dot 1.3s infinite;
+        animation-delay: 0.6s;
+      }
+
+      @keyframes rotate {
+        0% {
+          transform: rotate(-360deg);
+        }
+        100% {
+          /* This frame is supposed to be inferred, but Safari doesn't rotate it unless we're explicit */
+          transform: rotate(0deg);
+        }
+      }
+
+      @keyframes dot {
+        0% {
+          opacity: 0;
+        }
+        25% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+    `}};l([x({type:String})],Fe.prototype,"mode",void 0);Fe=l([we("ia-activity-indicator")],Fe);const Hr=Ke`
+  <svg class="star-selected" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <path
+    d="m81.0388846 100-30.9636029-22.5595033-30.7410319 22.5595033 10.6670595-37.3922042-30.0013093-25.2155916h37.5556428l12.5196389-37.3922042 12.3690754 37.3922042h37.5556429l-29.7034563 25.2155916z"
+    fill="#f0b445"
+  />
+</svg>`,Pr=Ke`
+  <svg class="star-unselected" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <path
+    d="m81.0388846 100-30.9636029-22.5595033-30.7410319 22.5595033 10.6670595-37.3922042-30.0013093-25.2155916h37.5556428l12.5196389-37.3922042 12.3690754 37.3922042h37.5556429l-29.7034563 25.2155916z"
+    fill="#e0e0e0"
+  />
+</svg>`,Ir=Ke`
+  <svg class="star-basic" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <path
+    d="m81.0388846 100-30.9636029-22.5595033-30.7410319 22.5595033 10.6670595-37.3922042-30.0013093-25.2155916h37.5556428l12.5196389-37.3922042 12.3690754 37.3922042h37.5556429l-29.7034563 25.2155916z"
+    fill="currentColor"
+  />
+</svg>`;let z=class extends N{constructor(){super(...arguments),this.maxSubjectLength=100,this.maxBodyLength=1e3,this.baseHost="https://archive.org",this.showTruncatedContent=!1}render(){return this.review?y`<article class="review" id=${this.review.domId}>
+          <div class="top-line">
+            <b>${_("Reviewer:")} </b>${this.reviewerTemplate} -
+            ${this.starsTemplate}${this.createDateTemplate}
+          </div>
+          <div class="subject">
+            <b>${_("Subject: ")}</b>${this.subjectTemplate}
+          </div>
+          <div class="body">${this.bodyTemplate}</div>
+          ${this.truncationButtonsTemplate}
+        </article>`:y`<div class="error">
+          ${_("This review cannot be displayed at this time.")}
+        </div>`}get subjectTemplate(){var e;return!((e=this.review)===null||e===void 0)&&e.reviewtitle?this.review.reviewtitle.length<=this.maxSubjectLength||this.showTruncatedContent?this.review.reviewtitle:this.review.reviewtitle.slice(0,this.maxSubjectLength).concat("..."):""}get bodyTemplate(){var e;return!((e=this.review)===null||e===void 0)&&e.reviewbody?this.review.reviewbody.length<=this.maxBodyLength||this.showTruncatedContent?this.review.reviewbody:this.review.reviewbody.slice(0,this.maxBodyLength).concat("..."):""}get truncationButtonsTemplate(){var e,t;return!(!((e=this.review)===null||e===void 0)&&e.reviewtitle)||!(!((t=this.review)===null||t===void 0)&&t.reviewbody)||this.review.reviewtitle.length<=this.maxSubjectLength&&this.review.reviewbody.length<=this.maxBodyLength?m:this.showTruncatedContent?this.lessButtonTemplate:this.moreButtonTemplate}get moreButtonTemplate(){return y`<button
+      class="simple-link more-btn"
+      @click=${()=>this.showTruncatedContent=!0}
     >
-      ${this.prefilledErrors.length?this.prefilledErrors.map(e=>v`<div class="errors prefilled-error">${e}</div>`):y}
-      ${this.recaptchaError?v`<div class="errors recaptcha-error">
-            ${x("Could not validate review. Please try again later.")}
-          </div>`:y}
-      ${this.starsInputTemplate} ${this.subjectInputTemplate}
-      ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
-      ${this.actionButtonsTemplate}
-    </form>`}firstUpdated(){this.formCanSubmit=this.checkSubmissionAllowed()}updated(e){e.has("oldReview")&&this.oldReview&&(this.oldReview.stars&&(this.currentStars=this.oldReview.stars),this.oldReview.reviewtitle&&(this.currentSubjectLength=this.oldReview.reviewtitle.length),this.oldReview.reviewbody&&(this.currentBodyLength=this.oldReview.reviewbody.length)),e.has("recaptchaManager")&&!this.bypassRecaptcha&&this.recaptchaManager&&this.setupRecaptcha(),(e.has("currentSubjectLength")||e.has("currentBodyLength"))&&(this.formCanSubmit=this.checkSubmissionAllowed())}get starsInputTemplate(){return v`
+      ${_("More...")}
+    </button>`}get lessButtonTemplate(){return y`<button
+      class="simple-link less-btn"
+      @click=${()=>this.showTruncatedContent=!1}
+    >
+      ${_("...Less")}
+    </button>`}get reviewerTemplate(){return this.review?this.review.itemname?y`<a
+            href="${this.baseHost}/details/${this.review.itemname}"
+            class="reviewer-link simple-link"
+            data-event-click-tracking="ItemReviews|ReviewerLink"
+            >${this.review.screenname}</a
+          >`:y`${this.review.screenname}`:m}get starsTemplate(){return!this.review||!this.review.stars?m:y`<div
+        class="review-stars"
+        title="${_(`${this.review.stars} out of 5 stars`)}"
+      >
+        ${new Array(this.review.stars).fill(null).map(()=>y`<div class="review-star">${Ir}</div>`)}
+      </div>
+      - `}get createDateTemplate(){var e,t,r;if(!this.review)return m;const n=(e=this.review.createdate)===null||e===void 0?void 0:e.toLocaleString("en-us",{month:"long",day:"numeric",year:"numeric"}),s=((t=this.review.reviewdate)===null||t===void 0?void 0:t.getTime())!==((r=this.review.createdate)===null||r===void 0?void 0:r.getTime())?"(edited)":"";return _(`${n} ${s}`)}static get styles(){return b`
+      :host {
+        font-family: var(
+          --ia-font-stack,
+          'Helvetica Neue',
+          Helvetica,
+          Arial,
+          sans-serif
+        );
+
+        font-size: inherit;
+      }
+
+      .error {
+        color: var(--ia-theme-error-color, #cc0000);
+      }
+
+      .top-line {
+        display: flex;
+        flex-direction: row;
+        gap: 3px;
+        margin-bottom: 0.5rem;
+      }
+
+      .review-star {
+        width: 1rem;
+      }
+
+      .review-stars {
+        display: flex;
+        flex-direction: row;
+      }
+
+      .simple-link {
+        color: var(--ia-link-color, #4b64ff);
+        text-decoration: none;
+        background: transparent;
+        border: none;
+        padding: 0px;
+      }
+
+      .simple-link:hover {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+
+      .subject {
+        margin-bottom: 0.5rem;
+      }
+    `}};l([x({type:Object})],z.prototype,"review",void 0);l([x({type:Number})],z.prototype,"maxSubjectLength",void 0);l([x({type:Number})],z.prototype,"maxBodyLength",void 0);l([x({type:String})],z.prototype,"baseHost",void 0);l([S()],z.prototype,"showTruncatedContent",void 0);z=l([we("ia-review")],z);let $=class extends N{constructor(){super(...arguments),this.token="",this.baseHost="https://archive.org",this.endpointPath="/write-review.php",this.displayMode="form",this.bypassRecaptcha=!1,this.recaptchaToken="",this.currentStars=0,this.currentSubjectLength=0,this.currentBodyLength=0,this.formCanSubmit=!1,this.submissionInProgress=!1,this.RECAPTCHA_ERROR_MESSAGE="Could not validate review. Please try again later."}render(){return this.displayMode==="review"?y`<ia-review .review=${this.oldReview}></ia-review>`:y`
+          <form
+            id="review-form"
+            action="${this.baseHost}${this.endpointPath}"
+            method="post"
+          >
+            ${this.unrecoverableError?this.unrecoverableErrorTemplate:y`
+                  <span class="inputs">
+                    ${this.starsInputTemplate} ${this.subjectInputTemplate}
+                    ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
+                  </span>
+                `}
+            ${this.recoverableErrorTemplate} ${this.actionButtonsTemplate}
+          </form>
+        `}firstUpdated(){this.formCanSubmit=this.checkSubmissionAllowed()}updated(e){e.has("oldReview")&&this.oldReview&&(this.oldReview.stars&&(this.currentStars=this.oldReview.stars),this.oldReview.reviewtitle&&(this.currentSubjectLength=this.oldReview.reviewtitle.length),this.oldReview.reviewbody&&(this.currentBodyLength=this.oldReview.reviewbody.length)),e.has("recaptchaManager")&&!this.bypassRecaptcha&&this.recaptchaManager&&!this.unrecoverableError&&this.setupRecaptcha(),(e.has("currentSubjectLength")||e.has("currentBodyLength"))&&(this.formCanSubmit=this.checkSubmissionAllowed())}get unrecoverableErrorTemplate(){return this.unrecoverableError?y`
+          <div class="unrecoverable-error">
+            <span class="error-msg">${_(this.unrecoverableError)}</span>
+          </div>
+        `:m}get recoverableErrorTemplate(){return this.recoverableError?y`
+          <div class="recoverable-error">${_(this.recoverableError)}</div>
+        `:m}get starsInputTemplate(){return y`
       <div class="form-heading">
-        <label for="stars-field">${x("Rating (optional)")}</label>
+        <label for="stars-field">${_("Rating (optional)")}</label>
       </div>
       <input
         type="hidden"
@@ -235,15 +465,16 @@
       <div class="stars">
         ${[1,2,3,4,5].map(e=>this.renderStar(e))}
         <button class="clear-stars-btn" @click=${this.handleClearBtnClicked}>
-          ${x("Clear")}
+          ${_("Clear")}
         </button>
       </div>
-    `}get subjectInputTemplate(){var e,t;return v`<span id="subject-input" class="input-box ${this.maxSubjectLength&&this.currentSubjectLength>this.maxSubjectLength?"error":""}"
+    `}get subjectInputTemplate(){var e,t;return y`
+      <span id="subject-input" class="input-box ${this.maxSubjectLength&&this.currentSubjectLength>this.maxSubjectLength?"error":""}"
       ><div class="form-heading">
-        <label for="field_reviewtitle">${x("Subject")}</label>
-        ${this.maxSubjectLength?v`<div class="char-count subject">
+        <label for="field_reviewtitle">${_("Subject")}</label>
+        ${this.maxSubjectLength?y`<div class="char-count subject">
                 ${this.currentSubjectLength}/${this.maxSubjectLength}
-              </div>`:y}
+              </div>`:m}
       </div>
       <input
         type="text"
@@ -252,38 +483,38 @@
         .value=${(t=(e=this.oldReview)===null||e===void 0?void 0:e.reviewtitle)!==null&&t!==void 0?t:""}
         @input=${this.handleSubjectChanged}
         required
-    />${this.maxSubjectLength?v`
+    />${this.maxSubjectLength?y`
             <div class="input-error">
-              ${x(`Subject may only have ${this.maxSubjectLength} characters`)}
+              ${_(`Subject may only have ${this.maxSubjectLength} characters`)}
             </div>
-          `:y}</div></span>`}get bodyInputTemplate(){var e,t;return v`<span
-      id="body-input"
-      class="input-box ${this.maxBodyLength&&this.currentBodyLength>this.maxBodyLength?"error":""}"
-      ><div class="form-heading">
-        <label for="field_reviewbody">${x("Review")}</label>
-        ${this.maxBodyLength?v`<div class="char-count body">
-              ${this.currentBodyLength}/${this.maxBodyLength}
-            </div>`:y}
-      </div>
-      <textarea
-        name="field_reviewbody"
-        id="field_reviewbody"
-        .value=${(t=(e=this.oldReview)===null||e===void 0?void 0:e.reviewbody)!==null&&t!==void 0?t:""}
-        rows="10"
-        cols="50"
-        required
-        @input=${this.handleBodyChanged}
-      ></textarea>
-      ${this.maxBodyLength?v`
-            <div class="input-error">
-              ${x(`Review may only have ${this.maxBodyLength} characters`)}
-            </div>
-          `:y}
-    </span>`}get hiddenInputsTemplate(){return v`<input
-        type="hidden"
-        name="field_reviewtoken"
-        .value=${this.token}
-      />
+          `:m}</div></span>
+    `}get bodyInputTemplate(){var e,t;return y`
+      <span
+        id="body-input"
+        class="input-box ${this.maxBodyLength&&this.currentBodyLength>this.maxBodyLength?"error":""}"
+        ><div class="form-heading">
+          <label for="field_reviewbody">${_("Review")}</label>
+          ${this.maxBodyLength?y`<div class="char-count body">
+                ${this.currentBodyLength}/${this.maxBodyLength}
+              </div>`:m}
+        </div>
+        <textarea
+          name="field_reviewbody"
+          id="field_reviewbody"
+          .value=${(t=(e=this.oldReview)===null||e===void 0?void 0:e.reviewbody)!==null&&t!==void 0?t:""}
+          rows="10"
+          cols="50"
+          required
+          @input=${this.handleBodyChanged}
+        ></textarea>
+        ${this.maxBodyLength?y`
+              <div class="input-error">
+                ${_(`Review may only have ${this.maxBodyLength} characters`)}
+              </div>
+            `:m}
+      </span>
+    `}get hiddenInputsTemplate(){return y`
+      <input type="hidden" name="field_reviewtoken" .value=${this.token} />
       <input
         type="hidden"
         name="g-recaptcha-response"
@@ -291,37 +522,46 @@
       />
       <!-- Indicates to backend that form submission is intended -->
       <input type="hidden" name="action" value="1" />
-      ${this.identifier?v`<input
+      ${this.identifier?y`<input
             type="hidden"
             name="identifier"
             .value=${this.identifier}
-          />`:y}`}get actionButtonsTemplate(){return v`<div class="action-btns">
-      ${this.identifier?v`<a
-            class="ia-button dark"
-            href="${this.baseHost}/details/${this.identifier}"
-            data-testid="cancel-btn"
-          >
-            ${x("Cancel")}
-          </a>`:y}
+          />`:m}
+    `}get actionButtonsTemplate(){return y`
+      <div class="action-btns">
+        ${this.identifier?y`
+              <a
+                class="ia-button dark"
+                href="${this.baseHost}/details/${this.identifier}"
+                data-testid="cancel-btn"
+              >
+                ${_("Cancel")}
+              </a>
+            `:m}
 
-      <button
-        type="submit"
-        class="ia-button primary"
-        name="submit"
-        ?disabled=${!this.formCanSubmit}
-        @click=${this.handleSubmit}
-      >
-        ${x("Submit review")}
-      </button>
-    </div>`}renderStar(e){const t=e===this.currentStars,n=x(`Rate ${e>1?`${e} stars`:"1 star"}`);return v`
+        <button
+          type="submit"
+          class="ia-button primary"
+          name="submit"
+          ?disabled=${!this.formCanSubmit||this.submissionInProgress}
+          @click=${this.handleSubmit}
+        >
+          ${this.submissionInProgress?y`
+                <span class="loading-indicator" alt="Loading indicator">
+                  <ia-activity-indicator></ia-activity-indicator>
+                </span>
+              `:_("Submit review")}
+        </button>
+      </div>
+    `}renderStar(e){const t=e===this.currentStars,r=_(`Rate ${e>1?`${e} stars`:"1 star"}`);return y`
       <button
         class="star star-${e}"
-        title=${t?x("Clear rating"):n}
-        @click=${r=>this.handleStarClicked(r,e)}
+        title=${t?_("Clear rating"):r}
+        @click=${n=>this.handleStarClicked(n,e)}
       >
-        ${e<=this.currentStars?yn:wn}
+        ${e<=this.currentStars?Hr:Pr}
       </button>
-    `}async setupRecaptcha(){var e;try{this.recaptchaWidget=await((e=this.recaptchaManager)===null||e===void 0?void 0:e.getRecaptchaWidget()),this.recaptchaError=!1}catch{this.recaptchaError=!0}}async handleSubmit(e){if(e.preventDefault(),!!this.reviewForm.reportValidity()){if(this.bypassRecaptcha){this.reviewForm.requestSubmit();return}if(!this.recaptchaWidget){this.recaptchaError=!0;return}try{const t=await this.recaptchaWidget.execute();this.dispatchEvent(new Event("recaptchaFinished")),this.recaptchaToken=t,await this.updateComplete,this.reviewForm.requestSubmit()}catch{this.recaptchaError=!0}}}handleStarClicked(e,t){e.preventDefault(),this.setStars(t)}handleClearBtnClicked(e){e.preventDefault(),this.currentStars=0}setStars(e){this.currentStars=e===this.currentStars?0:e}handleSubjectChanged(e){const t=e.target;this.currentSubjectLength=t.value.length}handleBodyChanged(e){const t=e.target;this.currentBodyLength=t.value.length}checkSubmissionAllowed(){return!(!this.currentBodyLength||!this.currentSubjectLength||this.maxSubjectLength&&this.currentSubjectLength>this.maxSubjectLength||this.maxBodyLength&&this.currentBodyLength>this.maxBodyLength)}static get styles(){return[Rn,$`
+    `}async setupRecaptcha(){var e;try{this.recaptchaWidget=await((e=this.recaptchaManager)===null||e===void 0?void 0:e.getRecaptchaWidget())}catch{this.unrecoverableError=this.RECAPTCHA_ERROR_MESSAGE}}async handleSubmit(e){if(e.preventDefault(),!this.submissionInProgress){if(this.submissionInProgress=!0,!this.reviewForm.reportValidity())return this.stopSubmission();if(this.bypassRecaptcha){this.reviewForm.requestSubmit();return}if(!this.recaptchaWidget)return this.recoverableError=this.RECAPTCHA_ERROR_MESSAGE,this.stopSubmission();try{const t=await this.recaptchaWidget.execute();this.dispatchEvent(new Event("recaptchaFinished")),this.recaptchaToken=t,await this.updateComplete,this.reviewForm.requestSubmit()}catch{return this.recoverableError=this.RECAPTCHA_ERROR_MESSAGE,this.stopSubmission()}}}stopSubmission(){this.submissionInProgress=!1}handleStarClicked(e,t){e.preventDefault(),this.setStars(t)}handleClearBtnClicked(e){e.preventDefault(),this.currentStars=0}setStars(e){this.currentStars=e===this.currentStars?0:e}handleSubjectChanged(e){const t=e.target;this.currentSubjectLength=t.value.length}handleBodyChanged(e){const t=e.target;this.currentBodyLength=t.value.length}checkSubmissionAllowed(){return!(this.unrecoverableError||!this.currentBodyLength||!this.currentSubjectLength||this.maxSubjectLength&&this.currentSubjectLength>this.maxSubjectLength||this.maxBodyLength&&this.currentBodyLength>this.maxBodyLength)}static get styles(){return[Nr,b`
         :host {
           font-family: var(
             --ia-font-stack,
@@ -332,7 +572,7 @@
           );
 
           color: var(--ia-text-color, #2c2c2c);
-          --ia-theme-error-color: #ff0000;
+          --ia-theme-error-color: #cc0000;
         }
 
         .form-heading {
@@ -353,7 +593,8 @@
         }
 
         textarea,
-        input[type='text'] {
+        input[type='text'],
+        .unrecoverable-error {
           padding: 5px;
           width: calc(100% - 10px);
           font-family: inherit;
@@ -363,12 +604,14 @@
 
         .input-box.error input,
         .input-box.error textarea {
-          border: 2px solid var(--ia-theme-error-color, #ff0000);
+          border: 2px solid var(--ia-theme-error-color, #cc0000);
         }
 
         .input-box.error .char-count,
-        .input-error {
-          color: var(--ia-theme-error-color, #ff0000);
+        .input-error,
+        .unrecoverable-error,
+        .recoverable-error {
+          color: var(--ia-theme-error-color, #cc0000);
         }
 
         .input-error {
@@ -429,15 +672,25 @@
           cursor: not-allowed;
         }
 
-        .errors {
-          padding: 15px;
-          border: 1px solid #ebccd1;
-          color: #a94442;
-          background-color: #f2dede;
-          border-radius: 4px;
-          margin-bottom: 10px;
+        .unrecoverable-error {
+          height: 350px;
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          background-color: #f5f5f7;
         }
-      `]}};l([S({type:String})],b.prototype,"identifier",void 0);l([S({type:String})],b.prototype,"token",void 0);l([S({type:String})],b.prototype,"baseHost",void 0);l([S({type:String})],b.prototype,"endpointPath",void 0);l([S({type:Object})],b.prototype,"oldReview",void 0);l([S({type:Array})],b.prototype,"prefilledErrors",void 0);l([S({type:Number})],b.prototype,"maxSubjectLength",void 0);l([S({type:Number})],b.prototype,"maxBodyLength",void 0);l([S({type:Object})],b.prototype,"recaptchaManager",void 0);l([S({type:Boolean})],b.prototype,"bypassRecaptcha",void 0);l([k()],b.prototype,"recaptchaToken",void 0);l([k()],b.prototype,"recaptchaError",void 0);l([k()],b.prototype,"currentStars",void 0);l([k()],b.prototype,"currentSubjectLength",void 0);l([k()],b.prototype,"currentBodyLength",void 0);l([k()],b.prototype,"formCanSubmit",void 0);l([nn("#review-form")],b.prototype,"reviewForm",void 0);b=l([Rt("ia-review-form")],b);let Bn=()=>({events:{},emit(i,...e){(this.events[i]||[]).forEach(t=>t(...e))},on(i,e){return(this.events[i]=this.events[i]||[]).push(e),()=>this.events[i]=(this.events[i]||[]).filter(t=>t!==e)}});function Ln(i){return new Promise(e=>setTimeout(e,i))}var E;(function(i){i.retryNumber="retryNumber",i.owner="owner",i.dynamicImportLoaded="dynamicImportLoaded",i.hasBeenRetried="hasBeenRetried"})(E||(E={}));const pt="lazyLoaderService";class Nn{constructor(e){var t,n,r;this.emitter=Bn(),this.container=(t=e==null?void 0:e.container)!==null&&t!==void 0?t:document.head,this.retryCount=(n=e==null?void 0:e.retryCount)!==null&&n!==void 0?n:2,this.retryInterval=(r=e==null?void 0:e.retryInterval)!==null&&r!==void 0?r:1}on(e,t){return this.emitter.on(e,t)}loadBundle(e){return ae(this,void 0,void 0,function*(){let t,n;return e.module&&(t=this.loadScript({src:e.module,bundleType:"module"})),e.nomodule&&(n=this.loadScript({src:e.nomodule,bundleType:"nomodule"})),Promise.race([t,n])})}loadScript(e){return ae(this,void 0,void 0,function*(){return this.doLoad(e)})}doLoad(e){var t;return ae(this,void 0,void 0,function*(){const n=(t=e.retryNumber)!==null&&t!==void 0?t:0,r=`script[src='${e.src}'][async][${E.owner}='${pt}'][${E.retryNumber}='${n}']`;let s=this.container.querySelector(r);return s||(s=this.getScriptTag(Object.assign(Object.assign({},e),{retryNumber:n})),this.container.appendChild(s)),new Promise((a,d)=>{if(s.getAttribute(E.dynamicImportLoaded)){a();return}const o=e.scriptBeingRetried,u=s.onload||(o==null?void 0:o.onload);s.onload=f=>{u==null||u(f),s.setAttribute(E.dynamicImportLoaded,"true"),a()};const h=s.onerror||(o==null?void 0:o.onerror);s.onerror=f=>ae(this,void 0,void 0,function*(){const g=s.getAttribute(E.hasBeenRetried);if(n<this.retryCount&&!g){s.setAttribute(E.hasBeenRetried,"true"),yield Ln(this.retryInterval*1e3);const w=n+1;this.emitter.emit("scriptLoadRetried",e.src,w),this.doLoad(Object.assign(Object.assign({},e),{retryNumber:w,scriptBeingRetried:s}))}else g||this.emitter.emit("scriptLoadFailed",e.src,f),h==null||h(f),d(f)})})})}getScriptTag(e){var t;const n=e.src.replace("'",'"'),r=document.createElement("script"),s=e.retryNumber;r.setAttribute(E.owner,pt),r.setAttribute("src",n),r.setAttribute(E.retryNumber,s.toString()),r.async=!0;const a=(t=e.attributes)!==null&&t!==void 0?t:{};switch(Object.keys(a).forEach(d=>{r.setAttribute(d,a[d])}),e.bundleType){case"module":r.setAttribute("type",e.bundleType);break;case"nomodule":r.setAttribute(e.bundleType,"");break}return r}}class Tn{constructor(e,t){this.widgetId=null,this.isExecuting=!1,this.siteKey=e.siteKey,this.grecaptchaLibrary=e.grecaptchaLibrary;const n=this.createContainer();this.setup(n,t)}async execute(){const{widgetId:e}=this;if(e===null)throw new Error("Recaptcha is not setup");return this.isExecuting&&this.finishExecution(),this.isExecuting=!0,new Promise((t,n)=>{this.executionSuccessBlock=r=>{this.finishExecution(),t(r)},this.executionExpiredBlock=()=>{this.finishExecution(),n(new Error("expired"))},this.executionErrorBlock=()=>{this.finishExecution(),n(new Error("error"))},this.grecaptchaLibrary.execute(e)})}finishExecution(){this.isExecuting=!1;const{widgetId:e}=this;e!==null&&this.grecaptchaLibrary.reset(e)}setup(e,t){var n;this.widgetId=this.grecaptchaLibrary.render(e,{callback:this.responseHandler.bind(this),"expired-callback":this.expiredHandler.bind(this),"error-callback":this.errorHandler.bind(this),sitekey:this.siteKey,tabindex:t==null?void 0:t.tabindex,theme:t==null?void 0:t.theme,type:t==null?void 0:t.type,size:(n=t==null?void 0:t.size)!==null&&n!==void 0?n:"invisible",badge:t==null?void 0:t.badge})}createContainer(e){const t=`recaptchaManager-${this.siteKey}`;let n=document.getElementById(t);return n||(n=document.createElement("div"),n.id=t,n.style.position="fixed",n.style.top="50%",n.style.left="50%",n.style.zIndex=e?`${e}`:"10",document.body.appendChild(n)),n}responseHandler(e){this.executionSuccessBlock&&(this.executionSuccessBlock(e),this.executionSuccessBlock=void 0)}expiredHandler(){this.executionExpiredBlock&&(this.executionExpiredBlock(),this.executionExpiredBlock=void 0)}errorHandler(){this.executionErrorBlock&&(this.executionErrorBlock(),this.executionErrorBlock=void 0)}}class ft{constructor(e){var t;this.recaptchaCache={},this.defaultSiteKey=e==null?void 0:e.defaultSiteKey,this.lazyLoader=(t=e==null?void 0:e.lazyLoader)!==null&&t!==void 0?t:new Nn,this.grecaptchaLibraryCache=e==null?void 0:e.grecaptchaLibrary}async getRecaptchaWidget(e){var t;const n=(t=e==null?void 0:e.siteKey)!==null&&t!==void 0?t:this.defaultSiteKey;if(!n)throw new Error("The reCaptcha widget requires a site key");const r=this.recaptchaCache[n];if(r)return r;const s=await this.getRecaptchaLibrary(),a=new Tn({siteKey:n,grecaptchaLibrary:s},e==null?void 0:e.recaptchaParams);return this.recaptchaCache[n]=a,a}async getRecaptchaLibrary(){return this.grecaptchaLibraryCache?this.grecaptchaLibraryCache:new Promise(e=>{window.grecaptchaLoadedCallback=()=>{setTimeout(()=>{delete window.grecaptchaLoadedCallback},10),this.grecaptchaLibraryCache=window.grecaptcha,e(window.grecaptcha)},this.lazyLoader.loadScript({src:"https://www.google.com/recaptcha/api.js?onload=grecaptchaLoadedCallback&render=explicit"})})}}let z=class extends F{constructor(){super(...arguments),this.mockOldReview=new se({stars:3,reviewtitle:"What a cool book!",reviewbody:"I loved it.",reviewer:"foo-bar",reviewdate:"2025-03-03 18:13:36",createdate:"2025-02-25 14:28:19"}),this.goodRecaptchaManager=new ft({defaultSiteKey:"demo-key"}),this.badRecaptchaManager=new ft({defaultSiteKey:"i-am-a-bad-key-that-will-fail"}),this.errors=["Sorry, we couldn't submit your review.","Write a better one."],this.bypassRecaptcha=!1,this.showErrors=!1,this.useCharCounts=!0}render(){return v`${this.recaptchaManager?y:v`<button
+
+        .loading-indicator {
+          display: block;
+          width: 20px;
+          height: 20px;
+          margin-top: 2px;
+          --activityIndicatorLoadingRingColor: #fff;
+          --activityIndicatorLoadingDotColor: #fff;
+        }
+      `]}};l([x({type:String})],$.prototype,"identifier",void 0);l([x({type:String})],$.prototype,"token",void 0);l([x({type:String})],$.prototype,"baseHost",void 0);l([x({type:String})],$.prototype,"endpointPath",void 0);l([x({type:String})],$.prototype,"displayMode",void 0);l([x({type:Object})],$.prototype,"oldReview",void 0);l([x({type:String})],$.prototype,"unrecoverableError",void 0);l([x({type:Number})],$.prototype,"maxSubjectLength",void 0);l([x({type:Number})],$.prototype,"maxBodyLength",void 0);l([x({type:Object})],$.prototype,"recaptchaManager",void 0);l([x({type:Boolean})],$.prototype,"bypassRecaptcha",void 0);l([S()],$.prototype,"recaptchaToken",void 0);l([S()],$.prototype,"currentStars",void 0);l([S()],$.prototype,"currentSubjectLength",void 0);l([S()],$.prototype,"currentBodyLength",void 0);l([S()],$.prototype,"recoverableError",void 0);l([S()],$.prototype,"formCanSubmit",void 0);l([S()],$.prototype,"submissionInProgress",void 0);l([sr("#review-form")],$.prototype,"reviewForm",void 0);$=l([we("ia-review-form")],$);let k=class extends N{constructor(){super(...arguments),this.mockOldReview={rawValue:new J({stars:5}),stars:5,reviewtitle:"What a cool book!",reviewbody:"I loved it.",reviewer:"Foo Bar",reviewdate:new Date("03/20/2025"),createdate:new Date("02/07/2025"),screenname:"Foo Bar",itemname:"foo-bar",domId:"12345"},this.longReview={rawValue:new J({stars:5}),stars:5,reviewtitle:"What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! ",reviewbody:new Array(100).fill("I loved it.").join(" "),reviewer:"Foo Bar",reviewdate:new Date("03/20/2025"),createdate:new Date("02/07/2025"),screenname:"Foo Bar",itemname:"foo-bar",domId:"12345"},this.goodRecaptchaManager=new yt({defaultSiteKey:"demo-key"}),this.badRecaptchaManager=new yt({defaultSiteKey:"i-am-a-bad-key-that-will-fail"}),this.bypassRecaptcha=!0,this.unrecoverableError=!1,this.recoverableError=!1,this.useCharCounts=!0,this.useReviewDisplay=!1,this.useLongReview=!1}render(){return y`${this.recaptchaManager?m:y`
+            <button
               @click=${()=>this.recaptchaManager=this.goodRecaptchaManager}
             >
               Turn on ReCaptcha (good site key)</button
@@ -445,30 +698,47 @@
               @click=${()=>this.recaptchaManager=this.badRecaptchaManager}
             >
               Turn on ReCaptcha (bad site key)
-            </button> `}
+            </button>
+          `}
       <button @click=${()=>this.bypassRecaptcha=!this.bypassRecaptcha}>
         ${this.bypassRecaptcha?"Enable":"Bypass"} ReCaptcha
       </button>
-      <button @click=${()=>this.showErrors=!this.showErrors}>
-        ${this.showErrors?"Hide":"Show"} pre-filled errors
+      <button
+        @click=${()=>this.unrecoverableError=!this.unrecoverableError}
+      >
+        ${this.unrecoverableError?"Hide":"Show"} unrecoverable error
+      </button>
+      <button
+        @click=${()=>{this.unrecoverableError=!1,this.recoverableError=!this.recoverableError}}
+      >
+        ${this.recoverableError?"Hide":"Show"} recoverable error
       </button>
       <button @click=${()=>this.useCharCounts=!this.useCharCounts}>
         ${this.useCharCounts?"Remove":"Use"} char count limits
       </button>
+      <button @click=${()=>this.useReviewDisplay=!this.useReviewDisplay}>
+        Switch to ${this.useReviewDisplay?"form view":"review view"}
+      </button>
+      <button @click=${()=>this.useLongReview=!this.useLongReview}>
+        Prefill ${this.useLongReview?"normal review":"too-long review"}
+      </button>
       <div class="container">
         <ia-review-form
           .identifier=${"goody"}
-          .oldReview=${this.mockOldReview}
+          .oldReview=${this.useLongReview?this.longReview:this.mockOldReview}
           .recaptchaManager=${this.recaptchaManager}
-          .prefilledErrors=${this.showErrors?this.errors:[]}
+          .unrecoverableError=${this.unrecoverableError?"Sorry, you're not cool enough to write a review for this item.":void 0}
+          .recoverableError=${this.recoverableError?"Why not try submitting again? What's the worst thing that could happen?":void 0}
           .maxSubjectLength=${this.useCharCounts?100:void 0}
           .maxBodyLength=${this.useCharCounts?1e3:void 0}
+          .displayMode=${this.useReviewDisplay?"review":"form"}
           ?bypassRecaptcha=${this.bypassRecaptcha}
+          ?submissionInProgress=${!0}
         ></ia-review-form>
-      </div>`}};z.styles=$`
+      </div>`}};k.styles=b`
     .container {
       max-width: 750px;
       margin: 10px auto;
       font-size: 1.4rem;
     }
-  `;l([k()],z.prototype,"recaptchaManager",void 0);l([k()],z.prototype,"bypassRecaptcha",void 0);l([k()],z.prototype,"showErrors",void 0);l([k()],z.prototype,"useCharCounts",void 0);z=l([Rt("app-root")],z);
+  `;l([S()],k.prototype,"recaptchaManager",void 0);l([S()],k.prototype,"bypassRecaptcha",void 0);l([S()],k.prototype,"unrecoverableError",void 0);l([S()],k.prototype,"recoverableError",void 0);l([S()],k.prototype,"useCharCounts",void 0);l([S()],k.prototype,"useReviewDisplay",void 0);l([S()],k.prototype,"useLongReview",void 0);k=l([we("app-root")],k);
