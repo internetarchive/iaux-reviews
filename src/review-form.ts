@@ -542,7 +542,7 @@ export class ReviewForm extends LitElement {
 
         .clear-stars-btn {
           padding: 0 5px;
-          color: var(--ia-link-color, #4b64ff);
+          color: var(--ia-link-color, #2c2c2c);
           font-family: inherit;
           border: none;
           background: transparent;
