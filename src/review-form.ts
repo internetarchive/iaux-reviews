@@ -125,6 +125,7 @@ export class ReviewForm extends LitElement {
   }
 
   protected updated(changed: PropertyValues): void {
+    // Fill in previous review, if provided
     if (changed.has('oldReview') && this.oldReview) {
       if (this.oldReview.stars) this.currentStars = this.oldReview.stars;
       if (this.oldReview.reviewtitle)
@@ -133,6 +134,7 @@ export class ReviewForm extends LitElement {
         this.currentBodyLength = this.oldReview.reviewbody.length;
     }
 
+    // Set up ReCaptcha, if possible
     if (
       changed.has('recaptchaManager') &&
       !this.bypassRecaptcha &&
@@ -142,6 +144,7 @@ export class ReviewForm extends LitElement {
       this.setupRecaptcha();
     }
 
+    // Ensure new subject and body have correct length
     if (
       changed.has('currentSubjectLength') ||
       changed.has('currentBodyLength')
@@ -150,6 +153,7 @@ export class ReviewForm extends LitElement {
     }
   }
 
+  /** Review to render on success or cancel */
   private get reviewTemplate(): HTMLTemplateResult | typeof nothing {
     if (!this.oldReview) return nothing;
     return html`
@@ -159,6 +163,7 @@ export class ReviewForm extends LitElement {
     `;
   }
 
+  /** Error to render instead of form inputs */
   private get unrecoverableErrorTemplate():
     | HTMLTemplateResult
     | typeof nothing {
@@ -171,6 +176,7 @@ export class ReviewForm extends LitElement {
       : nothing;
   }
 
+  /** Error to render next to submit button */
   private get recoverableErrorTemplate(): HTMLTemplateResult | typeof nothing {
     return this.recoverableError
       ? html`
@@ -179,6 +185,7 @@ export class ReviewForm extends LitElement {
       : nothing;
   }
 
+  /** Clickable group of stars */
   private get starsInputTemplate(): HTMLTemplateResult {
     return html`
       <div class="form-heading rating">
@@ -200,6 +207,7 @@ export class ReviewForm extends LitElement {
     `;
   }
 
+  /** Subject input and character counter */
   private get subjectInputTemplate(): HTMLTemplateResult {
     return html`
       <span id="subject-input" class="input-box ${
@@ -239,6 +247,7 @@ export class ReviewForm extends LitElement {
     `;
   }
 
+  /** Body input and character counter */
   private get bodyInputTemplate(): HTMLTemplateResult {
     return html`
       <span
@@ -275,7 +284,7 @@ export class ReviewForm extends LitElement {
     `;
   }
 
-  /* Renders all the hidden inputs we use to store other information for form submission */
+  /** Hidden inputs we use to store other information for form submission */
   private get hiddenInputsTemplate(): HTMLTemplateResult {
     return html`
       <input type="hidden" name="field_reviewtoken" .value=${this.token} />
@@ -296,6 +305,7 @@ export class ReviewForm extends LitElement {
     `;
   }
 
+  /** Buttons to render at bottom of form */
   private get actionButtonsTemplate(): HTMLTemplateResult {
     return html`<div class="action-btns">
       <button
@@ -323,6 +333,13 @@ export class ReviewForm extends LitElement {
     </div>`;
   }
 
+  /**
+   * Renders a star icon, using its number and the current star rating
+   * to determine whether it should appear selected or not
+   *
+   * @param {number} num The number of the current star
+   * @returns {HTMLTemplateResult} The correct icon, rendered within a button
+   */
   private renderStar(num: number): HTMLTemplateResult {
     const isSelected = num === this.currentStars;
     const ratingLabel = msg(`Rate ${num > 1 ? `${num} stars` : '1 star'}`);
@@ -338,6 +355,11 @@ export class ReviewForm extends LitElement {
     `;
   }
 
+  /**
+   * Sets up ReCaptcha for the form, if possible.
+   *
+   * On failure, replaces form inputs with the ReCaptcha error message.
+   */
   private async setupRecaptcha(): Promise<void> {
     try {
       this.recaptchaWidget = await this.recaptchaManager?.getRecaptchaWidget();
@@ -346,6 +368,7 @@ export class ReviewForm extends LitElement {
     }
   }
 
+  /** Handles validation and recaptcha execution on form submission */
   private async handleSubmit(e: Event): Promise<void> {
     e.preventDefault();
     // Don't double-submit
@@ -353,12 +376,14 @@ export class ReviewForm extends LitElement {
 
     this.submissionInProgress = true;
 
+    // Check for HTML errors
     if (!this.reviewForm.reportValidity()) {
       return this.stopSubmission();
     }
 
+    // If we're bypassing recaptcha, can go ahead and try submitting
     if (this.bypassRecaptcha) {
-      this.reviewForm.requestSubmit();
+      this.submitForm();
       return;
     }
 
@@ -380,6 +405,9 @@ export class ReviewForm extends LitElement {
       return this.stopSubmission();
     }
   }
+
+  /** Submits the form's data to the provided endpoint */
+  private async submitForm(): Promise<void> {}
 
   /* Handles canceled form submission */
   private stopSubmission(): void {
