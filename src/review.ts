@@ -16,6 +16,7 @@ import starBasic from './assets/star-basic';
 import { truncateScreenname } from './utils/truncate-screenname';
 import sanitizeReviewBody from './utils/sanitize-review-body';
 import friendlyTruncate from './utils/friendly-truncate';
+import linkUrlsInText from './utils/link-urls-in-text';
 
 /* Further properties for reviews added before render */
 export interface ReviewForRender extends Review {
@@ -87,7 +88,7 @@ export class IaReview extends LitElement {
         ? sanitizedReview
         : friendlyTruncate(sanitizedReview, this.maxBodyLength);
 
-    return html`${unsafeHTML(truncatedReview)}`;
+    return html`${unsafeHTML(linkUrlsInText(truncatedReview))}`;
   }
 
   /* Renders the More/Less button if review is truncated */
