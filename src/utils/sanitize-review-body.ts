@@ -10,5 +10,10 @@ const ALLOWED_TAGS = ['a'];
  * @returns {string} The sanitized review
  */
 export default function sanitizeReviewBody(reviewBody: string): string {
+  DOMPurify.addHook('afterSanitizeAttributes', node => {
+    if (node.nodeName.toLowerCase() === 'a') {
+      node.setAttribute('rel', 'ugc nofollow');
+    }
+  });
   return DOMPurify.sanitize(reviewBody, { ALLOWED_TAGS: ALLOWED_TAGS });
 }
