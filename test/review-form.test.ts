@@ -24,11 +24,22 @@ const mockRecaptchaManager = new MockRecaptchaManager();
 describe('ReviewForm', () => {
   it('passes the a11y audit', async () => {
     const el = await fixture<ReviewForm>(
-      html`<ia-review-form></ia-review-form>`,
+      html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
     );
 
     await expect(el).shadowDom.to.be.accessible();
   });
+
+  /*it('passes the a11y audit in review mode', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .oldReview=${mockOldReview}
+        .displayMode=${'review'}
+      ></ia-review-form>`,
+    );
+
+    await expect(el).shadowDom.to.be.accessible();
+  });*/
 
   it('renders a basic form', async () => {
     const el = await fixture<ReviewForm>(
