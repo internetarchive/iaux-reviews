@@ -306,4 +306,41 @@ describe('IaReview', () => {
     expect(subject?.textContent).to.contain('What a...');
     expect(body?.textContent).to.contain('I loved...');
   });
+
+  it('removes any HTML tags aside from anchor links prior to render', async () => {
+    const mockHTMLReview: ReviewForRender = {
+      rawValue: new Review({ stars: 5 }),
+      stars: 5,
+      reviewtitle: 'What a cool book!',
+      reviewbody:
+        'I loved it.<img src="foo" /> <b>I am bold!</b> <script>doStuff()</script> <style></style>',
+      reviewer: 'Foo Bar',
+      reviewdate: new Date('03/20/2025'),
+      createdate: new Date('02/07/2025'),
+      screenname: 'Foo Bar',
+      itemname: 'foo-bar',
+      domId: '12345',
+    };
+
+    const el = await fixture<IaReview>(
+      html`<ia-review .review=${mockHTMLReview}></ia-review>`,
+    );
+
+    const reviewBody = el.shadowRoot?.querySelector('.body');
+    expect(reviewBody).to.exist;
+
+    const reviewImages = reviewBody?.querySelectorAll('img');
+    expect(reviewImages?.length).to.equal(0);
+
+    const reviewBoldText = reviewBody?.querySelectorAll('b');
+    expect(reviewBoldText?.length).to.equal(0);
+
+    const reviewScriptTags = reviewBody?.querySelectorAll('script');
+    expect(reviewScriptTags?.length).to.equal(0);
+
+    const reviewStyleTags = reviewBody?.querySelectorAll('style');
+    expect(reviewStyleTags?.length).to.equal(0);
+
+    expect(reviewBody?.textContent?.trim()).to.equal('I loved it. I am bold!');
+  });
 });
