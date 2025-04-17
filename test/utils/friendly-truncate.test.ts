@@ -30,4 +30,42 @@ describe('friendlyTruncate', () => {
   it('does not truncate at the last space if requested not to', () => {
     expect(friendlyTruncate('I am a test', 3, false)).to.equal('I a...');
   });
+
+  it('includes any anchor closing tags, if less than 20 chars after the max-length', () => {
+    expect(
+      friendlyTruncate(
+        'I am a test <a href="archive.org">I love testing!</a> I just love it.',
+        30,
+      ),
+    ).to.equal('I am a test <a href="archive.org">I love testing!</a>...');
+  });
+
+  it('does not add ellipses if the closing anchor tag is at the end of the string', () => {
+    expect(
+      friendlyTruncate(
+        'I am a test <a href="archive.org">I love testing!</a>',
+        30,
+      ),
+    ).to.equal('I am a test <a href="archive.org">I love testing!</a>');
+  });
+
+  it('truncates before the last opening tag if the closing tag is too far from max-length', () => {
+    expect(
+      friendlyTruncate(
+        'I am a test <a href="archive.org">I love testing! I just love it so much. I really do. </a>',
+        30,
+      ),
+    ).to.equal('I am a test ...');
+  });
+
+  it('can handle multiple links', () => {
+    expect(
+      friendlyTruncate(
+        'I am <a href="archive.org">a test!</a> and wow I love testing. <a href="archive.org>Don\'t you!</a> I really do.',
+        78,
+      ),
+    ).to.equal(
+      'I am <a href="archive.org">a test!</a> and wow I love testing. <a href="archive.org>Don\'t you!</a>...',
+    );
+  });
 });
