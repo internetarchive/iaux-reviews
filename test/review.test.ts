@@ -222,7 +222,7 @@ describe('IaReview', () => {
     );
 
     const subject = el.shadowRoot?.querySelector('.body');
-    expect(subject?.textContent).to.contain('I love...');
+    expect(subject?.textContent).to.contain('I loved...');
   });
 
   it('shows a more button if subject/body are truncated', async () => {
