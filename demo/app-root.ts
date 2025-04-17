@@ -87,7 +87,8 @@ export class AppRoot extends LitElement {
   private review: ReviewForRender = this.mockOldReview;
 
   render() {
-    return html`${!this.recaptchaManager
+    return html` <h2>Toggle ReCaptcha</h2>
+      ${!this.recaptchaManager
         ? html`
             <button
               @click=${() =>
@@ -104,6 +105,7 @@ export class AppRoot extends LitElement {
       <button @click=${() => (this.bypassRecaptcha = !this.bypassRecaptcha)}>
         ${!this.bypassRecaptcha ? 'Bypass' : 'Enable'} ReCaptcha
       </button>
+      <h2>Toggle errors</h2>
       <button
         @click=${() => (this.unrecoverableError = !this.unrecoverableError)}
       >
@@ -120,6 +122,7 @@ export class AppRoot extends LitElement {
       <button @click=${() => (this.useCharCounts = !this.useCharCounts)}>
         ${this.useCharCounts ? 'Remove' : 'Use'} char count limits
       </button>
+      <h2>Toggle review display</h2>
       <button @click=${() => (this.useReviewDisplay = !this.useReviewDisplay)}>
         Switch to ${this.useReviewDisplay ? 'form view' : 'review view'}
       </button>
@@ -157,6 +160,10 @@ export class AppRoot extends LitElement {
       max-width: 750px;
       margin: 10px auto;
       font-size: 1.4rem;
+    }
+
+    h2 {
+      font-family: 'Helvetica', sans-serif;
     }
   `;
 }
