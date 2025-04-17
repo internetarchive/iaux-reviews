@@ -64,6 +64,7 @@ export class IaReview extends LitElement {
         `;
   }
 
+  /* Renders the review subject, truncating if necessary */
   private get subjectTemplate(): string {
     if (!this.review?.reviewtitle) return '';
 
@@ -73,6 +74,7 @@ export class IaReview extends LitElement {
       : this.review.reviewtitle.slice(0, this.maxSubjectLength).concat('...');
   }
 
+  /* Renders the review body, truncating if necessary */
   private get bodyTemplate(): string {
     if (!this.review?.reviewbody) return '';
 
@@ -82,6 +84,7 @@ export class IaReview extends LitElement {
       : this.review.reviewbody.slice(0, this.maxBodyLength).concat('...');
   }
 
+  /* Renders the More/Less button if review is truncated */
   private get truncationButtonsTemplate(): HTMLTemplateResult | typeof nothing {
     if (!this.review?.reviewtitle || !this.review?.reviewbody) return nothing;
 
@@ -96,6 +99,7 @@ export class IaReview extends LitElement {
       : this.moreButtonTemplate;
   }
 
+  /* More button for truncation */
   private get moreButtonTemplate(): HTMLTemplateResult {
     return html`
       <button
@@ -107,6 +111,7 @@ export class IaReview extends LitElement {
     `;
   }
 
+  /* Less button for truncation */
   private get lessButtonTemplate(): HTMLTemplateResult {
     return html`<button
       class="simple-link less-btn"
@@ -116,6 +121,7 @@ export class IaReview extends LitElement {
     </button>`;
   }
 
+  /* Reviewer name, with hyperlink and truncation if needed */
   private get reviewerTemplate(): HTMLTemplateResult | typeof nothing {
     return !this.review
       ? nothing
@@ -129,9 +135,10 @@ export class IaReview extends LitElement {
               ${truncateScreenname(this.review.screenname)}
             </a>
           `
-        : html`${this.review.screenname}`;
+        : html`${truncateScreenname(this.review.screenname)}`;
   }
 
+  /* Number of stars that corresponds to patron's rating */
   private get starsTemplate(): HTMLTemplateResult | typeof nothing {
     if (!this.review || !this.review.stars) return nothing;
     return html`
@@ -147,6 +154,7 @@ export class IaReview extends LitElement {
     `;
   }
 
+  /* Formats the review's date for render, adding (edited) if needed */
   private get createDateTemplate(): string | typeof nothing {
     if (!this.review?.createdate || !this.review?.reviewdate) return nothing;
 
