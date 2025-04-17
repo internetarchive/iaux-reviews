@@ -210,7 +210,8 @@ export class IaReview extends LitElement {
         display: inline-block;
       }
 
-      .simple-link {
+      .simple-link,
+      .body a {
         color: var(--ia-link-color, #4b64ff);
         text-decoration: none;
         background: transparent;
@@ -218,7 +219,8 @@ export class IaReview extends LitElement {
         padding: 0px;
       }
 
-      .simple-link:hover {
+      .simple-link:hover,
+      .body a:hover {
         cursor: pointer;
         text-decoration: underline;
       }

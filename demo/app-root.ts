@@ -40,6 +40,20 @@ export class AppRoot extends LitElement {
     domId: '12345',
   };
 
+  private reviewWithLink: ReviewForRender = {
+    rawValue: new Review({ stars: 5 }),
+    stars: 5,
+    reviewtitle: 'What a cool book!',
+    reviewbody:
+      'I loved it. You can <a href="archive.org/details/goody">read it here.</a>',
+    reviewer: 'Foo Bar',
+    reviewdate: new Date('03/20/2025'),
+    createdate: new Date('02/07/2025'),
+    screenname: 'Foo Bar',
+    itemname: 'foo-bar',
+    domId: '12345',
+  };
+
   private goodRecaptchaManager: RecaptchaManagerInterface =
     new RecaptchaManager({
       defaultSiteKey: 'demo-key',
@@ -70,7 +84,7 @@ export class AppRoot extends LitElement {
   private useReviewDisplay: boolean = false;
 
   @state()
-  private useLongReview: boolean = false;
+  private review: ReviewForRender = this.mockOldReview;
 
   render() {
     return html`${!this.recaptchaManager
@@ -109,15 +123,19 @@ export class AppRoot extends LitElement {
       <button @click=${() => (this.useReviewDisplay = !this.useReviewDisplay)}>
         Switch to ${this.useReviewDisplay ? 'form view' : 'review view'}
       </button>
-      <button @click=${() => (this.useLongReview = !this.useLongReview)}>
-        Prefill ${this.useLongReview ? 'normal review' : 'too-long review'}
+      <button @click=${() => (this.review = this.mockOldReview)}>
+        Prefill normal review
+      </button>
+      <button @click=${() => (this.review = this.longReview)}>
+        Prefill long review
+      </button>
+      <button @click=${() => (this.review = this.reviewWithLink)}>
+        Prefill review with link
       </button>
       <div class="container">
         <ia-review-form
           .identifier=${'goody'}
-          .oldReview=${this.useLongReview
-            ? this.longReview
-            : this.mockOldReview}
+          .oldReview=${this.review}
           .recaptchaManager=${this.recaptchaManager}
           .unrecoverableError=${this.unrecoverableError
             ? "Sorry, you're not cool enough to write a review for this item."
