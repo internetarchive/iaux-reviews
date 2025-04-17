@@ -526,8 +526,13 @@ export class ReviewForm extends LitElement {
           border: 2px solid #979797;
           border-radius: 5px;
           background-color: #f5f5f7;
-          padding: 10px 30px 10px 10px;
+          padding: 10px;
           margin-bottom: 20px;
+        }
+
+        /* Prevents overlap with delete icon, if present */
+        .review-container {
+          padding-right: 30px;
         }
 
         .form-heading {
