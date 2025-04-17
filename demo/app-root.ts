@@ -54,6 +54,19 @@ export class AppRoot extends LitElement {
     domId: '12345',
   };
 
+  private reviewWithTextLink: ReviewForRender = {
+    rawValue: new Review({ stars: 5 }),
+    stars: 5,
+    reviewtitle: 'What a cool book!',
+    reviewbody: 'I loved it. You can read it here: archive.org/details/goody',
+    reviewer: 'Foo Bar',
+    reviewdate: new Date('03/20/2025'),
+    createdate: new Date('02/07/2025'),
+    screenname: 'Foo Bar',
+    itemname: 'foo-bar',
+    domId: '12345',
+  };
+
   private goodRecaptchaManager: RecaptchaManagerInterface =
     new RecaptchaManager({
       defaultSiteKey: 'demo-key',
@@ -126,15 +139,27 @@ export class AppRoot extends LitElement {
       <button @click=${() => (this.useReviewDisplay = !this.useReviewDisplay)}>
         Switch to ${this.useReviewDisplay ? 'form view' : 'review view'}
       </button>
-      <button @click=${() => (this.review = this.mockOldReview)}>
-        Prefill normal review
-      </button>
-      <button @click=${() => (this.review = this.longReview)}>
-        Prefill long review
-      </button>
-      <button @click=${() => (this.review = this.reviewWithLink)}>
-        Prefill review with link
-      </button>
+      ${this.review !== this.mockOldReview
+        ? html`<button @click=${() => (this.review = this.mockOldReview)}>
+            Prefill normal review
+          </button>`
+        : nothing}
+      ${this.review !== this.longReview
+        ? html`<button @click=${() => (this.review = this.longReview)}>
+            Prefill long review
+          </button>`
+        : nothing}
+      ${this.review !== this.reviewWithLink
+        ? html`<button @click=${() => (this.review = this.reviewWithLink)}>
+            Prefill review with link
+          </button>`
+        : nothing}
+      ${this.review !== this.reviewWithTextLink
+        ? html`<button @click=${() => (this.review = this.reviewWithTextLink)}>
+            Prefill review with text link
+          </button>`
+        : nothing}
+
       <div class="container">
         <ia-review-form
           .identifier=${'goody'}
