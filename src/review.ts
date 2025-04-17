@@ -8,11 +8,14 @@ import {
 } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 import { msg } from '@lit/localize';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 import { Review } from '@internetarchive/metadata-service';
 
 import starBasic from './assets/star-basic';
 import { truncateScreenname } from './utils/truncate-screenname';
+import sanitizeReviewBody from './utils/sanitize-review-body';
+import friendlyTruncate from './utils/friendly-truncate';
 
 /* Further properties for reviews added before render */
 export interface ReviewForRender extends Review {
@@ -29,11 +32,11 @@ export class IaReview extends LitElement {
   /* The review to be rendered */
   @property({ type: Object }) review?: ReviewForRender;
 
-  /* Maximum length for subject */
+  /* Maximum renderable length for subject */
   @property({ type: Number }) maxSubjectLength = 100;
 
-  /* Maximum length for body */
-  @property({ type: Number }) maxBodyLength = 1000;
+  /* Maximum renderable length for body */
+  @property({ type: Number }) maxBodyLength = 150;
 
   /* Base for URLs */
   @property({ type: String }) baseHost = 'https://archive.org';
@@ -71,17 +74,20 @@ export class IaReview extends LitElement {
     return this.review.reviewtitle.length <= this.maxSubjectLength ||
       this.showTruncatedContent
       ? this.review.reviewtitle
-      : this.review.reviewtitle.slice(0, this.maxSubjectLength).concat('...');
+      : friendlyTruncate(this.review.reviewtitle, this.maxSubjectLength);
   }
 
   /* Renders the review body, truncating if necessary */
-  private get bodyTemplate(): string {
-    if (!this.review?.reviewbody) return '';
+  private get bodyTemplate(): HTMLTemplateResult | typeof nothing {
+    if (!this.review?.reviewbody) return nothing;
 
-    return this.review.reviewbody.length <= this.maxBodyLength ||
-      this.showTruncatedContent
-      ? this.review.reviewbody
-      : this.review.reviewbody.slice(0, this.maxBodyLength).concat('...');
+    const sanitizedReview = sanitizeReviewBody(this.review.reviewbody);
+    const truncatedReview =
+      sanitizedReview.length <= this.maxBodyLength || this.showTruncatedContent
+        ? sanitizedReview
+        : friendlyTruncate(sanitizedReview, this.maxBodyLength);
+
+    return html`${unsafeHTML(truncatedReview)}`;
   }
 
   /* Renders the More/Less button if review is truncated */
