@@ -30,7 +30,7 @@ export default function linkUrlsInText(text: string): string {
   const textWithLiveLinks = textWithExistingLinksPreserved.replace(
     URL_REGEXP,
     match =>
-      (match = `<a href="${match}" rel="ugc nofollow" target="_blank">${match}</a>`),
+      (match = `<a href="${!match.match(/^(https|http)/) ? 'https://' + match : match}" rel="ugc nofollow" target="_blank">${match}</a>`),
   );
 
   // Restore existing links

@@ -14,7 +14,7 @@ describe('linkUrlsInText', () => {
 
   it('converts URLs from text into live links', () => {
     expect(linkUrlsInText('I am a test for archive.org')).to.equal(
-      'I am a test for <a href="archive.org" rel="ugc nofollow" target="_blank">archive.org</a>',
+      'I am a test for <a href="https://archive.org" rel="ugc nofollow" target="_blank">archive.org</a>',
     );
   });
 
@@ -22,7 +22,25 @@ describe('linkUrlsInText', () => {
     expect(
       linkUrlsInText('I am a <a href="archive.org">test</a> for archive.org'),
     ).to.equal(
-      'I am a <a href="archive.org">test</a> for <a href="archive.org" rel="ugc nofollow" target="_blank">archive.org</a>',
+      'I am a <a href="archive.org">test</a> for <a href="https://archive.org" rel="ugc nofollow" target="_blank">archive.org</a>',
+    );
+  });
+
+  it('does not add extra https to links that already have it', () => {
+    expect(linkUrlsInText('I am a test for https://archive.org')).to.equal(
+      'I am a test for <a href="https://archive.org" rel="ugc nofollow" target="_blank">https://archive.org</a>',
+    );
+
+    expect(linkUrlsInText('I am a test for http://archive.org')).to.equal(
+      'I am a test for <a href="http://archive.org" rel="ugc nofollow" target="_blank">http://archive.org</a>',
+    );
+  });
+
+  it('does add https for links that include but do not start with it', () => {
+    expect(
+      linkUrlsInText('I am a test for archive.org/details/https-info'),
+    ).to.equal(
+      'I am a test for <a href="https://archive.org/details/https-info" rel="ugc nofollow" target="_blank">archive.org/details/https-info</a>',
     );
   });
 });
