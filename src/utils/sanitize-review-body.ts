@@ -13,6 +13,7 @@ export default function sanitizeReviewBody(reviewBody: string): string {
   DOMPurify.addHook('afterSanitizeAttributes', node => {
     if (node.nodeName.toLowerCase() === 'a') {
       node.setAttribute('rel', 'ugc nofollow');
+      node.setAttribute('target', '_blank');
     }
   });
 

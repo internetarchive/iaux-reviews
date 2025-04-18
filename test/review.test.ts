@@ -333,7 +333,31 @@ describe('IaReview', () => {
     const reviewStyleTags = reviewBody?.querySelectorAll('style');
     expect(reviewStyleTags?.length).to.equal(0);
 
-    expect(reviewBody?.textContent?.trim()).to.equal('I loved it. I am bold!');
+    expect(reviewBody?.innerHTML.trim()).to.contain('I loved it. I am bold!');
+  });
+
+  it('adds rel and target to anchor links before render', async () => {
+    const mockHTMLReview: ReviewForRender = {
+      rawValue: new Review({ stars: 5 }),
+      stars: 5,
+      reviewtitle: 'What a cool book!',
+      reviewbody: 'I loved it.<a href="/details/foo">So good!</a>',
+      reviewer: 'Foo Bar',
+      reviewdate: new Date('03/20/2025'),
+      createdate: new Date('02/07/2025'),
+      reviewer_itemname: 'foo-bar',
+    };
+
+    const el = await fixture<IaReview>(
+      html`<ia-review .review=${mockHTMLReview}></ia-review>`,
+    );
+
+    const reviewBody = el.shadowRoot?.querySelector('.body');
+    const reviewLink = reviewBody?.querySelector('a') as HTMLAnchorElement;
+
+    expect(reviewLink).to.exist;
+    expect(reviewLink.target).to.equal('_blank');
+    expect(reviewLink.rel).to.equal('ugc nofollow');
   });
 
   it('collapses internal space prior to render', async () => {
@@ -353,8 +377,6 @@ describe('IaReview', () => {
     );
 
     const reviewBody = el.shadowRoot?.querySelector('.body');
-    expect(reviewBody?.textContent?.trim()).to.equal(
-      'I loved it.<br />So great!',
-    );
+    expect(reviewBody?.innerHTML.trim()).to.contain('I loved it.<br>So great.');
   });
 });
