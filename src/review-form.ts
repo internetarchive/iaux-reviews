@@ -381,10 +381,8 @@ export class ReviewForm extends LitElement {
 
       if (!this.bypassRecaptcha) {
         const recaptchaToken = await this.getRecaptchaToken();
-        console.log(recaptchaToken);
 
         if (!recaptchaToken) {
-          console.log('no token');
           return this.handleRecaptchaError();
         }
 
@@ -425,7 +423,6 @@ export class ReviewForm extends LitElement {
 
     try {
       const recaptchaToken = await this.recaptchaWidget.execute();
-      console.log(recaptchaToken);
       return recaptchaToken;
     } catch {
       this.handleRecaptchaError();
