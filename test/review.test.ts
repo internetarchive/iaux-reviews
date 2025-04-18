@@ -12,8 +12,7 @@ const mockReview: ReviewForRender = {
   reviewer: 'Foo Bar',
   reviewdate: new Date('03/20/2025'),
   createdate: new Date('02/07/2025'),
-  screenname: 'Foo Bar',
-  itemname: 'foo-bar',
+  reviewer_itemname: 'foo-bar',
 };
 
 describe('IaReview', () => {
@@ -56,11 +55,10 @@ describe('IaReview', () => {
       stars: 5,
       reviewtitle: 'What a cool book!',
       reviewbody: 'I loved it.',
-      reviewer: 'Foo Bar',
+      reviewer: 'Foo Bar 123456789123456789123456789123456789',
       reviewdate: new Date('03/20/2025'),
       createdate: new Date('02/07/2025'),
-      screenname: 'Foo Bar 123456789123456789123456789123456789',
-      itemname: 'foo-bar',
+      reviewer_itemname: 'foo-bar',
     };
 
     const el = await fixture<IaReview>(
@@ -113,14 +111,14 @@ describe('IaReview', () => {
 
   it('does not add a link to the reviewer details page if itemname not provided', async () => {
     const reviewNoItemname = Object.assign({}, mockReview);
-    reviewNoItemname.itemname = undefined;
+    reviewNoItemname.reviewer_itemname = undefined;
 
     const el = await fixture<IaReview>(
       html`<ia-review .review=${reviewNoItemname}></ia-review>`,
     );
 
     const reviewerLink = el.shadowRoot?.querySelector('.reviewer-link');
-    expect(reviewerLink).not.to.exist;
+    expect(reviewerLink).to.be.null;
   });
 
   it('adds the correct number of stars, if provided', async () => {
@@ -170,8 +168,7 @@ describe('IaReview', () => {
       reviewer: 'Foo Bar',
       reviewdate: new Date('02/07/2025'),
       createdate: new Date('02/07/2025'),
-      screenname: 'Foo Bar',
-      itemname: 'foo-bar',
+      reviewer_itemname: 'foo-bar',
     };
 
     const el = await fixture<IaReview>(
@@ -314,8 +311,7 @@ describe('IaReview', () => {
       reviewer: 'Foo Bar',
       reviewdate: new Date('03/20/2025'),
       createdate: new Date('02/07/2025'),
-      screenname: 'Foo Bar',
-      itemname: 'foo-bar',
+      reviewer_itemname: 'foo-bar',
     };
 
     const el = await fixture<IaReview>(

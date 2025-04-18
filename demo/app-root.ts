@@ -21,8 +21,7 @@ export class AppRoot extends LitElement {
     reviewer: 'Foo Bar',
     reviewdate: new Date('03/20/2025'),
     createdate: new Date('02/07/2025'),
-    screenname: 'Foo Bar',
-    itemname: 'foo-bar',
+    reviewer_itemname: 'foo-bar',
   };
 
   private longReview: ReviewForRender = {
@@ -34,8 +33,7 @@ export class AppRoot extends LitElement {
     reviewer: 'Foo Bar',
     reviewdate: new Date('03/20/2025'),
     createdate: new Date('02/07/2025'),
-    screenname: 'Foo Bar',
-    itemname: 'foo-bar',
+    reviewer_itemname: 'foo-bar',
   };
 
   private reviewWithLink: ReviewForRender = {
@@ -47,8 +45,7 @@ export class AppRoot extends LitElement {
     reviewer: 'Foo Bar',
     reviewdate: new Date('03/20/2025'),
     createdate: new Date('02/07/2025'),
-    screenname: 'Foo Bar',
-    itemname: 'foo-bar',
+    reviewer_itemname: 'foo-bar',
   };
 
   private reviewWithTextLink: ReviewForRender = {
@@ -59,8 +56,7 @@ export class AppRoot extends LitElement {
     reviewer: 'Foo Bar',
     reviewdate: new Date('03/20/2025'),
     createdate: new Date('02/07/2025'),
-    screenname: 'Foo Bar',
-    itemname: 'foo-bar',
+    reviewer_itemname: 'foo-bar',
   };
 
   private goodRecaptchaManager: RecaptchaManagerInterface =
