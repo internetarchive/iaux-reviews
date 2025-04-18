@@ -20,8 +20,7 @@ import linkUrlsInText from './utils/link-urls-in-text';
 
 /* Further properties for reviews added before render */
 export interface ReviewForRender extends Review {
-  screenname: string;
-  itemname?: string;
+  reviewer_itemname?: string;
 }
 
 /**
@@ -131,17 +130,17 @@ export class IaReview extends LitElement {
   private get reviewerTemplate(): HTMLTemplateResult | typeof nothing {
     return !this.review
       ? nothing
-      : this.review.itemname
+      : this.review.reviewer_itemname
         ? html`
             <a
-              href="${this.baseHost}/details/${this.review.itemname}"
+              href="${this.baseHost}/details/${this.review.reviewer_itemname}"
               class="reviewer-link simple-link"
               data-event-click-tracking="ItemReviews|ReviewerLink"
             >
-              ${truncateScreenname(this.review.screenname)}
+              ${truncateScreenname(this.review.reviewer)}
             </a>
           `
-        : html`${truncateScreenname(this.review.screenname)}`;
+        : html`${truncateScreenname(this.review.reviewer)}`;
   }
 
   /* Number of stars that corresponds to patron's rating */

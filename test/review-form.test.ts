@@ -14,8 +14,7 @@ const mockOldReview: ReviewForRender = {
   reviewer: 'Foo Bar',
   reviewdate: new Date('03/20/2025'),
   createdate: new Date('02/07/2025'),
-  screenname: 'Foo Bar',
-  itemname: 'foo-bar',
+  reviewer_itemname: 'foo-bar',
 };
 
 const mockRecaptchaManager = new MockRecaptchaManager();
@@ -229,8 +228,7 @@ describe('ReviewForm', () => {
       reviewer: 'Foo Bar',
       reviewdate: new Date('03/20/2025'),
       createdate: new Date('02/07/2025'),
-      screenname: 'Foo Bar',
-      itemname: 'foo-bar',
+      reviewer_itemname: 'foo-bar',
     };
 
     const el = await fixture<ReviewForm>(
