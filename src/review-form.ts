@@ -17,6 +17,8 @@ import type {
 } from '@internetarchive/recaptcha-manager';
 import '@internetarchive/ia-activity-indicator';
 import type { Review } from '@internetarchive/metadata-service';
+import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service/dist/src/fetch-handler-interface';
+import { IaFetchHandler } from '@internetarchive/fetch-handler-service';
 
 import starSelected from './assets/star-selected';
 import starUnselected from './assets/star-unselected';
@@ -54,6 +56,10 @@ export class ReviewForm extends LitElement {
 
   /* Optional max length for review body */
   @property({ type: Number }) maxBodyLength?: number;
+
+  /* Handler for form submission */
+  @property({ type: Object }) fetchHandler: FetchHandlerInterface =
+    new IaFetchHandler();
 
   /* Service for activating the recaptcha challenge */
   @property({ type: Object }) recaptchaManager?: RecaptchaManagerInterface;
@@ -393,14 +399,15 @@ export class ReviewForm extends LitElement {
         formData.append(entry[0], entry[1] as string);
       }
 
-      const response = await fetch(`${this.baseHost}${this.endpointPath}`, {
-        method: 'POST',
-        body: formData,
-      });
+      const result = await this.fetchHandler.fetchApiResponse(
+        `${this.baseHost}${this.endpointPath}`,
+        {
+          method: 'POST',
+          body: formData,
+        },
+      );
 
-      console.log(response);
-      const json = await response.json();
-      console.log(json);
+      console.log(result);
 
       this.submissionInProgress = false;
       this.displayMode = 'review';
