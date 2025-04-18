@@ -14,7 +14,6 @@ const mockReview: ReviewForRender = {
   createdate: new Date('02/07/2025'),
   screenname: 'Foo Bar',
   itemname: 'foo-bar',
-  domId: '12345',
 };
 
 describe('IaReview', () => {
@@ -33,13 +32,13 @@ describe('IaReview', () => {
     expect(error).to.exist;
   });
 
-  it('adds the DOM ID to the review', async () => {
+  it('generates the correct Dom ID for the review', async () => {
     const el = await fixture<IaReview>(
       html`<ia-review .review=${mockReview}></ia-review>`,
     );
 
     const review = el.shadowRoot?.querySelector('.review');
-    expect(review?.id).to.equal('12345');
+    expect(review?.id).to.equal('review-1738904400000');
   });
 
   it('always renders the reviewer screenname', async () => {
@@ -62,7 +61,6 @@ describe('IaReview', () => {
       createdate: new Date('02/07/2025'),
       screenname: 'Foo Bar 123456789123456789123456789123456789',
       itemname: 'foo-bar',
-      domId: '12345',
     };
 
     const el = await fixture<IaReview>(
@@ -174,7 +172,6 @@ describe('IaReview', () => {
       createdate: new Date('02/07/2025'),
       screenname: 'Foo Bar',
       itemname: 'foo-bar',
-      domId: '12345',
     };
 
     const el = await fixture<IaReview>(
@@ -319,7 +316,6 @@ describe('IaReview', () => {
       createdate: new Date('02/07/2025'),
       screenname: 'Foo Bar',
       itemname: 'foo-bar',
-      domId: '12345',
     };
 
     const el = await fixture<IaReview>(

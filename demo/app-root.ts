@@ -23,7 +23,6 @@ export class AppRoot extends LitElement {
     createdate: new Date('02/07/2025'),
     screenname: 'Foo Bar',
     itemname: 'foo-bar',
-    domId: '12345',
   };
 
   private longReview: ReviewForRender = {
@@ -37,7 +36,6 @@ export class AppRoot extends LitElement {
     createdate: new Date('02/07/2025'),
     screenname: 'Foo Bar',
     itemname: 'foo-bar',
-    domId: '12345',
   };
 
   private reviewWithLink: ReviewForRender = {
@@ -51,7 +49,6 @@ export class AppRoot extends LitElement {
     createdate: new Date('02/07/2025'),
     screenname: 'Foo Bar',
     itemname: 'foo-bar',
-    domId: '12345',
   };
 
   private reviewWithTextLink: ReviewForRender = {
@@ -64,7 +61,6 @@ export class AppRoot extends LitElement {
     createdate: new Date('02/07/2025'),
     screenname: 'Foo Bar',
     itemname: 'foo-bar',
-    domId: '12345',
   };
 
   private goodRecaptchaManager: RecaptchaManagerInterface =

@@ -16,7 +16,6 @@ const mockOldReview: ReviewForRender = {
   createdate: new Date('02/07/2025'),
   screenname: 'Foo Bar',
   itemname: 'foo-bar',
-  domId: '12345',
 };
 
 const mockRecaptchaManager = new MockRecaptchaManager();
@@ -163,7 +162,7 @@ describe('ReviewForm', () => {
     expect(submitBtn?.getAttribute('disabled')).not.to.exist;
   });
 
-  it('prefills the old review body if provided', async () => {
+  it('prefills the old review title if provided', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
     );
@@ -232,7 +231,6 @@ describe('ReviewForm', () => {
       createdate: new Date('02/07/2025'),
       screenname: 'Foo Bar',
       itemname: 'foo-bar',
-      domId: '12345',
     };
 
     const el = await fixture<ReviewForm>(
