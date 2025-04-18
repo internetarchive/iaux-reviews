@@ -15,8 +15,6 @@ export class MockRecaptchaManager implements RecaptchaManagerInterface {
     siteKey?: string;
     recaptchaParams?: ReCaptchaV2.Parameters;
   }): Promise<RecaptchaWidgetInterface> {
-    const key = options?.siteKey ?? this.defaultSiteKey;
-
-    return new MockRecaptchaWidget({ siteKey: key });
+    return new MockRecaptchaWidget({ siteKey: 'test-key' });
   }
 }

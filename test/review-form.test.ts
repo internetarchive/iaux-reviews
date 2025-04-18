@@ -5,6 +5,7 @@ import { Review } from '@internetarchive/metadata-service';
 import { MockRecaptchaManager } from './mocks/mock-recaptcha-manager';
 import { IaReview } from '../src/review';
 import '../src/review-form';
+import { MockFetchHandler } from './mocks/mock-fetch-handler';
 
 const mockOldReview = new Review({
   stars: 5,
@@ -17,6 +18,7 @@ const mockOldReview = new Review({
 });
 
 const mockRecaptchaManager = new MockRecaptchaManager();
+const mockFetchHandler = new MockFetchHandler();
 
 describe('ReviewForm', () => {
   it('passes the a11y audit', async () => {
@@ -307,35 +309,6 @@ describe('ReviewForm', () => {
     expect(tokenInput.value).to.equal('12345a');
   });
 
-  /*
-    NOTE: These tests temporarily removed because they interfere with the CI.
-    Will be re-added when the submission is switched to an AJAX call and more easily intercepted.
-
-    it('adds the recaptcha token on submit if recaptcha manager provided', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form
-        .oldReview=${mockOldReview}
-        .recaptchaManager=${mockRecaptchaManager}
-      ></ia-review-form>`,
-    );
-
-    const submitBtn = el.shadowRoot?.querySelector(
-      'button[name="submit"]',
-    ) as HTMLButtonElement;
-
-    submitBtn?.click();
-
-    const recaptchaFinishedPromise = oneEvent(el, 'recaptchaFinished');
-    await recaptchaFinishedPromise;
-    await el.updateComplete;
-
-    const recaptchaInput = el.shadowRoot?.querySelector(
-      'input[name="g-recaptcha-response"]',
-    ) as HTMLInputElement;
-    expect(recaptchaInput).to.exist;
-    expect(recaptchaInput.value).to.equal('mock-token');
-  });
-
   it('shows an error on submit if no recaptcha manager/widget is provided', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
@@ -349,19 +322,20 @@ describe('ReviewForm', () => {
 
     await el.updateComplete;
 
-    const recaptchaInput = el.shadowRoot?.querySelector(
-      'input[name="g-recaptcha-response"]',
-    ) as HTMLInputElement;
-    expect(recaptchaInput.value).not.to.equal('mock-token');
-
-    const recaptchaErrorDiv = el.shadowRoot?.querySelector('.recaptcha-error');
+    const recaptchaErrorDiv = el.shadowRoot?.querySelector(
+      '.recoverable-error',
+    ) as HTMLDivElement;
     expect(recaptchaErrorDiv).to.exist;
+    expect(recaptchaErrorDiv?.innerText).to.equal(
+      'Could not validate review. Please try again later.',
+    );
   });
 
   it('skips recaptcha if the bypass switch is activated', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
         .oldReview=${mockOldReview}
+        .fetchHandler=${mockFetchHandler}
         ?bypassRecaptcha=${true}
         .baseHost=${'#'}
         .endpointPath=${'#'}
@@ -376,12 +350,9 @@ describe('ReviewForm', () => {
 
     await el.updateComplete;
 
-    const recaptchaInput = el.shadowRoot?.querySelector(
-      'input[name="g-recaptcha-response"]',
-    ) as HTMLInputElement;
-    expect(recaptchaInput.value).not.to.equal('mock-token');
-
-    const recaptchaErrorDiv = el.shadowRoot?.querySelector('.recaptcha-error');
+    const recaptchaErrorDiv = el.shadowRoot?.querySelector(
+      '.recoverable-error',
+    ) as HTMLDivElement;
     expect(recaptchaErrorDiv).not.to.exist;
   });
 
@@ -389,7 +360,7 @@ describe('ReviewForm', () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
         .oldReview=${mockOldReview}
-        .recaptchaManager=${mockRecaptchaManager}
+        .fetchHandler=${mockFetchHandler}
         ?bypassRecaptcha=${true}
         .baseHost=${'#'}
         .endpointPath=${'#'}
@@ -404,14 +375,11 @@ describe('ReviewForm', () => {
 
     await el.updateComplete;
 
-    const recaptchaInput = el.shadowRoot?.querySelector(
-      'input[name="g-recaptcha-response"]',
-    ) as HTMLInputElement;
-    expect(recaptchaInput.value).not.to.equal('mock-token');
-
-    const recaptchaErrorDiv = el.shadowRoot?.querySelector('.recaptcha-error');
+    const recaptchaErrorDiv = el.shadowRoot?.querySelector(
+      '.recoverable-error',
+    ) as HTMLDivElement;
     expect(recaptchaErrorDiv).not.to.exist;
-  });*/
+  });
 
   it('displays a character counter for the subject if max length specified', async () => {
     const el = await fixture<ReviewForm>(
