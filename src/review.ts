@@ -17,6 +17,7 @@ import { truncateScreenname } from './utils/truncate-screenname';
 import sanitizeReviewBody from './utils/sanitize-review-body';
 import friendlyTruncate from './utils/friendly-truncate';
 import linkUrlsInText from './utils/link-urls-in-text';
+import collapseSpace from './utils/collapse-space';
 
 /* Further properties for reviews added before render */
 export interface ReviewForRender extends Review {
@@ -86,7 +87,7 @@ export class IaReview extends LitElement {
         ? sanitizedReview
         : friendlyTruncate(sanitizedReview, this.maxBodyLength);
 
-    return html`${unsafeHTML(linkUrlsInText(truncatedReview))}`;
+    return html`${unsafeHTML(this.prepReview(truncatedReview))}`;
   }
 
   /* Renders the More/Less button if review is truncated */
@@ -187,6 +188,18 @@ export class IaReview extends LitElement {
     if (!this.review?.createdate) return '';
 
     return `review-${Date.parse(this.review.createdate.toString())}`;
+  }
+
+  /**
+   * Uses a set of utils in sequence to prepare a review for render,
+   * including transforming inline links into anchor links
+   * and collapsing internal spaces.
+   *
+   * @param {string} review The review to be prepped
+   * @returns {string} The review prepped for render
+   */
+  private prepReview(review: string): string {
+    return collapseSpace(linkUrlsInText(review));
   }
 
   static get styles(): CSSResultGroup {

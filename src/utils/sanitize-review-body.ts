@@ -15,5 +15,6 @@ export default function sanitizeReviewBody(reviewBody: string): string {
       node.setAttribute('rel', 'ugc nofollow');
     }
   });
+
   return DOMPurify.sanitize(reviewBody, { ALLOWED_TAGS: ALLOWED_TAGS });
 }

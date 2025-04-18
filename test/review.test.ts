@@ -335,4 +335,26 @@ describe('IaReview', () => {
 
     expect(reviewBody?.textContent?.trim()).to.equal('I loved it. I am bold!');
   });
+
+  it('collapses internal space prior to render', async () => {
+    const mockHTMLReview: ReviewForRender = {
+      rawValue: new Review({ stars: 5 }),
+      stars: 5,
+      reviewtitle: 'What a cool book!',
+      reviewbody: 'I loved it.\n\n\nSo great.',
+      reviewer: 'Foo Bar',
+      reviewdate: new Date('03/20/2025'),
+      createdate: new Date('02/07/2025'),
+      reviewer_itemname: 'foo-bar',
+    };
+
+    const el = await fixture<IaReview>(
+      html`<ia-review .review=${mockHTMLReview}></ia-review>`,
+    );
+
+    const reviewBody = el.shadowRoot?.querySelector('.body');
+    expect(reviewBody?.textContent?.trim()).to.equal(
+      'I loved it.<br />So great!',
+    );
+  });
 });
