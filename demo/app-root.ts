@@ -10,6 +10,8 @@ import {
 import type { ReviewForRender } from '../src/review';
 import '../src/review-form';
 import '../src/review';
+import { MockFetchHandler } from '../test/mocks/mock-fetch-handler';
+import { FetchHandlerInterface } from '@internetarchive/fetch-handler-service/dist/src/fetch-handler-interface';
 
 @customElement('app-root')
 export class AppRoot extends LitElement {
@@ -58,6 +60,8 @@ export class AppRoot extends LitElement {
     createdate: new Date('02/07/2025'),
     reviewer_itemname: 'foo-bar',
   };
+
+  private fetchHandler: FetchHandlerInterface = new MockFetchHandler();
 
   private goodRecaptchaManager: RecaptchaManagerInterface =
     new RecaptchaManager({
@@ -166,6 +170,7 @@ export class AppRoot extends LitElement {
           .maxSubjectLength=${this.useCharCounts ? 100 : undefined}
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
           .displayMode=${this.useReviewDisplay ? 'review' : 'form'}
+          .fetchHandler=${this.fetchHandler}
           ?bypassRecaptcha=${this.bypassRecaptcha}
           ?submissionInProgress=${true}
         ></ia-review-form>
