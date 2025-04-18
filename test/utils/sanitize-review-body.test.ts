@@ -21,7 +21,9 @@ describe('sanitizeReviewBody', () => {
   it('preserves links in the review body but adds spam protection', () => {
     expect(
       sanitizeReviewBody('I am a <a href="archive.org">test</a>'),
-    ).to.equal('I am a <a href="archive.org" rel="ugc nofollow">test</a>');
+    ).to.equal(
+      'I am a <a href="archive.org" rel="ugc nofollow" target="_blank">test</a>',
+    );
   });
 
   it('preserves text within HTML tags', () => {
