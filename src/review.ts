@@ -21,7 +21,6 @@ import linkUrlsInText from './utils/link-urls-in-text';
 /* Further properties for reviews added before render */
 export interface ReviewForRender extends Review {
   screenname: string;
-  domId: string;
   itemname?: string;
 }
 
@@ -54,7 +53,7 @@ export class IaReview extends LitElement {
           </div>
         `
       : html`
-          <article class="review" id=${this.review.domId}>
+          <article class="review" id=${this.generateDomId()}>
             <div class="top-line">
               <b>${msg('Reviewer:')}</b> ${this.reviewerTemplate} -
               ${this.starsTemplate}${this.createDateTemplate}
@@ -178,6 +177,17 @@ export class IaReview extends LitElement {
       reviewDate.getTime() !== createDate.getTime() ? '(edited)' : '';
 
     return msg(`${prettyDate} ${editedMsg}`);
+  }
+
+  /**
+   * Generates a unique ID for the review, using its createdate.
+   *
+   * @returns {string} The ID to render
+   */
+  private generateDomId(): string {
+    if (!this.review?.createdate) return '';
+
+    return `review-${Date.parse(this.review.createdate.toString())}`;
   }
 
   static get styles(): CSSResultGroup {
