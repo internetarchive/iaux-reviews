@@ -28,7 +28,7 @@ describe('ReviewForm', () => {
     await expect(el).shadowDom.to.be.accessible();
   });
 
-  /*it('passes the a11y audit in review mode', async () => {
+  it('passes the a11y audit in review mode', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
         .oldReview=${mockOldReview}
@@ -37,7 +37,29 @@ describe('ReviewForm', () => {
     );
 
     await expect(el).shadowDom.to.be.accessible();
-  });*/
+  });
+
+  it('passes the a11y audit with a recoverable error', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .oldReview=${mockOldReview}
+        .recoverableError=${'fail'}
+      ></ia-review-form>`,
+    );
+
+    await expect(el).shadowDom.to.be.accessible();
+  });
+
+  it('passes the a11y audit with an uncrecoverable error', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .oldReview=${mockOldReview}
+        .unrecoverableError=${'fail'}
+      ></ia-review-form>`,
+    );
+
+    await expect(el).shadowDom.to.be.accessible();
+  });
 
   it('renders a basic form', async () => {
     const el = await fixture<ReviewForm>(
