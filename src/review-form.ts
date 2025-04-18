@@ -514,15 +514,23 @@ export class ReviewForm extends LitElement {
           );
 
           color: var(--ia-text-color, #2c2c2c);
-          --ia-theme-error-color: #cc0000;
-          --ia-theme-error-color: #cc0000;
+
+          --container-error-color: #ea0202;
+          --container-link-color: #4f65f5;
+          --container-bg-color: #fbfbfd;
+          --container-border-color: #999999;
+        }
+
+        ia-review {
+          --error-color: var(--container-error-color, #ea0202);
+          --link-color: var(--container-link-color, #4f65f5);
         }
 
         form,
         .review-container {
-          border: 2px solid #979797;
+          border: 2px solid var(--container-border-color, #999999);
           border-radius: 5px;
-          background-color: #f5f5f7;
+          background-color: var(--container-bg-color, #fbfbfd);
           padding: 10px;
           margin-bottom: 20px;
         }
@@ -560,19 +568,19 @@ export class ReviewForm extends LitElement {
           width: calc(100% - 10px);
           font-family: inherit;
           border-radius: 5px;
-          border: 1px solid #999999;
+          border: 1px solid var(--container-border-color, #999999);
         }
 
         .input-box.error input,
         .input-box.error textarea {
-          border: 2px solid var(--ia-theme-error-color, #cc0000);
+          border: 2px solid var(--container-error-color, #ea0202);
         }
 
         .input-box.error .char-count,
         .input-error,
         .unrecoverable-error,
         .recoverable-error {
-          color: var(--ia-theme-error-color, #cc0000);
+          color: var(--container-error-color, #ea0202);
         }
 
         .input-error {
@@ -604,7 +612,7 @@ export class ReviewForm extends LitElement {
 
         .clear-stars-btn {
           padding: 0 5px;
-          color: var(--ia-link-color, #2c2c2c);
+          color: var(--container-link-color, #4f65f5);
           font-family: inherit;
           border: none;
           background: transparent;
@@ -639,7 +647,7 @@ export class ReviewForm extends LitElement {
           display: flex;
           flex-direction: column;
           justify-content: center;
-          background-color: #f5f5f7;
+          background-color: var(--container-bg-color, #fbfbfd);
         }
 
         .loading-indicator {

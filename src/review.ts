@@ -209,10 +209,12 @@ export class IaReview extends LitElement {
         );
 
         font-size: inherit;
+        --container-bg-color: #fbfbfd;
+        --container-border-color: #999999;
       }
 
       .error {
-        color: var(--ia-theme-error-color, #cc0000);
+        color: var(--error-color, #cc0000);
       }
 
       .top-line {
@@ -230,7 +232,7 @@ export class IaReview extends LitElement {
 
       .simple-link,
       .body a {
-        color: var(--ia-link-color, #4b64ff);
+        color: var(--link-color, #4b64ff);
         text-decoration: none;
         background: transparent;
         border: none;
