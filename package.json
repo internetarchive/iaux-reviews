@@ -7,7 +7,7 @@
   },
   "license": "AGPL-3.0-only",
   "author": "Internet Archive",
-  "version": "1.0.1",
+  "version": "1.0.2-webdev-7425.6",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "scripts": {
@@ -68,11 +68,13 @@
     ]
   },
   "dependencies": {
+    "@internetarchive/fetch-handler-service": "^1.0.0",
     "@internetarchive/ia-activity-indicator": "^0.0.6",
     "@internetarchive/ia-styles": "^1.0.0",
     "@internetarchive/metadata-service": "^1.0.3",
     "@internetarchive/recaptcha-manager": "^1.0.0",
     "@lit/localize": "^0.12.2",
+    "dompurify": "^3.2.5",
     "lit": "^2.8.0"
   }
 }
