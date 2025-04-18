@@ -360,6 +360,32 @@ describe('IaReview', () => {
     expect(reviewLink.rel).to.equal('ugc nofollow');
   });
 
+  it('converts inline links to live anchor links', async () => {
+    const mockHTMLReview: ReviewForRender = {
+      rawValue: new Review({ stars: 5 }),
+      stars: 5,
+      reviewtitle: 'What a cool book!',
+      reviewbody: 'I loved it. archive.org/details/foo',
+      reviewer: 'Foo Bar',
+      reviewdate: new Date('03/20/2025'),
+      createdate: new Date('02/07/2025'),
+      reviewer_itemname: 'foo-bar',
+    };
+
+    const el = await fixture<IaReview>(
+      html`<ia-review .review=${mockHTMLReview}></ia-review>`,
+    );
+
+    const reviewBody = el.shadowRoot?.querySelector('.body');
+    const reviewLink = reviewBody?.querySelector('a') as HTMLAnchorElement;
+
+    expect(reviewLink).to.exist;
+    expect(reviewLink.href).to.equal('https://archive.org/details/foo');
+    expect(reviewLink.target).to.equal('_blank');
+    expect(reviewLink.rel).to.equal('ugc nofollow');
+    expect(reviewLink.innerText).to.equal('archive.org/details/foo');
+  });
+
   it('collapses internal space prior to render', async () => {
     const mockHTMLReview: ReviewForRender = {
       rawValue: new Review({ stars: 5 }),
