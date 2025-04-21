@@ -11,6 +11,7 @@ import '../src/review-form';
 import '../src/review';
 import { MockFetchHandler } from '../test/mocks/mock-fetch-handler';
 import { FetchHandlerInterface } from '@internetarchive/fetch-handler-service/dist/src/fetch-handler-interface';
+import { ReviewForm } from '../src/review-form';
 
 @customElement('app-root')
 export class AppRoot extends LitElement {
@@ -73,7 +74,7 @@ export class AppRoot extends LitElement {
   private recaptchaManager?: RecaptchaManagerInterface;
 
   @state()
-  private bypassRecaptcha: boolean = false;
+  private bypassRecaptcha: boolean = true;
 
   @state()
   private unrecoverableError: boolean = false;
@@ -89,6 +90,9 @@ export class AppRoot extends LitElement {
 
   @state()
   private review: Review = this.mockOldReview;
+
+  @query('ia-review-form')
+  private reviewForm!: ReviewForm;
 
   @query('#review-input')
   private reviewInput!: HTMLTextAreaElement;
@@ -130,8 +134,16 @@ export class AppRoot extends LitElement {
         ${this.useCharCounts ? 'Remove' : 'Use'} char count limits
       </button>
       <h2>Toggle review display</h2>
-      <button @click=${() => (this.useReviewDisplay = !this.useReviewDisplay)}>
-        Switch to ${this.useReviewDisplay ? 'form view' : 'review view'}
+      <button
+        @click=${() =>
+          this.reviewForm.displayMode === 'review'
+            ? (this.useReviewDisplay = false)
+            : (this.useReviewDisplay = true)}
+      >
+        Switch to
+        ${this.reviewForm.displayMode === 'review'
+          ? 'form view'
+          : 'review view'}
       </button>
       ${this.review !== this.mockOldReview
         ? html`<button @click=${() => (this.review = this.mockOldReview)}>
