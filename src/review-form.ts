@@ -411,12 +411,33 @@ export class ReviewForm extends LitElement {
       console.log(result);
 
       this.submissionInProgress = false;
+      this.oldReview = this.generateSubmittedReview();
       this.displayMode = 'review';
     } catch (e) {
       console.log(e);
       this.recoverableError = this.GENERIC_ERROR_MESSAGE;
       this.stopSubmission();
     }
+  }
+
+  /**
+   * Generates a review object from the submitted review,
+   * for optimistic display on success.
+   *
+   * @returns {Review} The review to display
+   */
+  private generateSubmittedReview(): Review {
+    const today = new Date().toDateString();
+
+    return new Review({
+      reviewtitle: this.reviewForm.field_reviewtitle.value,
+      reviewbody: this.reviewForm.field_reviewbody.value,
+      stars: this.reviewForm.field_stars.value,
+      reviewdate: today,
+      reviewer: this.oldReview?.reviewer ?? 'test',
+      reviewer_itemname: this.oldReview?.reviewer_itemname ?? 'test',
+      createdate: this.oldReview?.createdate ?? today,
+    });
   }
 
   /**
