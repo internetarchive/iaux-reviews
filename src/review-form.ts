@@ -46,6 +46,12 @@ export class ReviewForm extends LitElement {
   /* Whether to display the form or the editable review */
   @property({ type: String }) displayMode: 'review' | 'form' = 'form';
 
+  /** Form submitter's screenname, if applicable */
+  @property({ type: String }) submitterScreenname: string = 'Anonymous';
+
+  /** Form submitter's itemname, if applicable */
+  @property({ type: String }) submitterItemname?: string;
+
   /* The previous review to pre-fill, if any */
   @property({ type: Object }) oldReview?: Review;
 
@@ -434,8 +440,9 @@ export class ReviewForm extends LitElement {
       reviewbody: this.reviewForm.field_reviewbody.value,
       stars: this.reviewForm.field_stars.value,
       reviewdate: today,
-      reviewer: this.oldReview?.reviewer ?? 'test',
-      reviewer_itemname: this.oldReview?.reviewer_itemname ?? 'test',
+      reviewer: this.oldReview?.reviewer ?? this.submitterScreenname,
+      reviewer_itemname:
+        this.oldReview?.reviewer_itemname ?? this.submitterItemname,
       createdate: this.oldReview?.createdate ?? today,
     });
   }
