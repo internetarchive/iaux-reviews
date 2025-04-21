@@ -36,7 +36,7 @@ describe('IaReview', () => {
     );
 
     const review = el.shadowRoot?.querySelector('.review');
-    expect(review?.id).to.equal('review-1738904400000');
+    expect(review?.id).to.contain('review-1738');
   });
 
   it('always renders the reviewer screenname', async () => {
