@@ -9,8 +9,8 @@ const mockReview: Review = new Review({
   reviewtitle: 'What a cool book!',
   reviewbody: 'I loved it.',
   reviewer: 'Foo Bar',
-  reviewdate: new Date('03/20/2025'),
-  createdate: new Date('02/07/2025'),
+  reviewdate: '03/20/2025',
+  createdate: '02/07/2025',
   reviewer_itemname: '@foo-bar',
 });
 
@@ -49,16 +49,9 @@ describe('IaReview', () => {
   });
 
   it('truncates the reviewer screenname if more than 40 characters', async () => {
-    const longScreennameReview = {
-      rawValue: new Review({ stars: 5 }),
-      stars: 5,
-      reviewtitle: 'What a cool book!',
-      reviewbody: 'I loved it.',
+    const longScreennameReview = new Review({
       reviewer: 'Foo Bar 123456789123456789123456789123456789',
-      reviewdate: new Date('03/20/2025'),
-      createdate: new Date('02/07/2025'),
-      reviewer_itemname: 'foo-bar',
-    };
+    });
 
     const el = await fixture<IaReview>(
       html`<ia-review .review=${longScreennameReview}></ia-review>`,
@@ -78,7 +71,7 @@ describe('IaReview', () => {
     const reviewerLink = el.shadowRoot?.querySelector(
       '.reviewer-link',
     ) as HTMLAnchorElement;
-    expect(reviewerLink?.href).to.contain('/details/foo-bar');
+    expect(reviewerLink?.href).to.contain('/details/@foo-bar');
   });
 
   it('uses a custom basehost for the reviewer details link if requested', async () => {
@@ -92,7 +85,7 @@ describe('IaReview', () => {
     const reviewerLink = el.shadowRoot?.querySelector(
       '.reviewer-link',
     ) as HTMLAnchorElement;
-    expect(reviewerLink?.href).to.contain('foo.archive.org/details/foo-bar');
+    expect(reviewerLink?.href).to.contain('foo.archive.org/details/@foo-bar');
   });
 
   it('defaults to archive.org if no custom host requested', async () => {
@@ -104,7 +97,7 @@ describe('IaReview', () => {
       '.reviewer-link',
     ) as HTMLAnchorElement;
     expect(reviewerLink?.href).to.contain(
-      'https://archive.org/details/foo-bar',
+      'https://archive.org/details/@foo-bar',
     );
   });
 

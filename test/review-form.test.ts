@@ -219,16 +219,7 @@ describe('ReviewForm', () => {
   });
 
   it('shows the same number of unselected stars as rating', async () => {
-    const threeStarReview = {
-      rawValue: new Review({ stars: 3 }),
-      stars: 3,
-      reviewtitle: 'What a cool book!',
-      reviewbody: 'I loved it.',
-      reviewer: 'Foo Bar',
-      reviewdate: new Date('03/20/2025'),
-      createdate: new Date('02/07/2025'),
-      reviewer_itemname: 'foo-bar',
-    };
+    const threeStarReview = new Review({ stars: 3 });
 
     const el = await fixture<ReviewForm>(
       html`<ia-review-form .oldReview=${threeStarReview}></ia-review-form>`,

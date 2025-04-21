@@ -1,5 +1,5 @@
 import { css, html, LitElement, nothing } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, query, state } from 'lit/decorators.js';
 
 import { Review } from '@internetarchive/metadata-service';
 import {
@@ -9,6 +9,7 @@ import {
 
 import '../src/review-form';
 import '../src/review';
+import { ReviewForm } from '../src/review-form';
 
 @customElement('app-root')
 export class AppRoot extends LitElement {
@@ -86,6 +87,9 @@ export class AppRoot extends LitElement {
   @state()
   private review: Review = this.mockOldReview;
 
+  @query('ia-review-form')
+  private reviewForm!: ReviewForm;
+
   render() {
     return html` <h2>Toggle ReCaptcha</h2>
       ${!this.recaptchaManager
@@ -123,8 +127,16 @@ export class AppRoot extends LitElement {
         ${this.useCharCounts ? 'Remove' : 'Use'} char count limits
       </button>
       <h2>Toggle review display</h2>
-      <button @click=${() => (this.useReviewDisplay = !this.useReviewDisplay)}>
-        Switch to ${this.useReviewDisplay ? 'form view' : 'review view'}
+      <button
+        @click=${() =>
+          this.reviewForm.displayMode === 'review'
+            ? (this.useReviewDisplay = false)
+            : (this.useReviewDisplay = true)}
+      >
+        Switch to
+        ${this.reviewForm.displayMode === 'review'
+          ? 'form view'
+          : 'review view'}
       </button>
       ${this.review !== this.mockOldReview
         ? html`<button @click=${() => (this.review = this.mockOldReview)}>
