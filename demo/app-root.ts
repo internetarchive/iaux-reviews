@@ -7,25 +7,22 @@ import {
   RecaptchaManagerInterface,
 } from '@internetarchive/recaptcha-manager';
 
-import type { ReviewForRender } from '../src/review';
 import '../src/review-form';
 import '../src/review';
 
 @customElement('app-root')
 export class AppRoot extends LitElement {
-  private mockOldReview: ReviewForRender = {
-    rawValue: new Review({ stars: 5 }),
+  private mockOldReview = new Review({
     stars: 5,
     reviewtitle: 'What a cool book!',
     reviewbody: 'I loved it.',
     reviewer: 'Foo Bar',
     reviewdate: new Date('03/20/2025'),
     createdate: new Date('02/07/2025'),
-    reviewer_itemname: 'foo-bar',
-  };
+    reviewer_itemname: '@foo-bar',
+  });
 
-  private longReview: ReviewForRender = {
-    rawValue: new Review({ stars: 5 }),
+  private longReview = new Review({
     stars: 5,
     reviewtitle:
       'What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! ',
@@ -33,11 +30,10 @@ export class AppRoot extends LitElement {
     reviewer: 'Foo Bar',
     reviewdate: new Date('03/20/2025'),
     createdate: new Date('02/07/2025'),
-    reviewer_itemname: 'foo-bar',
-  };
+    reviewer_itemname: '@foo-bar',
+  });
 
-  private reviewWithLink: ReviewForRender = {
-    rawValue: new Review({ stars: 5 }),
+  private reviewWithLink = new Review({
     stars: 5,
     reviewtitle: 'What a cool book!',
     reviewbody:
@@ -45,19 +41,18 @@ export class AppRoot extends LitElement {
     reviewer: 'Foo Bar',
     reviewdate: new Date('03/20/2025'),
     createdate: new Date('02/07/2025'),
-    reviewer_itemname: 'foo-bar',
-  };
+    reviewer_itemname: '@foo-bar',
+  });
 
-  private reviewWithTextLink: ReviewForRender = {
-    rawValue: new Review({ stars: 5 }),
+  private reviewWithTextLink = new Review({
     stars: 5,
     reviewtitle: 'What a cool book!',
     reviewbody: 'I loved it. You can read it here: archive.org/details/goody',
     reviewer: 'Foo Bar',
     reviewdate: new Date('03/20/2025'),
     createdate: new Date('02/07/2025'),
-    reviewer_itemname: 'foo-bar',
-  };
+    reviewer_itemname: '@foo-bar',
+  });
 
   private goodRecaptchaManager: RecaptchaManagerInterface =
     new RecaptchaManager({
@@ -89,7 +84,7 @@ export class AppRoot extends LitElement {
   private useReviewDisplay: boolean = false;
 
   @state()
-  private review: ReviewForRender = this.mockOldReview;
+  private review: Review = this.mockOldReview;
 
   render() {
     return html` <h2>Toggle ReCaptcha</h2>

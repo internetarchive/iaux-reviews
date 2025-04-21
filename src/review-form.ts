@@ -16,11 +16,13 @@ import type {
   RecaptchaWidgetInterface,
 } from '@internetarchive/recaptcha-manager';
 import '@internetarchive/ia-activity-indicator';
+import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service/dist/src/fetch-handler-interface';
+import { IaFetchHandler } from '@internetarchive/fetch-handler-service';
+import { Review } from '@internetarchive/metadata-service';
 
 import starSelected from './assets/star-selected';
 import starUnselected from './assets/star-unselected';
 
-import type { ReviewForRender } from './review';
 import './review';
 
 /**
@@ -44,7 +46,7 @@ export class ReviewForm extends LitElement {
   @property({ type: String }) displayMode: 'review' | 'form' = 'form';
 
   /* The previous review to pre-fill, if any */
-  @property({ type: Object }) oldReview?: ReviewForRender;
+  @property({ type: Object }) oldReview?: Review;
 
   /* An optional unrecoverable error to pass in instead of rendering the form inputs */
   @property({ type: String }) unrecoverableError?: string;

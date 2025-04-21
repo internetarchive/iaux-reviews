@@ -19,18 +19,13 @@ import friendlyTruncate from './utils/friendly-truncate';
 import linkUrlsInText from './utils/link-urls-in-text';
 import collapseSpace from './utils/collapse-space';
 
-/* Further properties for reviews added before render */
-export interface ReviewForRender extends Review {
-  reviewer_itemname?: string;
-}
-
 /**
  * Renders a single IA review
  */
 @customElement('ia-review')
 export class IaReview extends LitElement {
   /* The review to be rendered */
-  @property({ type: Object }) review?: ReviewForRender;
+  @property({ type: Object }) review?: Review;
 
   /* Maximum renderable length for subject */
   @property({ type: Number }) maxSubjectLength = 100;

@@ -1,19 +1,18 @@
 import { html, fixture, expect } from '@open-wc/testing';
 
-import type { IaReview, ReviewForRender } from '../src/review';
+import type { IaReview } from '../src/review';
 import { Review } from '@internetarchive/metadata-service';
 import '../src/review';
 
-const mockReview: ReviewForRender = {
-  rawValue: new Review({ stars: 5 }),
+const mockReview: Review = new Review({
   stars: 5,
   reviewtitle: 'What a cool book!',
   reviewbody: 'I loved it.',
   reviewer: 'Foo Bar',
   reviewdate: new Date('03/20/2025'),
   createdate: new Date('02/07/2025'),
-  reviewer_itemname: 'foo-bar',
-};
+  reviewer_itemname: '@foo-bar',
+});
 
 describe('IaReview', () => {
   it('passes the a11y audit', async () => {
@@ -110,8 +109,7 @@ describe('IaReview', () => {
   });
 
   it('does not add a link to the reviewer details page if itemname not provided', async () => {
-    const reviewNoItemname = Object.assign({}, mockReview);
-    reviewNoItemname.reviewer_itemname = undefined;
+    const reviewNoItemname = new Review({ reviewtitle: 'test' });
 
     const el = await fixture<IaReview>(
       html`<ia-review .review=${reviewNoItemname}></ia-review>`,
@@ -302,17 +300,11 @@ describe('IaReview', () => {
   });
 
   it('removes any HTML tags aside from anchor links prior to render', async () => {
-    const mockHTMLReview: ReviewForRender = {
-      rawValue: new Review({ stars: 5 }),
-      stars: 5,
+    const mockHTMLReview = new Review({
       reviewtitle: 'What a cool book!',
       reviewbody:
         'I loved it.<img src="foo" /> <b>I am bold!</b> <script>doStuff()</script> <style></style>',
-      reviewer: 'Foo Bar',
-      reviewdate: new Date('03/20/2025'),
-      createdate: new Date('02/07/2025'),
-      reviewer_itemname: 'foo-bar',
-    };
+    });
 
     const el = await fixture<IaReview>(
       html`<ia-review .review=${mockHTMLReview}></ia-review>`,
@@ -337,16 +329,10 @@ describe('IaReview', () => {
   });
 
   it('adds rel and target to anchor links before render', async () => {
-    const mockHTMLReview: ReviewForRender = {
-      rawValue: new Review({ stars: 5 }),
-      stars: 5,
+    const mockHTMLReview = new Review({
       reviewtitle: 'What a cool book!',
       reviewbody: 'I loved it.<a href="/details/foo">So good!</a>',
-      reviewer: 'Foo Bar',
-      reviewdate: new Date('03/20/2025'),
-      createdate: new Date('02/07/2025'),
-      reviewer_itemname: 'foo-bar',
-    };
+    });
 
     const el = await fixture<IaReview>(
       html`<ia-review .review=${mockHTMLReview}></ia-review>`,
@@ -361,16 +347,10 @@ describe('IaReview', () => {
   });
 
   it('converts inline links to live anchor links', async () => {
-    const mockHTMLReview: ReviewForRender = {
-      rawValue: new Review({ stars: 5 }),
-      stars: 5,
+    const mockHTMLReview = new Review({
       reviewtitle: 'What a cool book!',
       reviewbody: 'I loved it. archive.org/details/foo',
-      reviewer: 'Foo Bar',
-      reviewdate: new Date('03/20/2025'),
-      createdate: new Date('02/07/2025'),
-      reviewer_itemname: 'foo-bar',
-    };
+    });
 
     const el = await fixture<IaReview>(
       html`<ia-review .review=${mockHTMLReview}></ia-review>`,
@@ -387,16 +367,10 @@ describe('IaReview', () => {
   });
 
   it('collapses internal space prior to render', async () => {
-    const mockHTMLReview: ReviewForRender = {
-      rawValue: new Review({ stars: 5 }),
-      stars: 5,
+    const mockHTMLReview = new Review({
       reviewtitle: 'What a cool book!',
       reviewbody: 'I loved it.\n\n\nSo great.',
-      reviewer: 'Foo Bar',
-      reviewdate: new Date('03/20/2025'),
-      createdate: new Date('02/07/2025'),
-      reviewer_itemname: 'foo-bar',
-    };
+    });
 
     const el = await fixture<IaReview>(
       html`<ia-review .review=${mockHTMLReview}></ia-review>`,

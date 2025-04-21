@@ -2,20 +2,19 @@ import { html, fixture, expect, oneEvent } from '@open-wc/testing';
 
 import type { ReviewForm } from '../src/review-form';
 import { Review } from '@internetarchive/metadata-service';
-import '../src/review-form';
 import { MockRecaptchaManager } from './mocks/mock-recaptcha-manager';
-import { IaReview, ReviewForRender } from '../src/review';
+import { IaReview } from '../src/review';
+import '../src/review-form';
 
-const mockOldReview: ReviewForRender = {
-  rawValue: new Review({ stars: 5 }),
+const mockOldReview = new Review({
   stars: 5,
   reviewtitle: 'What a cool book!',
   reviewbody: 'I loved it.',
   reviewer: 'Foo Bar',
   reviewdate: new Date('03/20/2025'),
   createdate: new Date('02/07/2025'),
-  reviewer_itemname: 'foo-bar',
-};
+  reviewer_itemname: '@foo-bar',
+});
 
 const mockRecaptchaManager = new MockRecaptchaManager();
 
