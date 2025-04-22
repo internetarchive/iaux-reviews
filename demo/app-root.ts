@@ -49,8 +49,8 @@ export class AppRoot extends LitElement {
     reviewtitle: 'What a cool book!',
     reviewbody: 'I loved it. You can read it here: archive.org/details/goody',
     reviewer: 'Foo Bar',
-    reviewdate: new Date('03/20/2025'),
-    createdate: new Date('02/07/2025'),
+    reviewdate: '03/20/2025',
+    createdate: '02/07/2025',
     reviewer_itemname: '@foo-bar',
   });
 
