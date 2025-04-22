@@ -16,8 +16,6 @@ import type {
   RecaptchaWidgetInterface,
 } from '@internetarchive/recaptcha-manager';
 import '@internetarchive/ia-activity-indicator';
-import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service/dist/src/fetch-handler-interface';
-import { IaFetchHandler } from '@internetarchive/fetch-handler-service';
 import { Review } from '@internetarchive/metadata-service';
 
 import starSelected from './assets/star-selected';
