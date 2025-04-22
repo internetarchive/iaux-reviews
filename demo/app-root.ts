@@ -9,7 +9,6 @@ import {
 
 import '../src/review-form';
 import '../src/review';
-import { ReviewForm } from '../src/review-form';
 
 @customElement('app-root')
 export class AppRoot extends LitElement {
@@ -18,8 +17,8 @@ export class AppRoot extends LitElement {
     reviewtitle: 'What a cool book!',
     reviewbody: 'I loved it.',
     reviewer: 'Foo Bar',
-    reviewdate: new Date('03/20/2025'),
-    createdate: new Date('02/07/2025'),
+    reviewdate: '03/20/2025',
+    createdate: '02/07/2025',
     reviewer_itemname: '@foo-bar',
   });
 
@@ -29,8 +28,8 @@ export class AppRoot extends LitElement {
       'What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! What a cool book! ',
     reviewbody: new Array(100).fill('I loved it.').join(' '),
     reviewer: 'Foo Bar',
-    reviewdate: new Date('03/20/2025'),
-    createdate: new Date('02/07/2025'),
+    reviewdate: '03/20/2025',
+    createdate: '02/07/2025',
     reviewer_itemname: '@foo-bar',
   });
 
@@ -38,10 +37,10 @@ export class AppRoot extends LitElement {
     stars: 5,
     reviewtitle: 'What a cool book!',
     reviewbody:
-      'I loved it. You can <a href="archive.org/details/goody">read it here.</a>',
+      'I loved it. You can <a href="https://archive.org/details/goody">read it here.</a>',
     reviewer: 'Foo Bar',
-    reviewdate: new Date('03/20/2025'),
-    createdate: new Date('02/07/2025'),
+    reviewdate: '03/20/2025',
+    createdate: '02/07/2025',
     reviewer_itemname: '@foo-bar',
   });
 
@@ -87,9 +86,6 @@ export class AppRoot extends LitElement {
   @state()
   private review: Review = this.mockOldReview;
 
-  @query('ia-review-form')
-  private reviewForm!: ReviewForm;
-
   render() {
     return html` <h2>Toggle ReCaptcha</h2>
       ${!this.recaptchaManager
@@ -127,16 +123,8 @@ export class AppRoot extends LitElement {
         ${this.useCharCounts ? 'Remove' : 'Use'} char count limits
       </button>
       <h2>Toggle review display</h2>
-      <button
-        @click=${() =>
-          this.reviewForm.displayMode === 'review'
-            ? (this.useReviewDisplay = false)
-            : (this.useReviewDisplay = true)}
-      >
-        Switch to
-        ${this.reviewForm.displayMode === 'review'
-          ? 'form view'
-          : 'review view'}
+      <button @click=${() => (this.useReviewDisplay = !this.useReviewDisplay)}>
+        Switch to ${this.useReviewDisplay ? 'form view' : 'review view'}
       </button>
       ${this.review !== this.mockOldReview
         ? html`<button @click=${() => (this.review = this.mockOldReview)}>
