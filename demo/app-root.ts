@@ -1,5 +1,5 @@
 import { css, html, LitElement, nothing } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, query, state } from 'lit/decorators.js';
 
 import { Review } from '@internetarchive/metadata-service';
 import {
@@ -86,6 +86,9 @@ export class AppRoot extends LitElement {
   @state()
   private review: Review = this.mockOldReview;
 
+  @query('#review-input')
+  private reviewInput!: HTMLTextAreaElement;
+
   render() {
     return html` <h2>Toggle ReCaptcha</h2>
       ${!this.recaptchaManager
@@ -147,6 +150,24 @@ export class AppRoot extends LitElement {
           </button>`
         : nothing}
 
+      <div class="review-body-form">
+        <h2>Adjust review body</h2>
+        <textarea id="review-input"></textarea>
+        <button
+          @click=${() =>
+            (this.review = new Review({
+              reviewtitle: 'What a cool book!',
+              reviewbody: this.reviewInput.value,
+              reviewer: 'Foo Bar',
+              reviewdate: new Date().toDateString(),
+              createdate: '02/07/2025',
+              reviewer_itemname: '@foo-bar',
+            }))}
+        >
+          Update
+        </button>
+      </div>
+
       <div class="container">
         <ia-review-form
           .identifier=${'goody'}
@@ -174,8 +195,21 @@ export class AppRoot extends LitElement {
       font-size: 1.4rem;
     }
 
-    h2 {
+    h2,
+    textarea {
       font-family: 'Helvetica', sans-serif;
+    }
+
+    .review-body-form {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .review-body-form textarea {
+      width: 400px;
+      height: 100px;
     }
   `;
 }
