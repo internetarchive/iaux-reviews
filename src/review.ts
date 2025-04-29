@@ -8,17 +8,16 @@ import {
 } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 import { msg } from '@lit/localize';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 import { Review } from '@internetarchive/metadata-service';
 
 import starBasic from './assets/star-basic';
-
-/* Further properties for reviews added before render */
-export interface ReviewForRender extends Review {
-  screenname: string;
-  domId: string;
-  itemname?: string;
-}
+import { truncateScreenname } from './utils/truncate-screenname';
+import sanitizeReviewBody from './utils/sanitize-review-body';
+import friendlyTruncate from './utils/friendly-truncate';
+import linkUrlsInText from './utils/link-urls-in-text';
+import collapseSpace from './utils/collapse-space';
 
 /**
  * Renders a single IA review
@@ -26,13 +25,13 @@ export interface ReviewForRender extends Review {
 @customElement('ia-review')
 export class IaReview extends LitElement {
   /* The review to be rendered */
-  @property({ type: Object }) review?: ReviewForRender;
+  @property({ type: Object }) review?: Review;
 
-  /* Maximum length for subject */
+  /* Maximum renderable length for subject */
   @property({ type: Number }) maxSubjectLength = 100;
 
-  /* Maximum length for body */
-  @property({ type: Number }) maxBodyLength = 1000;
+  /* Maximum renderable length for body */
+  @property({ type: Number }) maxBodyLength = 150;
 
   /* Base for URLs */
   @property({ type: String }) baseHost = 'https://archive.org';
@@ -43,40 +42,50 @@ export class IaReview extends LitElement {
 
   render() {
     return !this.review
-      ? html`<div class="error">
-          ${msg('This review cannot be displayed at this time.')}
-        </div>`
-      : html`<article class="review" id=${this.review.domId}>
-          <div class="top-line">
-            <b>${msg('Reviewer:')} </b>${this.reviewerTemplate} -
-            ${this.starsTemplate}${this.createDateTemplate}
+      ? html`
+          <div class="error">
+            ${msg('This review cannot be displayed at this time.')}
           </div>
-          <div class="subject">
-            <b>${msg('Subject: ')}</b>${this.subjectTemplate}
-          </div>
-          <div class="body">${this.bodyTemplate}</div>
-          ${this.truncationButtonsTemplate}
-        </article>`;
+        `
+      : html`
+          <article class="review" id=${this.generateDomId()}>
+            <div class="top-line">
+              <b>${msg('Reviewer:')}</b> ${this.reviewerTemplate} -
+              ${this.starsTemplate}${this.createDateTemplate}
+            </div>
+            <div class="subject">
+              <b>${msg('Subject: ')}</b>${this.subjectTemplate}
+            </div>
+            <div class="body">${this.bodyTemplate}</div>
+            ${this.truncationButtonsTemplate}
+          </article>
+        `;
   }
 
+  /* Renders the review subject, truncating if necessary */
   private get subjectTemplate(): string {
     if (!this.review?.reviewtitle) return '';
 
     return this.review.reviewtitle.length <= this.maxSubjectLength ||
       this.showTruncatedContent
       ? this.review.reviewtitle
-      : this.review.reviewtitle.slice(0, this.maxSubjectLength).concat('...');
+      : friendlyTruncate(this.review.reviewtitle, this.maxSubjectLength);
   }
 
-  private get bodyTemplate(): string {
-    if (!this.review?.reviewbody) return '';
+  /* Renders the review body, truncating if necessary */
+  private get bodyTemplate(): HTMLTemplateResult | typeof nothing {
+    if (!this.review?.reviewbody) return nothing;
 
-    return this.review.reviewbody.length <= this.maxBodyLength ||
-      this.showTruncatedContent
-      ? this.review.reviewbody
-      : this.review.reviewbody.slice(0, this.maxBodyLength).concat('...');
+    const sanitizedReview = sanitizeReviewBody(this.review.reviewbody);
+    const truncatedReview =
+      sanitizedReview.length <= this.maxBodyLength || this.showTruncatedContent
+        ? sanitizedReview
+        : friendlyTruncate(sanitizedReview, this.maxBodyLength);
+
+    return html`${unsafeHTML(this.prepReview(truncatedReview))}`;
   }
 
+  /* Renders the More/Less button if review is truncated */
   private get truncationButtonsTemplate(): HTMLTemplateResult | typeof nothing {
     if (!this.review?.reviewtitle || !this.review?.reviewbody) return nothing;
 
@@ -91,15 +100,19 @@ export class IaReview extends LitElement {
       : this.moreButtonTemplate;
   }
 
+  /* More button for truncation */
   private get moreButtonTemplate(): HTMLTemplateResult {
-    return html`<button
-      class="simple-link more-btn"
-      @click=${() => (this.showTruncatedContent = true)}
-    >
-      ${msg('More...')}
-    </button>`;
+    return html`
+      <button
+        class="simple-link more-btn"
+        @click=${() => (this.showTruncatedContent = true)}
+      >
+        ${msg('More...')}
+      </button>
+    `;
   }
 
+  /* Less button for truncation */
   private get lessButtonTemplate(): HTMLTemplateResult {
     return html`<button
       class="simple-link less-btn"
@@ -109,45 +122,79 @@ export class IaReview extends LitElement {
     </button>`;
   }
 
+  /* Reviewer name, with hyperlink and truncation if needed */
   private get reviewerTemplate(): HTMLTemplateResult | typeof nothing {
     return !this.review
       ? nothing
-      : this.review.itemname
-        ? html`<a
-            href="${this.baseHost}/details/${this.review.itemname}"
-            class="reviewer-link simple-link"
-            data-event-click-tracking="ItemReviews|ReviewerLink"
-            >${this.review.screenname}</a
-          >`
-        : html`${this.review.screenname}`;
+      : this.review.reviewer_itemname
+        ? html`
+            <a
+              href="${this.baseHost}/details/${this.review.reviewer_itemname}"
+              class="reviewer-link simple-link"
+              data-event-click-tracking="ItemReviews|ReviewerLink"
+            >
+              ${truncateScreenname(this.review.reviewer)}
+            </a>
+          `
+        : html`${truncateScreenname(this.review.reviewer)}`;
   }
 
+  /* Number of stars that corresponds to patron's rating */
   private get starsTemplate(): HTMLTemplateResult | typeof nothing {
     if (!this.review || !this.review.stars) return nothing;
-    return html`<div
+    return html`
+      <div
         class="review-stars"
         title="${msg(`${this.review.stars} out of 5 stars`)}"
       >
-        ${new Array(this.review.stars)
+        ${new Array(Number(this.review.stars))
           .fill(null)
           .map(() => html`<div class="review-star">${starBasic}</div>`)}
       </div>
-      - `;
+      -
+    `;
   }
 
+  /* Formats the review's date for render, adding (edited) if needed */
   private get createDateTemplate(): string | typeof nothing {
-    if (!this.review) return nothing;
-    const prettyDate = this.review.createdate?.toLocaleString('en-us', {
+    if (!this.review?.createdate || !this.review?.reviewdate) return nothing;
+
+    const reviewDate = new Date(this.review.reviewdate);
+    const createDate = new Date(this.review.createdate);
+
+    const prettyDate = createDate.toLocaleString('en-us', {
       month: 'long',
       day: 'numeric',
       year: 'numeric',
     });
+
     const editedMsg =
-      this.review.reviewdate?.getTime() !== this.review.createdate?.getTime()
-        ? '(edited)'
-        : '';
+      reviewDate.getTime() !== createDate.getTime() ? '(edited)' : '';
 
     return msg(`${prettyDate} ${editedMsg}`);
+  }
+
+  /**
+   * Generates a unique ID for the review, using its createdate.
+   *
+   * @returns {string} The ID to render
+   */
+  private generateDomId(): string {
+    if (!this.review?.createdate) return '';
+
+    return `review-${Date.parse(this.review.createdate.toString())}`;
+  }
+
+  /**
+   * Uses a set of utils in sequence to prepare a review for render,
+   * including transforming inline links into anchor links
+   * and collapsing internal spaces.
+   *
+   * @param {string} review The review to be prepped
+   * @returns {string} The review prepped for render
+   */
+  private prepReview(review: string): string {
+    return collapseSpace(linkUrlsInText(review));
   }
 
   static get styles(): CSSResultGroup {
@@ -169,22 +216,20 @@ export class IaReview extends LitElement {
       }
 
       .top-line {
-        display: flex;
-        flex-direction: row;
-        gap: 3px;
         margin-bottom: 0.5rem;
+      }
+
+      .top-line > * {
+        display: inline-block;
       }
 
       .review-star {
         width: 1rem;
+        display: inline-block;
       }
 
-      .review-stars {
-        display: flex;
-        flex-direction: row;
-      }
-
-      .simple-link {
+      .simple-link,
+      .body a {
         color: var(--ia-link-color, #4b64ff);
         text-decoration: none;
         background: transparent;
@@ -192,7 +237,8 @@ export class IaReview extends LitElement {
         padding: 0px;
       }
 
-      .simple-link:hover {
+      .simple-link:hover,
+      .body a:hover {
         cursor: pointer;
         text-decoration: underline;
       }

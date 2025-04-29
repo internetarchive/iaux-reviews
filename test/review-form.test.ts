@@ -2,33 +2,41 @@ import { html, fixture, expect, oneEvent } from '@open-wc/testing';
 
 import type { ReviewForm } from '../src/review-form';
 import { Review } from '@internetarchive/metadata-service';
-import '../src/review-form';
 import { MockRecaptchaManager } from './mocks/mock-recaptcha-manager';
-import { IaReview, ReviewForRender } from '../src/review';
+import { IaReview } from '../src/review';
+import '../src/review-form';
 
-const mockOldReview: ReviewForRender = {
-  rawValue: new Review({ stars: 5 }),
+const mockOldReview = new Review({
   stars: 5,
   reviewtitle: 'What a cool book!',
   reviewbody: 'I loved it.',
   reviewer: 'Foo Bar',
   reviewdate: new Date('03/20/2025'),
   createdate: new Date('02/07/2025'),
-  screenname: 'Foo Bar',
-  itemname: 'foo-bar',
-  domId: '12345',
-};
+  reviewer_itemname: '@foo-bar',
+});
 
 const mockRecaptchaManager = new MockRecaptchaManager();
 
 describe('ReviewForm', () => {
   it('passes the a11y audit', async () => {
     const el = await fixture<ReviewForm>(
-      html`<ia-review-form></ia-review-form>`,
+      html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
     );
 
     await expect(el).shadowDom.to.be.accessible();
   });
+
+  /*it('passes the a11y audit in review mode', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .oldReview=${mockOldReview}
+        .displayMode=${'review'}
+      ></ia-review-form>`,
+    );
+
+    await expect(el).shadowDom.to.be.accessible();
+  });*/
 
   it('renders a basic form', async () => {
     const el = await fixture<ReviewForm>(
@@ -152,7 +160,7 @@ describe('ReviewForm', () => {
     expect(submitBtn?.getAttribute('disabled')).not.to.exist;
   });
 
-  it('prefills the old review body if provided', async () => {
+  it('prefills the old review title if provided', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
     );
@@ -211,18 +219,7 @@ describe('ReviewForm', () => {
   });
 
   it('shows the same number of unselected stars as rating', async () => {
-    const threeStarReview = {
-      rawValue: new Review({ stars: 3 }),
-      stars: 3,
-      reviewtitle: 'What a cool book!',
-      reviewbody: 'I loved it.',
-      reviewer: 'Foo Bar',
-      reviewdate: new Date('03/20/2025'),
-      createdate: new Date('02/07/2025'),
-      screenname: 'Foo Bar',
-      itemname: 'foo-bar',
-      domId: '12345',
-    };
+    const threeStarReview = new Review({ stars: 3 });
 
     const el = await fixture<ReviewForm>(
       html`<ia-review-form .oldReview=${threeStarReview}></ia-review-form>`,
