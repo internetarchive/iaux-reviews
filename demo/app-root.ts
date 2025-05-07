@@ -134,16 +134,8 @@ export class AppRoot extends LitElement {
         ${this.useCharCounts ? 'Remove' : 'Use'} char count limits
       </button>
       <h2>Toggle review display</h2>
-      <button
-        @click=${() =>
-          this.reviewForm.displayMode === 'review'
-            ? (this.useReviewDisplay = false)
-            : (this.useReviewDisplay = true)}
-      >
-        Switch to
-        ${this.reviewForm.displayMode === 'review'
-          ? 'form view'
-          : 'review view'}
+      <button @click=${() => (this.useReviewDisplay = !this.useReviewDisplay)}>
+        Switch to ${this.useReviewDisplay ? 'form view' : 'review view'}
       </button>
       ${this.review !== this.mockOldReview
         ? html`<button @click=${() => (this.review = this.mockOldReview)}>
