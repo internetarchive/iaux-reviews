@@ -393,10 +393,7 @@ export class ReviewForm extends LitElement {
 
       if (!this.bypassRecaptcha) {
         const recaptchaToken = await this.getRecaptchaToken();
-
-        if (!recaptchaToken) {
-          return this.handleRecaptchaError();
-        }
+        if (!recaptchaToken) return this.handleRecaptchaError();
 
         formData.append('g-recaptcha-response', recaptchaToken ?? '');
       }
