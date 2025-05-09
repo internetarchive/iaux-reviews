@@ -389,7 +389,7 @@ export class ReviewForm extends LitElement {
     }
 
     try {
-      const formData: { [key: string]: string } = {};
+      const formData = new URLSearchParams();
 
       if (!this.bypassRecaptcha) {
         const recaptchaToken = await this.getRecaptchaToken();
@@ -398,19 +398,18 @@ export class ReviewForm extends LitElement {
           return this.handleRecaptchaError();
         }
 
-        formData['g-recaptcha-response'] = recaptchaToken ?? '';
+        formData.append('g-recaptcha-response', recaptchaToken ?? '');
       }
 
       for (const entry of new FormData(this.reviewForm)) {
-        formData[entry[0]] = entry[1].toString();
+        formData.append(entry[0], entry[1] as string);
       }
 
       const result = await this.fetchHandler.fetchApiResponse(
         `${this.baseHost}${this.endpointPath}`,
         {
-          includeCredentials: true,
           method: 'POST',
-          body: JSON.stringify(formData),
+          body: formData,
         },
       );
 
