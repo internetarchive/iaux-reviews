@@ -409,6 +409,7 @@ export class ReviewForm extends LitElement {
         `${this.baseHost}${this.endpointPath}`,
         {
           method: 'POST',
+          includeCredentials: true,
           body: formData,
         },
       );
