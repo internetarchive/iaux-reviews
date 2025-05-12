@@ -9,6 +9,9 @@ import {
 } from 'lit';
 import { property, customElement, state, query } from 'lit/decorators.js';
 import { msg } from '@lit/localize';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+
+import DOMPurify from 'dompurify';
 
 import { iaButtonStyles } from '@internetarchive/ia-styles';
 import type {
@@ -187,7 +190,9 @@ export class ReviewForm extends LitElement {
   private get recoverableErrorTemplate(): HTMLTemplateResult | typeof nothing {
     return this.recoverableError
       ? html`
-          <div class="recoverable-error">${msg(this.recoverableError)}</div>
+          <div class="recoverable-error">
+            ${unsafeHTML(this.sanitizeErrorMsg(msg(this.recoverableError)))}
+          </div>
         `
       : nothing;
   }
@@ -370,6 +375,16 @@ export class ReviewForm extends LitElement {
     } catch {
       this.unrecoverableError = this.RECAPTCHA_ERROR_MESSAGE;
     }
+  }
+
+  /**
+   * Uses DOMpurify to sanitize any error message before render.
+   *
+   * @param {string} errorMsg The error message to be sanitized
+   * @returns {string} The sanitized error message
+   */
+  private sanitizeErrorMsg(errorMsg: string): string {
+    return DOMPurify.sanitize(errorMsg, { ALLOWED_TAGS: ['a', 'b'] });
   }
 
   /** Handles validation and recaptcha execution on form submission */

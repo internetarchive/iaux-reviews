@@ -6,6 +6,7 @@ import { MockRecaptchaManager } from './mocks/mock-recaptcha-manager';
 import { IaReview } from '../src/review';
 import '../src/review-form';
 import { MockFetchHandler } from './mocks/mock-fetch-handler';
+import { error } from 'console';
 
 const mockOldReview = new Review({
   stars: 5,
@@ -126,6 +127,38 @@ describe('ReviewForm', () => {
 
     const submitBtn = el.shadowRoot?.querySelector('button[type="submit"]');
     expect(submitBtn?.getAttribute('disabled')).not.to.exist;
+  });
+
+  it('permits safe HTML in error messages', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .bypassRecaptcha=${true}
+        .review=${mockOldReview}
+        .recoverableError=${'<b>I am bold. <a href="archive.org">I am a link.</a></b>'}
+      ></ia-review-form>`,
+    );
+
+    const errorDiv = el.shadowRoot?.querySelector('.recoverable-error');
+    expect(errorDiv).to.exist;
+    expect(errorDiv?.textContent).to.include('I am bold. I am a link');
+    expect(errorDiv?.querySelector('a')).to.exist;
+    expect(errorDiv?.querySelector('b')).to.exist;
+  });
+
+  it('sanitizes error message HTML prior to submit', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .bypassRecaptcha=${true}
+        .review=${mockOldReview}
+        .recoverableError=${'<b>I am bold. <button onclick="dostuff()">I am a button.</button><img src="archive.org" /></b>'}
+      ></ia-review-form>`,
+    );
+
+    const errorDiv = el.shadowRoot?.querySelector('.recoverable-error');
+    expect(errorDiv).to.exist;
+    expect(errorDiv?.textContent).to.include('I am bold. I am a button.');
+    expect(errorDiv?.querySelector('b')).to.exist;
+    expect(errorDiv?.querySelector('button')).not.to.exist;
   });
 
   it('prefills the old review title if provided', async () => {
