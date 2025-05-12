@@ -391,7 +391,7 @@ export class ReviewForm extends LitElement {
    * @returns {string} The sanitized error message
    */
   private sanitizeErrorMsg(errorMsg: string): string {
-    return DOMPurify.sanitize(errorMsg, { ALLOWED_TAGS: ['a', 'b'] });
+    return DOMPurify.sanitize(errorMsg, { ALLOWED_TAGS: ['a', 'b', 'br'] });
   }
 
   /** Handles validation and recaptcha execution on form submission */
