@@ -402,22 +402,26 @@ export class ReviewForm extends LitElement {
         formData.append(entry[0], entry[1] as string);
       }
 
-      const result = await this.fetchHandler.fetchApiResponse(
-        `${this.baseHost}${this.endpointPath}`,
-        {
-          method: 'POST',
-          includeCredentials: true,
-          body: formData,
-        },
-      );
+      const result: { success: boolean; error?: string } =
+        await this.fetchHandler.fetchApiResponse(
+          `${this.baseHost}${this.endpointPath}`,
+          {
+            method: 'POST',
+            includeCredentials: true,
+            body: formData,
+          },
+        );
 
-      console.log(result);
-
-      this.submissionInProgress = false;
-      this.oldReview = this.generateSubmittedReview();
-      this.displayMode = 'review';
+      if (result?.success === true) {
+        this.submissionInProgress = false;
+        this.oldReview = this.generateSubmittedReview();
+        this.displayMode = 'review';
+      } else {
+        this.recoverableError = result.error ?? this.GENERIC_ERROR_MESSAGE;
+        this.stopSubmission();
+      }
     } catch (e) {
-      console.log(e);
+      console.error(e);
       this.recoverableError = this.GENERIC_ERROR_MESSAGE;
       this.stopSubmission();
     }
@@ -432,7 +436,7 @@ export class ReviewForm extends LitElement {
   private generateSubmittedReview(): Review {
     const today = new Date().toDateString();
 
-    return new Review({
+    const newReview = new Review({
       reviewtitle: this.reviewForm.field_reviewtitle.value,
       reviewbody: this.reviewForm.field_reviewbody.value,
       stars: this.reviewForm.field_stars.value,
@@ -440,8 +444,10 @@ export class ReviewForm extends LitElement {
       reviewer: this.oldReview?.reviewer ?? this.submitterScreenname,
       reviewer_itemname:
         this.oldReview?.reviewer_itemname ?? this.submitterItemname,
-      createdate: this.oldReview?.createdate ?? today,
+      createdate: this.oldReview?.createdate?.toDateString() ?? today,
     });
+
+    return newReview;
   }
 
   /**
