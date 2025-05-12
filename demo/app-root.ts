@@ -89,6 +89,9 @@ export class AppRoot extends LitElement {
   private useReviewDisplay: boolean = false;
 
   @state()
+  private allowDeletion: boolean = false;
+
+  @state()
   private review: Review = this.mockOldReview;
 
   @query('ia-review-form')
@@ -157,6 +160,9 @@ export class AppRoot extends LitElement {
             Prefill review with text link
           </button>`
         : nothing}
+      <button @click=${() => (this.allowDeletion = !this.allowDeletion)}>
+        ${this.allowDeletion ? 'Prevent' : 'Allow'} deletion
+      </button>
 
       <div class="review-body-form">
         <h2>Adjust review body</h2>
@@ -191,6 +197,7 @@ export class AppRoot extends LitElement {
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
           .displayMode=${this.useReviewDisplay ? 'review' : 'form'}
           .fetchHandler=${this.fetchHandler}
+          ?canDelete=${this.allowDeletion}
           ?bypassRecaptcha=${this.bypassRecaptcha}
           ?submissionInProgress=${true}
         ></ia-review-form>

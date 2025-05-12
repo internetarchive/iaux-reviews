@@ -76,6 +76,9 @@ export class ReviewForm extends LitElement {
   /* Optionally avoid using recaptcha for the form */
   @property({ type: Boolean }) bypassRecaptcha: boolean = false;
 
+  /* Optionally allow review deletion */
+  @property({ type: Boolean }) canDelete: boolean = false;
+
   /* Recaptcha widget for the form */
   private recaptchaWidget?: RecaptchaWidgetInterface;
 
@@ -168,7 +171,11 @@ export class ReviewForm extends LitElement {
     if (!this.oldReview) return nothing;
     return html`
       <div class="review-container">
-        <ia-review .review=${this.oldReview}></ia-review>
+        <ia-review
+          .review=${this.oldReview}
+          .baseHost=${this.baseHost}
+          ?canDelete=${this.canDelete}
+        ></ia-review>
       </div>
     `;
   }
@@ -587,11 +594,6 @@ export class ReviewForm extends LitElement {
           background-color: var(--container-bg-color, #fbfbfd);
           padding: 10px;
           margin-bottom: 20px;
-        }
-
-        /* Prevents overlap with delete icon, if present */
-        .review-container {
-          padding-right: 30px;
         }
 
         .form-heading {
