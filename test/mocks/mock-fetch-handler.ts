@@ -10,7 +10,7 @@ export class MockFetchHandler implements FetchHandlerInterface {
       headers?: HeadersInit;
     },
   ): Promise<T> {
-    return { response: 'mockresponse' } as T;
+    return { success: true } as T;
   }
 
   async fetchIAApiResponse<T>(
