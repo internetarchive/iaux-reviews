@@ -466,10 +466,19 @@ export class ReviewForm extends LitElement {
       reviewer: this.oldReview?.reviewer ?? this.submitterScreenname,
       reviewer_itemname:
         this.oldReview?.reviewer_itemname ?? this.submitterItemname,
-      createdate: this.oldReview?.createdate?.toDateString() ?? today,
+      createdate: this.dateToString(this.oldReview?.createdate) ?? today,
     });
 
     return newReview;
+  }
+
+  /**
+   * Converts date to string if it is a Date, otherwise
+   * leaves unchanged.
+   */
+  private dateToString(date: string | Date | undefined) {
+    if (date instanceof Date) return date.toDateString();
+    return date;
   }
 
   /**
