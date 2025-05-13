@@ -675,7 +675,8 @@ export class ReviewForm extends LitElement {
           cursor: pointer;
         }
 
-        .clear-stars-btn {
+        .clear-stars-btn,
+        .recoverable-error a {
           padding: 0 5px;
           color: var(--container-link-color, #4f65f5);
           font-family: inherit;
@@ -685,7 +686,8 @@ export class ReviewForm extends LitElement {
           padding-top: 5px;
         }
 
-        .clear-stars-btn:hover {
+        .clear-stars-btn:hover,
+        .recoverable-error a:hover {
           cursor: pointer;
           text-decoration: underline;
         }
