@@ -841,8 +841,8 @@
           .identifier=${"goody"}
           .oldReview=${this.review}
           .recaptchaManager=${this.recaptchaManager}
-          .unrecoverableError=${this.unrecoverableError?"Sorry, you're not cool enough to write a review for this item.":void 0}
-          .recoverableError=${this.recoverableError?"Why not try submitting again? What's the worst thing that could happen?":void 0}
+          .unrecoverableError=${this.unrecoverableError?"You must be logged in to write reviews.":void 0}
+          .recoverableError=${this.recoverableError?"There's a problem submitting your review, please try again later.":void 0}
           .maxSubjectLength=${this.useCharCounts?100:void 0}
           .maxBodyLength=${this.useCharCounts?1e3:void 0}
           .fetchHandler=${this.fetchHandler}
