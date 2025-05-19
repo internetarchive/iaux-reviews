@@ -172,6 +172,7 @@ export class ReviewForm extends LitElement {
     return html`
       <div class="review-container">
         <ia-review
+          .identifier=${this.identifier}
           .review=${this.oldReview}
           .baseHost=${this.baseHost}
           ?canDelete=${this.canDelete}

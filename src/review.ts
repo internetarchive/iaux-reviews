@@ -29,6 +29,9 @@ export class IaReview extends LitElement {
   /* The review to be rendered */
   @property({ type: Object }) review?: Review;
 
+  /* The identifier for the item being reviewed */
+  @property({ type: String }) identifier?: string;
+
   /* Maximum renderable length for subject */
   @property({ type: Number }) maxSubjectLength = 100;
 
@@ -225,10 +228,10 @@ export class IaReview extends LitElement {
    * Deletes the review, following an extra confirmation.
    */
   private async deleteReview(): Promise<void> {
-    if (!this.review) return;
+    if (!this.review || !this.identifier) return;
     if (!confirm('Are you sure you want to delete this review?')) return;
 
-    const deleteUrl = `${this.baseHost}/edit-reviews.php?identifier=${this.review.rawValue.identifier}&deleteReviewer=${this.review.reviewer_itemname}`;
+    const deleteUrl = `${this.baseHost}/edit-reviews.php?identifier=${this.identifier}&deleteReviewer=${this.review.reviewer_itemname}`;
     try {
       await fetch(deleteUrl, { method: 'POST' });
       this.deleteMsg = 'This review has been queued for deletion.';
