@@ -168,10 +168,10 @@ export class AppRoot extends LitElement {
           .oldReview=${this.review}
           .recaptchaManager=${this.recaptchaManager}
           .unrecoverableError=${this.unrecoverableError
-            ? "Sorry, you're not cool enough to write a review for this item."
+            ? 'You must be logged in to write reviews.'
             : undefined}
           .recoverableError=${this.recoverableError
-            ? "Why not try submitting again? What's the worst thing that could happen?"
+            ? "There's a problem submitting your review, please try again later."
             : undefined}
           .maxSubjectLength=${this.useCharCounts ? 100 : undefined}
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
