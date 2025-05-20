@@ -762,7 +762,8 @@
         }
 
         .unrecoverable-error {
-          height: 350px;
+          min-height: 50px;
+          padding: 5px;
           text-align: center;
           display: flex;
           flex-direction: column;
