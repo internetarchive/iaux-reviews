@@ -10,7 +10,7 @@ import {
 import '../src/review-form';
 import '../src/review';
 import { MockFetchHandler } from '../test/mocks/mock-fetch-handler';
-import { FetchHandlerInterface } from '@internetarchive/fetch-handler-service/dist/src/fetch-handler-interface';
+import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service';
 import { ReviewForm } from '../src/review-form';
 
 @customElement('app-root')

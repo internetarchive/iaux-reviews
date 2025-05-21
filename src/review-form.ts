@@ -19,7 +19,7 @@ import type {
   RecaptchaWidgetInterface,
 } from '@internetarchive/recaptcha-manager';
 import '@internetarchive/ia-activity-indicator';
-import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service/dist/src/fetch-handler-interface';
+import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service';
 import { IaFetchHandler } from '@internetarchive/fetch-handler-service';
 import { Review } from '@internetarchive/metadata-service';
 
