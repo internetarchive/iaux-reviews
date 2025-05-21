@@ -229,7 +229,7 @@ export class IaReview extends LitElement {
    */
   private async deleteReview(): Promise<void> {
     if (!this.review || !this.identifier) return;
-    if (!confirm('Are you sure you want to delete this review?')) return;
+    if (!confirm(msg('Are you sure you want to delete this review?'))) return;
 
     const deleteUrl = `${this.baseHost}/edit-reviews.php?identifier=${this.identifier}&deleteReviewer=${this.review.reviewer_itemname}`;
     try {

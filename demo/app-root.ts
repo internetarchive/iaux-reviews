@@ -61,7 +61,7 @@ export class AppRoot extends LitElement {
 
   private goodRecaptchaManager: RecaptchaManagerInterface =
     new RecaptchaManager({
-      defaultSiteKey: '6Ld64a8UAAAAAGbDwi1927ztGNw7YABQ-dqzvTN2',
+      defaultSiteKey: 'demo-key',
     });
 
   private badRecaptchaManager: RecaptchaManagerInterface = new RecaptchaManager(
