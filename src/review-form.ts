@@ -425,6 +425,9 @@ export class ReviewForm extends LitElement {
         formData.append(entry[0], entry[1] as string);
       }
 
+      // Indicates to the backend that submission is intended
+      formData.append('submitter', 'review-form');
+
       const result: { success: boolean; error?: string } =
         await this.fetchHandler.fetchApiResponse(
           `${this.baseHost}${this.endpointPath}`,
