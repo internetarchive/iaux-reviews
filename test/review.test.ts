@@ -372,4 +372,22 @@ describe('IaReview', () => {
     const reviewBody = el.shadowRoot?.querySelector('.body');
     expect(reviewBody?.innerHTML.trim()).to.contain('I loved it.<br>So great.');
   });
+
+  it('includes a delete button if specified', async () => {
+    const el = await fixture<IaReview>(
+      html`<ia-review .review=${mockReview} ?canDelete=${true}></ia-review>`,
+    );
+
+    const deleteBtn = el.shadowRoot?.querySelector('.delete-btn');
+    expect(deleteBtn).to.exist;
+  });
+
+  it('does not include a delete button by default', async () => {
+    const el = await fixture<IaReview>(
+      html`<ia-review .review=${mockReview}></ia-review>`,
+    );
+
+    const deleteBtn = el.shadowRoot?.querySelector('.delete-btn');
+    expect(deleteBtn).not.to.exist;
+  });
 });

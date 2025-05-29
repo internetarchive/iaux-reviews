@@ -9,6 +9,9 @@ import {
 
 import '../src/review-form';
 import '../src/review';
+import { MockFetchHandler } from '../test/mocks/mock-fetch-handler';
+import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service';
+import { ReviewForm } from '../src/review-form';
 
 @customElement('app-root')
 export class AppRoot extends LitElement {
@@ -54,6 +57,8 @@ export class AppRoot extends LitElement {
     reviewer_itemname: '@foo-bar',
   });
 
+  private fetchHandler: FetchHandlerInterface = new MockFetchHandler();
+
   private goodRecaptchaManager: RecaptchaManagerInterface =
     new RecaptchaManager({
       defaultSiteKey: 'demo-key',
@@ -81,13 +86,13 @@ export class AppRoot extends LitElement {
   private useCharCounts: boolean = true;
 
   @state()
-  private useReviewDisplay: boolean = false;
+  private allowDeletion: boolean = false;
 
   @state()
   private review: Review = this.mockOldReview;
 
-  @query('#review-input')
-  private reviewInput!: HTMLTextAreaElement;
+  @query('ia-review-form')
+  private reviewForm!: ReviewForm;
 
   render() {
     return html` <h2>Toggle ReCaptcha</h2>
@@ -126,8 +131,12 @@ export class AppRoot extends LitElement {
         ${this.useCharCounts ? 'Remove' : 'Use'} char count limits
       </button>
       <h2>Toggle review display</h2>
-      <button @click=${() => (this.useReviewDisplay = !this.useReviewDisplay)}>
-        Switch to ${this.useReviewDisplay ? 'form view' : 'review view'}
+      <button
+        @click=${() => {
+          this.reviewForm.displayMode = 'form';
+        }}
+      >
+        Switch to form view
       </button>
       ${this.review !== this.mockOldReview
         ? html`<button @click=${() => (this.review = this.mockOldReview)}>
@@ -149,24 +158,9 @@ export class AppRoot extends LitElement {
             Prefill review with text link
           </button>`
         : nothing}
-
-      <div class="review-body-form">
-        <h2>Adjust review body</h2>
-        <textarea id="review-input"></textarea>
-        <button
-          @click=${() =>
-            (this.review = new Review({
-              reviewtitle: 'What a cool book!',
-              reviewbody: this.reviewInput.value,
-              reviewer: 'Foo Bar',
-              reviewdate: new Date().toDateString(),
-              createdate: '02/07/2025',
-              reviewer_itemname: '@foo-bar',
-            }))}
-        >
-          Update
-        </button>
-      </div>
+      <button @click=${() => (this.allowDeletion = !this.allowDeletion)}>
+        ${this.allowDeletion ? 'Prevent' : 'Allow'} deletion
+      </button>
 
       <div class="container">
         <ia-review-form
@@ -174,14 +168,15 @@ export class AppRoot extends LitElement {
           .oldReview=${this.review}
           .recaptchaManager=${this.recaptchaManager}
           .unrecoverableError=${this.unrecoverableError
-            ? "Sorry, you're not cool enough to write a review for this item."
+            ? 'You must be logged in to write reviews.'
             : undefined}
           .recoverableError=${this.recoverableError
-            ? "Why not try submitting again? What's the worst thing that could happen?"
+            ? "There's a problem submitting your review, please try again later."
             : undefined}
           .maxSubjectLength=${this.useCharCounts ? 100 : undefined}
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
-          .displayMode=${this.useReviewDisplay ? 'review' : 'form'}
+          .fetchHandler=${this.fetchHandler}
+          ?canDelete=${this.allowDeletion}
           ?bypassRecaptcha=${this.bypassRecaptcha}
           ?submissionInProgress=${true}
         ></ia-review-form>

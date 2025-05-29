@@ -5,6 +5,8 @@ import { Review } from '@internetarchive/metadata-service';
 import { MockRecaptchaManager } from './mocks/mock-recaptcha-manager';
 import { IaReview } from '../src/review';
 import '../src/review-form';
+import { MockFetchHandler } from './mocks/mock-fetch-handler';
+import { error } from 'console';
 
 const mockOldReview = new Review({
   stars: 5,
@@ -17,6 +19,7 @@ const mockOldReview = new Review({
 });
 
 const mockRecaptchaManager = new MockRecaptchaManager();
+const mockFetchHandler = new MockFetchHandler();
 
 describe('ReviewForm', () => {
   it('passes the a11y audit', async () => {
@@ -27,7 +30,7 @@ describe('ReviewForm', () => {
     await expect(el).shadowDom.to.be.accessible();
   });
 
-  /*it('passes the a11y audit in review mode', async () => {
+  it('passes the a11y audit in review mode', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
         .oldReview=${mockOldReview}
@@ -36,7 +39,29 @@ describe('ReviewForm', () => {
     );
 
     await expect(el).shadowDom.to.be.accessible();
-  });*/
+  });
+
+  it('passes the a11y audit with a recoverable error', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .oldReview=${mockOldReview}
+        .recoverableError=${'fail'}
+      ></ia-review-form>`,
+    );
+
+    await expect(el).shadowDom.to.be.accessible();
+  });
+
+  it('passes the a11y audit with an uncrecoverable error', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .oldReview=${mockOldReview}
+        .unrecoverableError=${'fail'}
+      ></ia-review-form>`,
+    );
+
+    await expect(el).shadowDom.to.be.accessible();
+  });
 
   it('renders a basic form', async () => {
     const el = await fixture<ReviewForm>(
@@ -45,62 +70,6 @@ describe('ReviewForm', () => {
 
     const form = el.shadowRoot?.querySelector('form');
     expect(form).to.exist;
-  });
-
-  it('defaults to the correct endpoint for form submission', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form></ia-review-form>`,
-    );
-
-    const form = el.shadowRoot?.querySelector('form');
-    expect(form?.getAttribute('action')).to.contain('/write-review.php');
-  });
-
-  it('uses a custom endpoint path for form submission if desired', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form
-        .baseHost=${'https://archive.org'}
-        .endpointPath=${'/foo'}
-      ></ia-review-form>`,
-    );
-
-    const form = el.shadowRoot?.querySelector('form');
-    expect(form?.getAttribute('action')).to.equal('https://archive.org/foo');
-  });
-
-  it('defaults to the prod base host for form submission', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form .identifier=${'foo'}></ia-review-form>`,
-    );
-
-    const form = el.shadowRoot?.querySelector('form');
-    expect(form?.getAttribute('action')).to.equal(
-      'https://archive.org/write-review.php',
-    );
-
-    const cancelBtn = el.shadowRoot?.querySelector(
-      'a[data-testid=cancel-btn]',
-    ) as HTMLAnchorElement;
-    expect(cancelBtn.href).to.equal('https://archive.org/details/foo');
-  });
-
-  it('uses a custom base host for form submission if desired', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form
-        .baseHost=${'https://foo.archive.org'}
-        .identifier=${'foo'}
-      ></ia-review-form>`,
-    );
-
-    const form = el.shadowRoot?.querySelector('form');
-    expect(form?.getAttribute('action')).to.equal(
-      'https://foo.archive.org/write-review.php',
-    );
-
-    const cancelBtn = el.shadowRoot?.querySelector(
-      'a[data-testid=cancel-btn]',
-    ) as HTMLAnchorElement;
-    expect(cancelBtn.href).to.equal('https://foo.archive.org/details/foo');
   });
 
   it('replaces the form inputs with an error if an unrecoverable error is passed in, and disables submission', async () => {
@@ -158,6 +127,38 @@ describe('ReviewForm', () => {
 
     const submitBtn = el.shadowRoot?.querySelector('button[type="submit"]');
     expect(submitBtn?.getAttribute('disabled')).not.to.exist;
+  });
+
+  it('permits safe HTML in error messages', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .bypassRecaptcha=${true}
+        .review=${mockOldReview}
+        .recoverableError=${'<b>I am bold. <a href="archive.org">I am a link.</a></b>'}
+      ></ia-review-form>`,
+    );
+
+    const errorDiv = el.shadowRoot?.querySelector('.recoverable-error');
+    expect(errorDiv).to.exist;
+    expect(errorDiv?.textContent).to.include('I am bold. I am a link');
+    expect(errorDiv?.querySelector('a')).to.exist;
+    expect(errorDiv?.querySelector('b')).to.exist;
+  });
+
+  it('sanitizes error message HTML prior to submit', async () => {
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .bypassRecaptcha=${true}
+        .review=${mockOldReview}
+        .recoverableError=${'<b>I am bold. <button onclick="dostuff()">I am a button.</button><img src="archive.org" /></b>'}
+      ></ia-review-form>`,
+    );
+
+    const errorDiv = el.shadowRoot?.querySelector('.recoverable-error');
+    expect(errorDiv).to.exist;
+    expect(errorDiv?.textContent).to.include('I am bold. I am a button.');
+    expect(errorDiv?.querySelector('b')).to.exist;
+    expect(errorDiv?.querySelector('button')).not.to.exist;
   });
 
   it('prefills the old review title if provided', async () => {
@@ -314,16 +315,19 @@ describe('ReviewForm', () => {
     expect(identifierInput.value).to.equal('foo');
   });
 
-  it('shows a cancel button that routes to the detail page if identifier provided', async () => {
+  it('shows a cancel button that switches to review display mode', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form .identifier=${'foo'}></ia-review-form>`,
     );
 
     const cancelBtn = el.shadowRoot?.querySelector(
-      'a[data-testid=cancel-btn]',
+      'button[data-testid=cancel-btn]',
     ) as HTMLAnchorElement;
     expect(cancelBtn).to.exist;
-    expect(cancelBtn.href).to.contain('/details/foo');
+
+    cancelBtn.click();
+
+    expect(el.displayMode).to.equal('review');
   });
 
   it('prefills the token if provided', async () => {
@@ -336,35 +340,6 @@ describe('ReviewForm', () => {
     ) as HTMLInputElement;
     expect(tokenInput).to.exist;
     expect(tokenInput.value).to.equal('12345a');
-  });
-
-  /*
-    NOTE: These tests temporarily removed because they interfere with the CI.
-    Will be re-added when the submission is switched to an AJAX call and more easily intercepted.
-
-    it('adds the recaptcha token on submit if recaptcha manager provided', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form
-        .oldReview=${mockOldReview}
-        .recaptchaManager=${mockRecaptchaManager}
-      ></ia-review-form>`,
-    );
-
-    const submitBtn = el.shadowRoot?.querySelector(
-      'button[name="submit"]',
-    ) as HTMLButtonElement;
-
-    submitBtn?.click();
-
-    const recaptchaFinishedPromise = oneEvent(el, 'recaptchaFinished');
-    await recaptchaFinishedPromise;
-    await el.updateComplete;
-
-    const recaptchaInput = el.shadowRoot?.querySelector(
-      'input[name="g-recaptcha-response"]',
-    ) as HTMLInputElement;
-    expect(recaptchaInput).to.exist;
-    expect(recaptchaInput.value).to.equal('mock-token');
   });
 
   it('shows an error on submit if no recaptcha manager/widget is provided', async () => {
@@ -380,19 +355,20 @@ describe('ReviewForm', () => {
 
     await el.updateComplete;
 
-    const recaptchaInput = el.shadowRoot?.querySelector(
-      'input[name="g-recaptcha-response"]',
-    ) as HTMLInputElement;
-    expect(recaptchaInput.value).not.to.equal('mock-token');
-
-    const recaptchaErrorDiv = el.shadowRoot?.querySelector('.recaptcha-error');
+    const recaptchaErrorDiv = el.shadowRoot?.querySelector(
+      '.recoverable-error',
+    ) as HTMLDivElement;
     expect(recaptchaErrorDiv).to.exist;
+    expect(recaptchaErrorDiv?.innerText).to.equal(
+      'Could not validate review. Please try again later.',
+    );
   });
 
   it('skips recaptcha if the bypass switch is activated', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
         .oldReview=${mockOldReview}
+        .fetchHandler=${mockFetchHandler}
         ?bypassRecaptcha=${true}
         .baseHost=${'#'}
         .endpointPath=${'#'}
@@ -407,12 +383,9 @@ describe('ReviewForm', () => {
 
     await el.updateComplete;
 
-    const recaptchaInput = el.shadowRoot?.querySelector(
-      'input[name="g-recaptcha-response"]',
-    ) as HTMLInputElement;
-    expect(recaptchaInput.value).not.to.equal('mock-token');
-
-    const recaptchaErrorDiv = el.shadowRoot?.querySelector('.recaptcha-error');
+    const recaptchaErrorDiv = el.shadowRoot?.querySelector(
+      '.recoverable-error',
+    ) as HTMLDivElement;
     expect(recaptchaErrorDiv).not.to.exist;
   });
 
@@ -420,7 +393,7 @@ describe('ReviewForm', () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
         .oldReview=${mockOldReview}
-        .recaptchaManager=${mockRecaptchaManager}
+        .fetchHandler=${mockFetchHandler}
         ?bypassRecaptcha=${true}
         .baseHost=${'#'}
         .endpointPath=${'#'}
@@ -435,14 +408,11 @@ describe('ReviewForm', () => {
 
     await el.updateComplete;
 
-    const recaptchaInput = el.shadowRoot?.querySelector(
-      'input[name="g-recaptcha-response"]',
-    ) as HTMLInputElement;
-    expect(recaptchaInput.value).not.to.equal('mock-token');
-
-    const recaptchaErrorDiv = el.shadowRoot?.querySelector('.recaptcha-error');
+    const recaptchaErrorDiv = el.shadowRoot?.querySelector(
+      '.recoverable-error',
+    ) as HTMLDivElement;
     expect(recaptchaErrorDiv).not.to.exist;
-  });*/
+  });
 
   it('displays a character counter for the subject if max length specified', async () => {
     const el = await fixture<ReviewForm>(

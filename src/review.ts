@@ -19,6 +19,8 @@ import friendlyTruncate from './utils/friendly-truncate';
 import linkUrlsInText from './utils/link-urls-in-text';
 import collapseSpace from './utils/collapse-space';
 
+import deleteIcon from './assets/delete-icon';
+
 /**
  * Renders a single IA review
  */
@@ -26,6 +28,9 @@ import collapseSpace from './utils/collapse-space';
 export class IaReview extends LitElement {
   /* The review to be rendered */
   @property({ type: Object }) review?: Review;
+
+  /* The identifier for the item being reviewed */
+  @property({ type: String }) identifier?: string;
 
   /* Maximum renderable length for subject */
   @property({ type: Number }) maxSubjectLength = 100;
@@ -36,9 +41,16 @@ export class IaReview extends LitElement {
   /* Base for URLs */
   @property({ type: String }) baseHost = 'https://archive.org';
 
+  /* Whether the person viewing this review has the power to delete it */
+  @property({ type: Boolean }) canDelete = false;
+
   /* Whether to show truncated review title / body */
   @state()
   private showTruncatedContent: boolean = false;
+
+  /* An optional message created following attempted review deletion */
+  @state()
+  private deleteMsg: string = '';
 
   render() {
     return !this.review
@@ -49,6 +61,17 @@ export class IaReview extends LitElement {
         `
       : html`
           <article class="review" id=${this.generateDomId()}>
+            ${this.canDelete
+              ? html`
+                  <button
+                    class="delete-btn"
+                    title="Delete this review"
+                    @click=${this.deleteReview}
+                  >
+                    ${deleteIcon}
+                  </button>
+                `
+              : nothing}
             <div class="top-line">
               <b>${msg('Reviewer:')}</b> ${this.reviewerTemplate} -
               ${this.starsTemplate}${this.createDateTemplate}
@@ -56,7 +79,11 @@ export class IaReview extends LitElement {
             <div class="subject">
               <b>${msg('Subject: ')}</b>${this.subjectTemplate}
             </div>
-            <div class="body">${this.bodyTemplate}</div>
+            <div class="body">
+              ${!this.deleteMsg
+                ? this.bodyTemplate
+                : html`<i>${msg(this.deleteMsg)}</i>`}
+            </div>
             ${this.truncationButtonsTemplate}
           </article>
         `;
@@ -197,6 +224,22 @@ export class IaReview extends LitElement {
     return collapseSpace(linkUrlsInText(review));
   }
 
+  /**
+   * Deletes the review, following an extra confirmation.
+   */
+  private async deleteReview(): Promise<void> {
+    if (!this.review || !this.identifier) return;
+    if (!confirm(msg('Are you sure you want to delete this review?'))) return;
+
+    const deleteUrl = `${this.baseHost}/edit-reviews.php?identifier=${this.identifier}&deleteReviewer=${this.review.reviewer}`;
+    try {
+      await fetch(deleteUrl, { method: 'POST' });
+      this.deleteMsg = 'This review has been queued for deletion.';
+    } catch {
+      this.deleteMsg = 'Sorry, we were unable to delete this review.';
+    }
+  }
+
   static get styles(): CSSResultGroup {
     return css`
       :host {
@@ -209,10 +252,17 @@ export class IaReview extends LitElement {
         );
 
         font-size: inherit;
+        --container-bg-color: #fbfbfd;
+        --container-border-color: #999999;
+      }
+
+      .review {
+        position: relative;
+        padding-right: 30px;
       }
 
       .error {
-        color: var(--ia-theme-error-color, #cc0000);
+        color: var(--error-color, #cc0000);
       }
 
       .top-line {
@@ -230,7 +280,7 @@ export class IaReview extends LitElement {
 
       .simple-link,
       .body a {
-        color: var(--ia-link-color, #4b64ff);
+        color: var(--link-color, #4b64ff);
         text-decoration: none;
         background: transparent;
         border: none;
@@ -245,6 +295,24 @@ export class IaReview extends LitElement {
 
       .subject {
         margin-bottom: 0.5rem;
+      }
+
+      .delete-btn {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 0;
+        background: none;
+        border: 0;
+      }
+
+      .delete-btn:hover {
+        cursor: pointer;
+      }
+
+      .delete-icon {
+        width: 20px;
+        mix-blend-mode: multiply;
       }
     `;
   }
