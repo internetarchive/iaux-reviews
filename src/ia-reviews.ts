@@ -1,0 +1,181 @@
+import {
+  html,
+  HTMLTemplateResult,
+  LitElement,
+  nothing,
+  PropertyValues,
+} from 'lit';
+import { property, customElement, state } from 'lit/decorators.js';
+
+import type { Review } from '@internetarchive/metadata-service';
+import type { RecaptchaManagerInterface } from '@internetarchive/recaptcha-manager';
+
+import './review';
+import './review-form';
+import { msg } from '@lit/localize';
+import {
+  FetchHandlerInterface,
+  IaFetchHandler,
+} from '@internetarchive/fetch-handler-service';
+
+/**
+ * Renders the full IA reviews piece
+ */
+@customElement('ia-reviews')
+export class IaReviews extends LitElement {
+  /** GLOBAL/REVIEW-RENDERING PROPERTIES */
+  /* The identifier for the item being reviewed */
+  @property({ type: String }) identifier?: string;
+
+  /* The list of reviews to be rendered */
+  @property({ type: Array }) reviews?: Review[];
+
+  /* One's own review, if applicable */
+  @property({ type: Object }) ownReview?: Review;
+
+  /* Whether the person viewing the reviews section has the power to delete reviews */
+  @property({ type: Boolean }) canDelete = false;
+
+  /* Maximum allowable length for subject */
+  @property({ type: Number }) maxSubjectLength?: number;
+
+  /* Maximum allowable length for body */
+  @property({ type: Number }) maxBodyLength?: number;
+
+  /* Base for URLs */
+  @property({ type: String }) baseHost = 'https://archive.org';
+
+  /** REVIEW FORM PROPERTIES */
+  /* The token for the review edit */
+  @property({ type: String }) token: string = '';
+
+  /* The path for the endpoint we're submitting to */
+  @property({ type: String }) endpointPath: string = '/write-review.php';
+
+  /** Form submitter's screenname, if applicable */
+  @property({ type: String }) submitterScreenname: string = 'Anonymous';
+
+  /** Form submitter's itemname, if applicable */
+  @property({ type: String }) submitterItemname?: string;
+
+  /* Service for activating the recaptcha challenge */
+  @property({ type: Object }) recaptchaManager?: RecaptchaManagerInterface;
+
+  /* Optionally avoid using recaptcha for the form */
+  @property({ type: Boolean }) bypassRecaptcha: boolean = false;
+
+  /* An optional error message to be displayed instead of the review form */
+  @property({ type: String }) reviewSubmissionError?: string;
+
+  /* An optional handler for form submission to pass along to the form */
+  @property({ type: Object }) fetchHandler: FetchHandlerInterface =
+    new IaFetchHandler();
+
+  /* Whether to display the review form or the editable review */
+  @state()
+  displayReviewForm: boolean = false;
+
+  /* Whether to display the existing reviews */
+  @state()
+  displayReviews: boolean = false;
+
+  /* The current version of the review */
+  @state()
+  currentReview?: Review;
+
+  /* The current review count */
+  @state()
+  reviewsCount: number = 0;
+
+  render() {
+    return html`<h2>
+        ${msg(
+          `Reviews ${this.reviewsCount > 0 ? `(${this.reviewsCount})` : ''}`,
+        )}
+      </h2>
+      <button class="add-edit-btn" @click=${this.addEditReview}>
+        ${msg(this.currentReview ? 'Edit My Review' : 'Add Review')}
+      </button>
+      ${this.displayReviews
+        ? html`${this.editableCurrentReviewTemplate}
+          ${this.reviews
+            ? this.reviews.map(review => this.renderReview(review))
+            : nothing}`
+        : nothing}`;
+  }
+
+  protected updated(changed: PropertyValues): void {
+    if (changed.has('ownReview') && this.ownReview) {
+      this.currentReview = this.ownReview;
+    }
+
+    if (changed.has('reviews') && this.reviews) {
+      this.reviewsCount = this.reviews.length;
+    }
+  }
+
+  /**
+   * Renders the review form, passing along all necessary properties; this will also render
+   * the patron's own review if applicable and/or following submission.
+   */
+  private get editableCurrentReviewTemplate():
+    | HTMLTemplateResult
+    | typeof nothing {
+    if (!this.displayReviewForm) return this.renderReview(this.currentReview);
+
+    return html`<div class="own-review-container">
+      ${!this.displayReviewForm
+        ? this.renderReview(this.currentReview)
+        : html`<ia-review-form
+            .identifier=${this.identifier}
+            .oldReview=${this.ownReview}
+            .baseHost=${this.baseHost}
+            .endpointPath=${this.endpointPath}
+            .submitterItemname=${this.submitterItemname}
+            .submitterScreenname=${this.submitterScreenname}
+            .maxSubjectLength=${this.maxSubjectLength}
+            .maxBodyLength=${this.maxBodyLength}
+            .token=${this.token}
+            .unrecoverableError=${this.reviewSubmissionError}
+            .fetchHandler=${this.fetchHandler}
+            ?bypassRecaptcha=${this.bypassRecaptcha}
+            @reviewUpdated=${this.handleReviewUpdate}
+            @reviewEditCanceled=${this.handleEditCanceled}
+          ></ia-review-form>`}
+    </div>`;
+  }
+
+  /* Renders the given review, using the ia-review component */
+  private renderReview(review?: Review): HTMLTemplateResult | typeof nothing {
+    if (!review) return nothing;
+
+    return html`<ia-review
+      .review=${review}
+      .identifier=${this.identifier}
+      ?canDelete=${this.canDelete}
+      .baseHost=${this.baseHost}
+    ></ia-review>`;
+  }
+
+  /** Prepare the review form for adding or editing */
+  private addEditReview(): void {
+    this.displayReviews = true;
+    this.displayReviewForm = true;
+  }
+
+  /** Handles successful review submission */
+  private handleReviewUpdate(e: CustomEvent<Review>): void {
+    // Update the reviews count to reflect new review, if applicable
+    if (!this.ownReview) {
+      this.reviewsCount++;
+    }
+
+    this.currentReview = e.detail;
+    this.displayReviewForm = false;
+  }
+
+  /** Closes the review form if requested */
+  private handleEditCanceled(): void {
+    this.displayReviewForm = false;
+  }
+}

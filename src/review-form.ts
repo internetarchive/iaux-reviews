@@ -45,9 +45,6 @@ export class ReviewForm extends LitElement {
   /* The path for the endpoint we're submitting to */
   @property({ type: String }) endpointPath: string = '/write-review.php';
 
-  /* Whether to display the form or the editable review */
-  @property({ type: String }) displayMode: 'review' | 'form' = 'form';
-
   /** Form submitter's screenname, if applicable */
   @property({ type: String }) submitterScreenname: string = 'Anonymous';
 
@@ -75,9 +72,6 @@ export class ReviewForm extends LitElement {
 
   /* Optionally avoid using recaptcha for the form */
   @property({ type: Boolean }) bypassRecaptcha: boolean = false;
-
-  /* Optionally allow review deletion */
-  @property({ type: Boolean }) canDelete: boolean = false;
 
   /* Recaptcha widget for the form */
   private recaptchaWidget?: RecaptchaWidgetInterface;
@@ -118,20 +112,18 @@ export class ReviewForm extends LitElement {
     "There's been a temporary error. Please wait a moment and try again.";
 
   render() {
-    return this.displayMode === 'review'
-      ? this.reviewTemplate
-      : html`<form id="review-form" @submit=${this.handleSubmit}>
-          ${this.unrecoverableError
-            ? this.unrecoverableErrorTemplate
-            : html`
-                <span class="inputs">
-                  ${this.starsInputTemplate} ${this.subjectInputTemplate}
-                  ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
-                </span>
-              `}
-          ${this.recaptchaMessageTemplate} ${this.recoverableErrorTemplate}
+    return html`<form id="review-form" @submit=${this.handleSubmit}>
+      ${this.unrecoverableError
+        ? this.unrecoverableErrorTemplate
+        : html`
+            <span class="inputs">
+              ${this.starsInputTemplate} ${this.subjectInputTemplate}
+              ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
+            </span>
+          `}
+      ${this.recaptchaMessageTemplate} ${this.recoverableErrorTemplate}
           ${this.actionButtonsTemplate}
-        </form>`;
+    </form>`;
   }
 
   protected firstUpdated(): void {
@@ -165,21 +157,6 @@ export class ReviewForm extends LitElement {
     ) {
       this.formCanSubmit = this.checkSubmissionAllowed();
     }
-  }
-
-  /** Review to render on success or cancel */
-  private get reviewTemplate(): HTMLTemplateResult | typeof nothing {
-    if (!this.oldReview) return nothing;
-    return html`
-      <div class="review-container">
-        <ia-review
-          .identifier=${this.identifier}
-          .review=${this.oldReview}
-          .baseHost=${this.baseHost}
-          ?canDelete=${this.canDelete}
-        ></ia-review>
-      </div>
-    `;
   }
 
   /** Error to render instead of form inputs */
@@ -352,7 +329,7 @@ export class ReviewForm extends LitElement {
         type="button"
         class="ia-button dark"
         data-testid="cancel-btn"
-        @click=${() => (this.displayMode = 'review')}
+        @click=${this.cancelReviewEdit}
       >
         ${msg('Cancel')}
       </button>
@@ -463,8 +440,13 @@ export class ReviewForm extends LitElement {
 
       if (result?.success === true) {
         this.submissionInProgress = false;
-        this.oldReview = this.generateSubmittedReview();
-        this.displayMode = 'review';
+        const newReview = this.generateSubmittedReview();
+
+        // Emit a reviewUpdated event
+        const event = new CustomEvent<Review>('reviewUpdated', {
+          detail: newReview,
+        });
+        this.dispatchEvent(event);
       } else {
         this.recoverableError = result.error ?? this.GENERIC_ERROR_MESSAGE;
         this.stopSubmission();
@@ -538,6 +520,12 @@ export class ReviewForm extends LitElement {
     if (this.submissionInProgress) {
       this.submissionInProgress = false;
     }
+  }
+
+  /* Emits an event to close the form */
+  private cancelReviewEdit(): void {
+    const event = new CustomEvent('reviewEditCanceled');
+    this.dispatchEvent(event);
   }
 
   /* Prevents form submission and sets stars based on number clicked */
