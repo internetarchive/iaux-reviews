@@ -129,7 +129,8 @@ export class ReviewForm extends LitElement {
                   ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
                 </span>
               `}
-          ${this.recoverableErrorTemplate} ${this.actionButtonsTemplate}
+          ${this.recaptchaMessageTemplate} ${this.recoverableErrorTemplate}
+          ${this.actionButtonsTemplate}
         </form>`;
   }
 
@@ -203,6 +204,28 @@ export class ReviewForm extends LitElement {
           </div>
         `
       : nothing;
+  }
+
+  private get recaptchaMessageTemplate(): HTMLTemplateResult | typeof nothing {
+    if (this.bypassRecaptcha) return nothing;
+
+    return html`${msg(
+      html`This site is protected by reCAPTCHA and the Google
+        <a
+          target="_blank"
+          class="inline-link"
+          href="https://policies.google.com/privacy"
+          >Privacy Policy</a
+        >
+        and
+        <a
+          target="_blank"
+          class="inline-link"
+          href="https://policies.google.com/terms"
+          >Terms of Service</a
+        >
+        apply.`,
+    )}`;
   }
 
   /** Clickable group of stars */
@@ -662,6 +685,15 @@ export class ReviewForm extends LitElement {
           padding-top: 5px;
         }
 
+        .inline-link {
+          color: var(--container-link-color, #4f65f5);
+          text-decoration: none;
+        }
+
+        .inline-link:hover {
+          text-decoration: underline;
+        }
+
         .stars {
           display: flex;
           flex-direction: row;
@@ -693,6 +725,15 @@ export class ReviewForm extends LitElement {
         .clear-stars-btn:hover,
         .recoverable-error a:hover {
           cursor: pointer;
+          text-decoration: underline;
+        }
+
+        .inline-link {
+          color: var(--container-link-color, #4f65f5);
+          text-decoration: none;
+        }
+
+        .inline-link:hover {
           text-decoration: underline;
         }
 
