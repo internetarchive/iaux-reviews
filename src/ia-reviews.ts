@@ -224,7 +224,7 @@ export class IaReviews extends LitElement {
         ? this.renderReview(this.currentReview)
         : html`<ia-review-form
             .identifier=${this.identifier}
-            .oldReview=${this.ownReview}
+            .oldReview=${this.currentReview}
             .baseHost=${this.baseHost}
             .endpointPath=${this.endpointPath}
             .submitterItemname=${this.submitterItemname}
@@ -268,7 +268,7 @@ export class IaReviews extends LitElement {
   /** Handles successful review submission */
   private handleReviewUpdate(e: CustomEvent<Review>): void {
     // Update the reviews count to reflect new review, if applicable
-    if (!this.ownReview) {
+    if (!this.currentReview) {
       this.reviewsCount = this.reviewsCount + 1;
     }
 

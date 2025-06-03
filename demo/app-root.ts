@@ -214,6 +214,8 @@ export class AppRoot extends LitElement {
           .reviews=${this.useOtherReviews ? this.otherReviews : undefined}
           .ownReview=${this.useOwnReview ? this.review : undefined}
           .recaptchaManager=${this.recaptchaManager}
+          .submitterItemname=${'@foo-bar'}
+          .submitterScreenname=${'Foo Bar'}
           .reviewSubmissionError=${this.unrecoverableError
             ? 'You must be logged in to write reviews.'
             : undefined}
