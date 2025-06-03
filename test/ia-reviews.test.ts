@@ -105,7 +105,7 @@ describe('IaReviews', () => {
     const reviews = el.shadowRoot?.querySelectorAll('ia-review');
     expect(reviews?.length).to.equal(0);
     const displayReviewsMsg = el.shadowRoot?.querySelector(
-      '.display-reviews-msg',
+      '.message',
     ) as HTMLDivElement;
     expect(displayReviewsMsg).to.exist;
     expect(displayReviewsMsg?.innerText).to.include(
@@ -122,7 +122,7 @@ describe('IaReviews', () => {
     expect(reviewForm).not.to.exist;
 
     const noReviewsMsg = el.shadowRoot?.querySelector(
-      '.no-reviews-msg',
+      '.message',
     ) as HTMLDivElement;
     expect(noReviewsMsg).to.exist;
     expect(noReviewsMsg?.innerText).to.include(
@@ -246,5 +246,68 @@ describe('IaReviews', () => {
     expect(reviewForm).to.exist;
     const reviews = el.shadowRoot?.querySelectorAll('ia-review');
     expect(reviews?.length).to.equal(2);
+  });
+
+  it('fully disables the reviews if requested', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews
+        .ownReview=${mockReviews[0]}
+        .reviews=${mockReviews}
+        ?reviewsDisabled=${true}
+      ></ia-reviews>`,
+    );
+
+    const reviews = el.shadowRoot?.querySelectorAll('ia-review');
+    expect(reviews?.length).to.equal(0);
+
+    const disabledMessage = el.shadowRoot?.querySelector(
+      '.message',
+    ) as HTMLDivElement;
+    expect(disabledMessage.innerText).to.include(
+      'Reviews have been disabled for this item.',
+    );
+
+    const addEditButton = el.shadowRoot?.querySelector('.add-edit-btn');
+    expect(addEditButton).not.to.exist;
+  });
+
+  it('displays reviews but prevents adding reviews if frozen', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews
+        .ownReview=${mockReviews[0]}
+        .reviews=${mockReviews}
+        .displayReviews=${true}
+        ?reviewsFrozen=${true}
+      ></ia-reviews>`,
+    );
+
+    const reviews = el.shadowRoot?.querySelectorAll('ia-review');
+    expect(reviews?.length).to.equal(3);
+
+    const frozenMessage = el.shadowRoot?.querySelector(
+      '.message',
+    ) as HTMLDivElement;
+    expect(frozenMessage.innerText).to.include(
+      'Reviews can no longer be added to this item.',
+    );
+
+    const addEditButton = el.shadowRoot?.querySelector('.add-edit-btn');
+    expect(addEditButton).not.to.exist;
+  });
+
+  it('shows the correct message if reviews frozen and no reviews yet', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews ?reviewsFrozen=${true}></ia-reviews>`,
+    );
+
+    const frozenMessage = el.shadowRoot?.querySelector(
+      '.message',
+    ) as HTMLDivElement;
+    expect(frozenMessage.innerText).to.include(
+      'Reviews cannot be added to this item.',
+    );
+
+    const addEditButton = el.shadowRoot?.querySelector('.add-edit-btn');
+    expect(addEditButton).not.to.exist;
   });
 });

@@ -39,6 +39,12 @@ export class IaReviews extends LitElement {
   /* One's own review, if applicable */
   @property({ type: Object }) ownReview?: Review;
 
+  /* Whether reviews are disabled for the item */
+  @property({ type: Boolean }) reviewsDisabled = false;
+
+  /* Whether reviews are frozen for the item */
+  @property({ type: Boolean }) reviewsFrozen = false;
+
   /* Whether the person viewing the reviews section has the power to delete reviews */
   @property({ type: Boolean }) canDelete = false;
 
@@ -120,25 +126,38 @@ export class IaReviews extends LitElement {
         <h2>
           ${reviewsIcon}
           ${msg(
-            `Reviews ${this.reviewsCount > 0 ? `(${this.reviewsCount})` : ''}`,
+            `Reviews ${!this.reviewsDisabled && this.reviewsCount > 0 ? `(${this.reviewsCount})` : ''}`,
           )}
         </h2>
-        <button class="add-edit-btn" @click=${this.addEditReview}>
-          ${addIcon}
-          ${msg(this.currentReview ? 'Edit My Review' : 'Add Review')}
-        </button>
+        ${!this.reviewsDisabled && !this.reviewsFrozen
+          ? html`<button class="add-edit-btn" @click=${this.addEditReview}>
+              ${addIcon}
+              ${msg(this.currentReview ? 'Edit My Review' : 'Add Review')}
+            </button>`
+          : nothing}
       </div>
     `;
   }
 
   /* Renders the reviews list, including the editable current review, if applicable */
   private get reviewsListTemplate(): HTMLTemplateResult | typeof nothing {
+    if (this.reviewsDisabled)
+      return html`<div class="message">
+        ${msg('Reviews have been disabled for this item.')}
+      </div>`;
+
     if (this.reviewsCount === 0 && !this.displayReviewForm)
       return this.noReviewsMsgTemplate;
+
     if (!this.displayReviews) return this.displayReviewsMsgTemplate;
 
     return html`
       <div class="reviews-list">
+        ${this.reviewsFrozen
+          ? html`<div class="message">
+              ${msg('Reviews can no longer be added to this item.')}
+            </div>`
+          : nothing}
         ${this.editableCurrentReviewTemplate}${this.reviews
           ? this.reviews.map(review => this.renderReview(review))
           : nothing}
@@ -148,8 +167,15 @@ export class IaReviews extends LitElement {
 
   /* Message to display instead of the reviews list if there are no reviews yet */
   private get noReviewsMsgTemplate(): HTMLTemplateResult {
+    if (this.reviewsFrozen)
+      return html`
+        <div class="message">
+          ${msg('Reviews cannot be added to this item.')}
+        </div>
+      `;
+
     return html`
-      <div class="no-reviews-msg">
+      <div class="message">
         ${msg('There are no reviews yet.')}
         ${msg(html`
           Be the first one to
@@ -170,7 +196,7 @@ export class IaReviews extends LitElement {
   /* Message to display instead of the reviews list if reviews are hidden */
   private get displayReviewsMsgTemplate(): HTMLTemplateResult {
     return html`
-      <div class="display-reviews-msg">
+      <div class="message">
         ${this.reviewsCount === 1
           ? msg('There is 1 review for this item.')
           : msg(`There are ${this.reviewsCount} reviews for this item.`)}
@@ -300,13 +326,11 @@ export class IaReviews extends LitElement {
           padding: 10px;
         }
 
-        .display-reviews-msg,
-        .no-reviews-msg {
+        .message {
           font-weight: 200;
         }
 
-        .display-reviews-msg .ia-button,
-        .no-reviews-msg .ia-button {
+        .message .ia-button {
           display: inline;
           vertical-align: baseline;
           padding: 0;

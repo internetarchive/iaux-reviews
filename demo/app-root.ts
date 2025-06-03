@@ -116,6 +116,12 @@ export class AppRoot extends LitElement {
   @state()
   private useOtherReviews: boolean = true;
 
+  @state()
+  private reviewsDisabled: boolean = false;
+
+  @state()
+  private reviewsFrozen: boolean = false;
+
   render() {
     return html` <h2>General Settings</h2>
       <button @click=${() => (this.useOwnReview = !this.useOwnReview)}>
@@ -123,6 +129,12 @@ export class AppRoot extends LitElement {
       </button>
       <button @click=${() => (this.useOtherReviews = !this.useOtherReviews)}>
         ${this.useOtherReviews ? 'Remove' : 'Show'} other reviews
+      </button>
+      <button @click=${() => (this.reviewsDisabled = !this.reviewsDisabled)}>
+        ${this.reviewsDisabled ? 'Enable' : 'Disable'} reviews
+      </button>
+      <button @click=${() => (this.reviewsFrozen = !this.reviewsFrozen)}>
+        ${this.reviewsFrozen ? 'Unfreeze' : 'Freeze'} reviews
       </button>
       <h2>Toggle ReCaptcha</h2>
       ${!this.recaptchaManager
@@ -210,6 +222,8 @@ export class AppRoot extends LitElement {
           .fetchHandler=${this.fetchHandler}
           ?canDelete=${this.allowDeletion}
           ?bypassRecaptcha=${this.bypassRecaptcha}
+          ?reviewsDisabled=${this.reviewsDisabled}
+          ?reviewsFrozen=${this.reviewsFrozen}
         ></ia-reviews>
       </div>`;
   }
