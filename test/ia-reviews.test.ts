@@ -63,6 +63,28 @@ describe('IaReviews', () => {
     expect(reviewsTitle?.textContent?.trim()).to.equal('Reviews (2)');
   });
 
+  it("includes the patron's own review in the count", async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews
+        .reviews=${mockReviews}
+        .ownReview=${mockReview1}
+        .displayReviews=${true}
+      ></ia-reviews>`,
+    );
+
+    const reviewsTitle = el.shadowRoot?.querySelector('h2');
+    expect(reviewsTitle?.textContent?.trim()).to.equal('Reviews (3)');
+  });
+
+  it("includes the patron's own review in the count even if no other reviews", async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews .ownReview=${mockReview1}></ia-reviews>`,
+    );
+
+    const reviewsTitle = el.shadowRoot?.querySelector('h2');
+    expect(reviewsTitle?.textContent?.trim()).to.equal('Reviews (1)');
+  });
+
   it('does not show any number if there are no reviews', async () => {
     const el = await fixture<IaReviews>(
       html`<ia-reviews .displayReviews=${true}></ia-reviews>`,

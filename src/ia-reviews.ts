@@ -88,7 +88,8 @@ export class IaReviews extends LitElement {
   reviewsCount: number = 0;
 
   render() {
-    return html`<h2>
+    return html`
+      <h2>
         ${msg(
           `Reviews ${this.reviewsCount > 0 ? `(${this.reviewsCount})` : ''}`,
         )}
@@ -101,16 +102,18 @@ export class IaReviews extends LitElement {
           ${this.reviews
             ? this.reviews.map(review => this.renderReview(review))
             : nothing}`
-        : nothing}`;
+        : nothing}
+    `;
   }
 
   protected updated(changed: PropertyValues): void {
     if (changed.has('ownReview') && this.ownReview) {
       this.currentReview = this.ownReview;
+      this.updateReviewsCount();
     }
 
     if (changed.has('reviews') && this.reviews) {
-      this.reviewsCount = this.reviews.length;
+      this.updateReviewsCount();
     }
   }
 
@@ -145,6 +148,12 @@ export class IaReviews extends LitElement {
     </div>`;
   }
 
+  /** Updates the review count */
+  private updateReviewsCount(): void {
+    this.reviewsCount =
+      (this.reviews?.length ?? 0) + (this.currentReview ? 1 : 0);
+  }
+
   /* Renders the given review, using the ia-review component */
   private renderReview(review?: Review): HTMLTemplateResult | typeof nothing {
     if (!review) return nothing;
@@ -167,7 +176,7 @@ export class IaReviews extends LitElement {
   private handleReviewUpdate(e: CustomEvent<Review>): void {
     // Update the reviews count to reflect new review, if applicable
     if (!this.ownReview) {
-      this.reviewsCount++;
+      this.reviewsCount = this.reviewsCount + 1;
     }
 
     this.currentReview = e.detail;
