@@ -120,7 +120,7 @@ export class ReviewForm extends LitElement {
             </span>
           `}
       ${this.recaptchaMessageTemplate} ${this.recoverableErrorTemplate}
-          ${this.actionButtonsTemplate}
+      ${this.actionButtonsTemplate}
     </form>`;
   }
 
