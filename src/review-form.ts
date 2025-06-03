@@ -130,12 +130,10 @@ export class ReviewForm extends LitElement {
 
   protected updated(changed: PropertyValues): void {
     // Fill in previous review, if provided
-    if (changed.has('oldReview') && this.oldReview) {
-      if (this.oldReview.stars) this.currentStars = this.oldReview.stars;
-      if (this.oldReview.reviewtitle)
-        this.currentSubjectLength = this.oldReview.reviewtitle.length;
-      if (this.oldReview.reviewbody)
-        this.currentBodyLength = this.oldReview.reviewbody.length;
+    if (changed.has('oldReview')) {
+      this.currentStars = this.oldReview?.stars ?? 0;
+      this.currentSubjectLength = this.oldReview?.reviewtitle?.length ?? 0;
+      this.currentBodyLength = this.oldReview?.reviewbody?.length ?? 0;
     }
 
     // Set up ReCaptcha, if possible
