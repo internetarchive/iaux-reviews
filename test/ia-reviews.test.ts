@@ -113,6 +113,39 @@ describe('IaReviews', () => {
     );
   });
 
+  it('displays a message instead of the reviews or review form if there are no reviews yet', async () => {
+    const el = await fixture<IaReviews>(html`<ia-reviews></ia-reviews>`);
+
+    const reviewForm = el.shadowRoot?.querySelector(
+      'ia-review-form',
+    ) as ReviewForm;
+    expect(reviewForm).not.to.exist;
+
+    const noReviewsMsg = el.shadowRoot?.querySelector(
+      '.no-reviews-msg',
+    ) as HTMLDivElement;
+    expect(noReviewsMsg).to.exist;
+    expect(noReviewsMsg?.innerText).to.include(
+      'There are no reviews yet. Be the first one to write a review.',
+    );
+  });
+
+  it('displays the review form on no reviews button click', async () => {
+    const el = await fixture<IaReviews>(html`<ia-reviews></ia-reviews>`);
+
+    const noReviewsBtn = el.shadowRoot?.querySelector(
+      '.no-reviews-btn',
+    ) as HTMLButtonElement;
+    expect(noReviewsBtn).to.exist;
+    noReviewsBtn.click();
+
+    await el.updateComplete;
+    const reviewForm = el.shadowRoot?.querySelector(
+      'ia-review-form',
+    ) as ReviewForm;
+    expect(reviewForm).to.exist;
+  });
+
   it('displays the reviews on button click', async () => {
     const el = await fixture<IaReviews>(
       html`<ia-reviews

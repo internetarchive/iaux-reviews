@@ -117,7 +117,11 @@ export class IaReviews extends LitElement {
 
   /* Renders the reviews list, including the editable current review, if applicable */
   private get reviewsListTemplate(): HTMLTemplateResult | typeof nothing {
-    if (!this.displayReviews) return this.displayReviewsMsgTemplate;
+    if (!this.displayReviews) {
+      return this.reviewsCount > 0
+        ? this.displayReviewsMsgTemplate
+        : this.noReviewsMsgTemplate;
+    }
 
     return html`
       <div class="reviews-list">
@@ -128,7 +132,28 @@ export class IaReviews extends LitElement {
     `;
   }
 
-  /* Renders the message to display instead of the reviews list */
+  /* Message to display instead of the reviews list if there are no reviews yet */
+  private get noReviewsMsgTemplate(): HTMLTemplateResult {
+    return html`
+      <div class="no-reviews-msg">
+        ${msg('There are no reviews yet.')}
+        ${msg(html`
+          Be the first one to
+          <button
+            class="ia-button link no-reviews-btn"
+            @click=${() => {
+              this.displayReviewForm = true;
+              this.displayReviews = true;
+            }}
+          >
+            write a review</button
+          >.
+        `)}
+      </div>
+    `;
+  }
+
+  /* Message to display instead of the reviews list if reviews are hidden */
   private get displayReviewsMsgTemplate(): HTMLTemplateResult {
     return html`
       <div class="display-reviews-msg">
@@ -214,6 +239,11 @@ export class IaReviews extends LitElement {
   /** Closes the review form if requested */
   private handleEditCanceled(): void {
     this.displayReviewForm = false;
+
+    // Display no-reviews message again if no new review was added
+    if (this.reviewsCount === 0) {
+      this.displayReviews = false;
+    }
   }
 
   static get styles(): CSSResultGroup {
@@ -252,11 +282,13 @@ export class IaReviews extends LitElement {
           padding: 10px;
         }
 
-        .display-reviews-msg {
+        .display-reviews-msg,
+        .no-reviews-msg {
           font-weight: 200;
         }
 
-        .ia-button.display-reviews-btn {
+        .display-reviews-msg .ia-button,
+        .no-reviews-msg .ia-button {
           display: inline;
           vertical-align: baseline;
           padding: 0;
