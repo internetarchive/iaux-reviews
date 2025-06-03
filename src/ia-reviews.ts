@@ -8,17 +8,18 @@ import {
   PropertyValues,
 } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
+import { msg } from '@lit/localize';
 
 import type { Review } from '@internetarchive/metadata-service';
 import type { RecaptchaManagerInterface } from '@internetarchive/recaptcha-manager';
-
-import './review';
-import './review-form';
-import { msg } from '@lit/localize';
 import {
   FetchHandlerInterface,
   IaFetchHandler,
 } from '@internetarchive/fetch-handler-service';
+import { iaButtonStyles } from '@internetarchive/ia-styles';
+
+import './review';
+import './review-form';
 
 /**
  * Renders the full IA reviews piece
@@ -99,12 +100,7 @@ export class IaReviews extends LitElement {
       <button class="add-edit-btn" @click=${this.addEditReview}>
         ${msg(this.currentReview ? 'Edit My Review' : 'Add Review')}
       </button>
-      ${this.displayReviews
-        ? html`${this.editableCurrentReviewTemplate}
-          ${this.reviews
-            ? this.reviews.map(review => this.renderReview(review))
-            : nothing}`
-        : nothing}
+      ${this.reviewsListTemplate}
     `;
   }
 
@@ -114,9 +110,35 @@ export class IaReviews extends LitElement {
       this.updateReviewsCount();
     }
 
-    if (changed.has('reviews') && this.reviews) {
+    if (changed.has('reviews')) {
       this.updateReviewsCount();
     }
+  }
+
+  /* Renders the reviews list, including the editable current review, if applicable */
+  private get reviewsListTemplate(): HTMLTemplateResult | typeof nothing {
+    if (!this.displayReviews) return this.displayReviewsMsgTemplate;
+
+    return html`${this.editableCurrentReviewTemplate}${this.reviews
+      ? this.reviews.map(review => this.renderReview(review))
+      : nothing}`;
+  }
+
+  /* Renders the message to display instead of the reviews list */
+  private get displayReviewsMsgTemplate(): HTMLTemplateResult {
+    return html`
+      <div class="display-reviews-msg">
+        ${this.reviewsCount === 1
+          ? msg('There is 1 review for this item.')
+          : msg(`There are ${this.reviewsCount} reviews for this item.`)}
+        <button
+          class="ia-button link display-reviews-btn"
+          @click=${() => (this.displayReviews = true)}
+        >
+          ${msg(`Display ${this.reviewsCount === 1 ? 'review' : 'reviews'}`)}</button
+        >.
+      </div>
+    `;
   }
 
   /**
@@ -191,33 +213,47 @@ export class IaReviews extends LitElement {
   }
 
   static get styles(): CSSResultGroup {
-    return css`
-      :host {
-        font-family: var(
-          --ia-font-stack,
-          'Helvetica Neue',
-          Helvetica,
-          Arial,
-          sans-serif
-        );
+    return [
+      iaButtonStyles,
+      css`
+        :host {
+          font-family: var(
+            --ia-font-stack,
+            'Helvetica Neue',
+            Helvetica,
+            Arial,
+            sans-serif
+          );
 
-        color: var(--ia-text-color, #2c2c2c);
-      }
+          color: var(--ia-text-color, #2c2c2c);
+        }
 
-      .own-review-container {
-        --error-color: var(--container-error-color, #ea0202);
-        --link-color: var(--container-link-color, #4f65f5);
-        --container-error-color: #ea0202;
-        --container-link-color: #4f65f5;
-        --container-bg-color: #fbfbfd;
-        --container-border-color: #999999;
+        .own-review-container {
+          --error-color: var(--container-error-color, #ea0202);
+          --link-color: var(--container-link-color, #4f65f5);
+          --container-error-color: #ea0202;
+          --container-link-color: #4f65f5;
+          --container-bg-color: #fbfbfd;
+          --container-border-color: #999999;
 
-        border: 2px solid var(--container-border-color, #999999);
-        border-radius: 5px;
-        background-color: var(--container-bg-color, #fbfbfd);
-        padding: 10px;
-        margin-bottom: 20px;
-      }
-    `;
+          border: 2px solid var(--container-border-color, #999999);
+          border-radius: 5px;
+          background-color: var(--container-bg-color, #fbfbfd);
+          padding: 10px;
+          margin-bottom: 20px;
+        }
+
+        .display-reviews-msg {
+          font-weight: 200;
+        }
+
+        .ia-button.display-reviews-btn {
+          display: inline;
+          vertical-align: baseline;
+          padding: 0;
+          font-weight: 600;
+        }
+      `,
+    ];
   }
 }

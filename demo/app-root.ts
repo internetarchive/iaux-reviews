@@ -113,10 +113,16 @@ export class AppRoot extends LitElement {
   @state()
   private useOwnReview: boolean = true;
 
+  @state()
+  private useOtherReviews: boolean = true;
+
   render() {
     return html` <h2>General Settings</h2>
       <button @click=${() => (this.useOwnReview = !this.useOwnReview)}>
         ${this.useOwnReview ? 'Remove' : 'Show'} own review
+      </button>
+      <button @click=${() => (this.useOtherReviews = !this.useOtherReviews)}>
+        ${this.useOtherReviews ? 'Remove' : 'Show'} other reviews
       </button>
       <h2>Toggle ReCaptcha</h2>
       ${!this.recaptchaManager
@@ -193,7 +199,7 @@ export class AppRoot extends LitElement {
       <div class="container">
         <ia-reviews
           .identifier=${'goody'}
-          .reviews=${this.otherReviews}
+          .reviews=${this.useOtherReviews ? this.otherReviews : undefined}
           .ownReview=${this.useOwnReview ? this.review : undefined}
           .recaptchaManager=${this.recaptchaManager}
           .reviewSubmissionError=${this.unrecoverableError

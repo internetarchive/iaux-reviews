@@ -94,6 +94,44 @@ describe('IaReviews', () => {
     expect(reviewsTitle?.textContent?.trim()).to.equal('Reviews');
   });
 
+  it('displays a message instead of the reviews by default', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews
+        .ownReview=${mockReview1}
+        .reviews=${mockReviews}
+      ></ia-reviews>`,
+    );
+
+    const reviews = el.shadowRoot?.querySelectorAll('ia-review');
+    expect(reviews?.length).to.equal(0);
+    const displayReviewsMsg = el.shadowRoot?.querySelector(
+      '.display-reviews-msg',
+    ) as HTMLDivElement;
+    expect(displayReviewsMsg).to.exist;
+    expect(displayReviewsMsg?.innerText).to.include(
+      'There are 3 reviews for this item. Display reviews.',
+    );
+  });
+
+  it('displays the reviews on button click', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews
+        .ownReview=${mockReview1}
+        .reviews=${mockReviews}
+      ></ia-reviews>`,
+    );
+
+    const displayReviewsBtn = el.shadowRoot?.querySelector(
+      '.display-reviews-btn',
+    ) as HTMLButtonElement;
+    expect(displayReviewsBtn).to.exist;
+    displayReviewsBtn?.click();
+
+    await el.updateComplete;
+    const reviews = el.shadowRoot?.querySelectorAll('ia-review');
+    expect(reviews?.length).to.equal(3);
+  });
+
   it('does not display the review form by default', async () => {
     const el = await fixture<IaReviews>(
       html`<ia-reviews
