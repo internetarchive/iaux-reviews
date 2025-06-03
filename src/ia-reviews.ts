@@ -119,9 +119,13 @@ export class IaReviews extends LitElement {
   private get reviewsListTemplate(): HTMLTemplateResult | typeof nothing {
     if (!this.displayReviews) return this.displayReviewsMsgTemplate;
 
-    return html`${this.editableCurrentReviewTemplate}${this.reviews
-      ? this.reviews.map(review => this.renderReview(review))
-      : nothing}`;
+    return html`
+      <div class="reviews-list">
+        ${this.editableCurrentReviewTemplate}${this.reviews
+          ? this.reviews.map(review => this.renderReview(review))
+          : nothing}
+      </div>
+    `;
   }
 
   /* Renders the message to display instead of the reviews list */
@@ -228,6 +232,12 @@ export class IaReviews extends LitElement {
           color: var(--ia-text-color, #2c2c2c);
         }
 
+        .reviews-list {
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
+        }
+
         .own-review-container {
           --error-color: var(--container-error-color, #ea0202);
           --link-color: var(--container-link-color, #4f65f5);
@@ -240,7 +250,6 @@ export class IaReviews extends LitElement {
           border-radius: 5px;
           background-color: var(--container-bg-color, #fbfbfd);
           padding: 10px;
-          margin-bottom: 20px;
         }
 
         .display-reviews-msg {
