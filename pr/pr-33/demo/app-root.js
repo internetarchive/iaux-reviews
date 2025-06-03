@@ -833,7 +833,7 @@
     `}get editableCurrentReviewTemplate(){return!this.displayReviewForm&&!this.currentReview?b:y`<div class="own-review-container">
       ${this.displayReviewForm?y`<ia-review-form
             .identifier=${this.identifier}
-            .oldReview=${this.ownReview}
+            .oldReview=${this.currentReview}
             .baseHost=${this.baseHost}
             .endpointPath=${this.endpointPath}
             .submitterItemname=${this.submitterItemname}
@@ -852,7 +852,7 @@
       .identifier=${this.identifier}
       ?canDelete=${this.canDelete}
       .baseHost=${this.baseHost}
-    ></ia-review>`:b}addEditReview(){this.displayReviews=!0,this.displayReviewForm=!0}handleReviewUpdate(e){this.ownReview||(this.reviewsCount=this.reviewsCount+1),this.currentReview=e.detail,this.displayReviewForm=!1}handleEditCanceled(){this.displayReviewForm=!1,this.reviewsCount===0&&(this.displayReviews=!1)}static get styles(){return[Kr,R`
+    ></ia-review>`:b}addEditReview(){this.displayReviews=!0,this.displayReviewForm=!0}handleReviewUpdate(e){this.currentReview||(this.reviewsCount=this.reviewsCount+1),this.currentReview=e.detail,this.displayReviewForm=!1}handleEditCanceled(){this.displayReviewForm=!1,this.reviewsCount===0&&(this.displayReviews=!1)}static get styles(){return[Kr,R`
         :host {
           font-family: var(
             --ia-font-stack,
@@ -1022,6 +1022,8 @@
           .reviews=${this.useOtherReviews?this.otherReviews:void 0}
           .ownReview=${this.useOwnReview?this.review:void 0}
           .recaptchaManager=${this.recaptchaManager}
+          .submitterItemname=${"@foo-bar"}
+          .submitterScreenname=${"Foo Bar"}
           .reviewSubmissionError=${this.unrecoverableError?"You must be logged in to write reviews.":void 0}
           .maxSubjectLength=${this.useCharCounts?100:void 0}
           .maxBodyLength=${this.useCharCounts?1e3:void 0}
