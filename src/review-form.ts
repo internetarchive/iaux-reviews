@@ -589,37 +589,6 @@ export class ReviewForm extends LitElement {
     return [
       iaButtonStyles,
       css`
-        :host {
-          font-family: var(
-            --ia-font-stack,
-            'Helvetica Neue',
-            Helvetica,
-            Arial,
-            sans-serif
-          );
-
-          color: var(--ia-text-color, #2c2c2c);
-
-          --container-error-color: #ea0202;
-          --container-link-color: #4f65f5;
-          --container-bg-color: #fbfbfd;
-          --container-border-color: #999999;
-        }
-
-        ia-review {
-          --error-color: var(--container-error-color, #ea0202);
-          --link-color: var(--container-link-color, #4f65f5);
-        }
-
-        form,
-        .review-container {
-          border: 2px solid var(--container-border-color, #999999);
-          border-radius: 5px;
-          background-color: var(--container-bg-color, #fbfbfd);
-          padding: 10px;
-          margin-bottom: 20px;
-        }
-
         .form-heading {
           display: flex;
           flex-direction: row;

@@ -1,4 +1,6 @@
 import {
+  css,
+  CSSResultGroup,
   html,
   HTMLTemplateResult,
   LitElement,
@@ -124,7 +126,7 @@ export class IaReviews extends LitElement {
   private get editableCurrentReviewTemplate():
     | HTMLTemplateResult
     | typeof nothing {
-    if (!this.displayReviewForm) return this.renderReview(this.currentReview);
+    if (!this.displayReviewForm && !this.currentReview) return nothing;
 
     return html`<div class="own-review-container">
       ${!this.displayReviewForm
@@ -186,5 +188,36 @@ export class IaReviews extends LitElement {
   /** Closes the review form if requested */
   private handleEditCanceled(): void {
     this.displayReviewForm = false;
+  }
+
+  static get styles(): CSSResultGroup {
+    return css`
+      :host {
+        font-family: var(
+          --ia-font-stack,
+          'Helvetica Neue',
+          Helvetica,
+          Arial,
+          sans-serif
+        );
+
+        color: var(--ia-text-color, #2c2c2c);
+      }
+
+      .own-review-container {
+        --error-color: var(--container-error-color, #ea0202);
+        --link-color: var(--container-link-color, #4f65f5);
+        --container-error-color: #ea0202;
+        --container-link-color: #4f65f5;
+        --container-bg-color: #fbfbfd;
+        --container-border-color: #999999;
+
+        border: 2px solid var(--container-border-color, #999999);
+        border-radius: 5px;
+        background-color: var(--container-bg-color, #fbfbfd);
+        padding: 10px;
+        margin-bottom: 20px;
+      }
+    `;
   }
 }
