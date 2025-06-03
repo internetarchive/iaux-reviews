@@ -19,6 +19,7 @@ import {
 import { iaButtonStyles } from '@internetarchive/ia-styles';
 
 import addIcon from './assets/add-icon';
+import reviewsIcon from './assets/reviews-icon';
 
 import './review';
 import './review-form';
@@ -93,7 +94,12 @@ export class IaReviews extends LitElement {
   reviewsCount: number = 0;
 
   render() {
-    return html` ${this.reviewsTitleTemplate} ${this.reviewsListTemplate} `;
+    return html`
+      <span class="left-icon">${reviewsIcon}</span>
+      <div class="reviews">
+        ${this.reviewsTitleTemplate} ${this.reviewsListTemplate}
+      </div>
+    `;
   }
 
   protected updated(changed: PropertyValues): void {
@@ -112,6 +118,7 @@ export class IaReviews extends LitElement {
     return html`
       <div class="reviews-title">
         <h2>
+          ${reviewsIcon}
           ${msg(
             `Reviews ${this.reviewsCount > 0 ? `(${this.reviewsCount})` : ''}`,
           )}
@@ -267,6 +274,10 @@ export class IaReviews extends LitElement {
           );
 
           color: var(--ia-text-color, #2c2c2c);
+          display: flex;
+          flex-direction: row;
+          gap: 2rem;
+          align-items: flex-start;
         }
 
         .reviews-list {
@@ -312,6 +323,20 @@ export class IaReviews extends LitElement {
           margin-bottom: 10px;
         }
 
+        .reviews-title .reviews-icon {
+          vertical-align: bottom;
+          display: none;
+        }
+
+        .reviews-icon {
+          width: 3.5rem;
+          padding-top: 0.5rem;
+        }
+
+        .reviews {
+          flex-grow: 1;
+        }
+
         .reviews-title h2 {
           font-size: 3rem;
           font-weight: 500;
@@ -331,6 +356,16 @@ export class IaReviews extends LitElement {
           width: 1.6rem;
           display: inline-block;
           vertical-align: bottom;
+        }
+
+        @media only screen and (max-width: 767px) {
+          .left-icon {
+            display: none;
+          }
+
+          .reviews-title .reviews-icon {
+            display: inline;
+          }
         }
       `,
     ];

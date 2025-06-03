@@ -216,7 +216,7 @@ export class AppRoot extends LitElement {
 
   static styles = css`
     .container {
-      max-width: 550px;
+      max-width: 750px;
       margin: 10px auto;
       font-size: 1.4rem;
       margin-top: 50px;
