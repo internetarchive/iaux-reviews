@@ -20,7 +20,6 @@ import type {
 } from '@internetarchive/recaptcha-manager';
 import '@internetarchive/ia-activity-indicator';
 import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service';
-import { IaFetchHandler } from '@internetarchive/fetch-handler-service';
 import { Review } from '@internetarchive/metadata-service';
 
 import starSelected from './assets/star-selected';
@@ -64,8 +63,7 @@ export class ReviewForm extends LitElement {
   @property({ type: Number }) maxBodyLength?: number;
 
   /* Handler for form submission */
-  @property({ type: Object }) fetchHandler: FetchHandlerInterface =
-    new IaFetchHandler();
+  @property({ type: Object }) fetchHandler?: FetchHandlerInterface;
 
   /* Service for activating the recaptcha challenge */
   @property({ type: Object }) recaptchaManager?: RecaptchaManagerInterface;
@@ -408,6 +406,11 @@ export class ReviewForm extends LitElement {
 
     // Check for HTML errors
     if (!this.reviewForm.reportValidity()) {
+      return this.stopSubmission();
+    }
+
+    if (!this.fetchHandler) {
+      this.recoverableError = this.GENERIC_ERROR_MESSAGE;
       return this.stopSubmission();
     }
 
