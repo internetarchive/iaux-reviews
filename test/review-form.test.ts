@@ -325,7 +325,10 @@ describe('ReviewForm', () => {
 
   it('shows an error on submit if no recaptcha manager/widget is provided', async () => {
     const el = await fixture<ReviewForm>(
-      html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
+      html`<ia-review-form
+        .oldReview=${mockOldReview}
+        .fetchHandler=${mockFetchHandler}
+      ></ia-review-form>`,
     );
 
     const submitBtn = el.shadowRoot?.querySelector(

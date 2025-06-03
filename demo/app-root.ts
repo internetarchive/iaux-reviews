@@ -208,8 +208,6 @@ export class AppRoot extends LitElement {
           .maxSubjectLength=${this.useCharCounts ? 100 : undefined}
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
           .fetchHandler=${this.fetchHandler}
-          ?displayReviews=${true}
-          ?displayReviewForm=${true}
           ?canDelete=${this.allowDeletion}
           ?bypassRecaptcha=${this.bypassRecaptcha}
         ></ia-reviews>
@@ -218,9 +216,10 @@ export class AppRoot extends LitElement {
 
   static styles = css`
     .container {
-      max-width: 750px;
+      max-width: 550px;
       margin: 10px auto;
       font-size: 1.4rem;
+      margin-top: 50px;
     }
 
     h2,

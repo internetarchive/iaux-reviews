@@ -18,6 +18,8 @@ import {
 } from '@internetarchive/fetch-handler-service';
 import { iaButtonStyles } from '@internetarchive/ia-styles';
 
+import addIcon from './assets/add-icon';
+
 import './review';
 import './review-form';
 
@@ -91,17 +93,7 @@ export class IaReviews extends LitElement {
   reviewsCount: number = 0;
 
   render() {
-    return html`
-      <h2>
-        ${msg(
-          `Reviews ${this.reviewsCount > 0 ? `(${this.reviewsCount})` : ''}`,
-        )}
-      </h2>
-      <button class="add-edit-btn" @click=${this.addEditReview}>
-        ${msg(this.currentReview ? 'Edit My Review' : 'Add Review')}
-      </button>
-      ${this.reviewsListTemplate}
-    `;
+    return html` ${this.reviewsTitleTemplate} ${this.reviewsListTemplate} `;
   }
 
   protected updated(changed: PropertyValues): void {
@@ -115,13 +107,28 @@ export class IaReviews extends LitElement {
     }
   }
 
+  /* Title for the reviews section, including the add/edit review button */
+  private get reviewsTitleTemplate(): HTMLTemplateResult {
+    return html`
+      <div class="reviews-title">
+        <h2>
+          ${msg(
+            `Reviews ${this.reviewsCount > 0 ? `(${this.reviewsCount})` : ''}`,
+          )}
+        </h2>
+        <button class="add-edit-btn" @click=${this.addEditReview}>
+          ${addIcon}
+          ${msg(this.currentReview ? 'Edit My Review' : 'Add Review')}
+        </button>
+      </div>
+    `;
+  }
+
   /* Renders the reviews list, including the editable current review, if applicable */
   private get reviewsListTemplate(): HTMLTemplateResult | typeof nothing {
-    if (!this.displayReviews) {
-      return this.reviewsCount > 0
-        ? this.displayReviewsMsgTemplate
-        : this.noReviewsMsgTemplate;
-    }
+    if (this.reviewsCount === 0 && !this.displayReviewForm)
+      return this.noReviewsMsgTemplate;
+    if (!this.displayReviews) return this.displayReviewsMsgTemplate;
 
     return html`
       <div class="reviews-list">
@@ -293,6 +300,37 @@ export class IaReviews extends LitElement {
           vertical-align: baseline;
           padding: 0;
           font-weight: 600;
+        }
+
+        .reviews-title {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: flex-end;
+          border-bottom: 1px solid #979797;
+          padding-bottom: 5px;
+          margin-bottom: 10px;
+        }
+
+        .reviews-title h2 {
+          font-size: 3rem;
+          font-weight: 500;
+          margin: 0;
+        }
+
+        .add-edit-btn {
+          all: unset;
+          font-weight: 500;
+        }
+
+        .add-edit-btn:hover {
+          cursor: pointer;
+        }
+
+        .add-icon {
+          width: 1.6rem;
+          display: inline-block;
+          vertical-align: bottom;
         }
       `,
     ];
