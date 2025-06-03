@@ -728,15 +728,6 @@ export class ReviewForm extends LitElement {
           text-decoration: underline;
         }
 
-        .inline-link {
-          color: var(--container-link-color, #4f65f5);
-          text-decoration: none;
-        }
-
-        .inline-link:hover {
-          text-decoration: underline;
-        }
-
         .action-btns {
           width: 100%;
           display: flex;
