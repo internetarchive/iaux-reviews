@@ -507,7 +507,7 @@
             </span>
           `}
       ${this.recaptchaMessageTemplate} ${this.recoverableErrorTemplate}
-          ${this.actionButtonsTemplate}
+      ${this.actionButtonsTemplate}
     </form>`}firstUpdated(){this.formCanSubmit=this.checkSubmissionAllowed()}updated(e){e.has("oldReview")&&this.oldReview&&(this.oldReview.stars&&(this.currentStars=this.oldReview.stars),this.oldReview.reviewtitle&&(this.currentSubjectLength=this.oldReview.reviewtitle.length),this.oldReview.reviewbody&&(this.currentBodyLength=this.oldReview.reviewbody.length)),e.has("recaptchaManager")&&!this.bypassRecaptcha&&this.recaptchaManager&&!this.unrecoverableError&&this.setupRecaptcha(),(e.has("currentSubjectLength")||e.has("currentBodyLength"))&&(this.formCanSubmit=this.checkSubmissionAllowed())}get unrecoverableErrorTemplate(){return this.unrecoverableError?y`
           <div class="unrecoverable-error">
             <span class="error-msg">${E(this.unrecoverableError)}</span>
