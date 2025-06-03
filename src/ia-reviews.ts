@@ -107,7 +107,7 @@ export class IaReviews extends LitElement {
   }
 
   protected updated(changed: PropertyValues): void {
-    if (changed.has('ownReview') && this.ownReview) {
+    if (changed.has('ownReview')) {
       this.currentReview = this.ownReview;
       this.updateReviewsCount();
     }
