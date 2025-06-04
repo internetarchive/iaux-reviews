@@ -48,6 +48,9 @@ export class IaReviews extends LitElement {
   /* Whether the person viewing the reviews section has the power to delete reviews */
   @property({ type: Boolean }) canDelete = false;
 
+  /* Whether we should bypass the show/hide and more/less toggles */
+  @property({ type: Boolean }) showReviewsByDefault = false;
+
   /* Maximum allowable length for subject */
   @property({ type: Number }) maxSubjectLength?: number;
 
@@ -116,6 +119,10 @@ export class IaReviews extends LitElement {
 
     if (changed.has('reviews')) {
       this.updateReviewsCount();
+    }
+
+    if (changed.has('showReviewsByDefault') && this.showReviewsByDefault) {
+      this.displayReviews = true;
     }
   }
 
@@ -255,6 +262,7 @@ export class IaReviews extends LitElement {
       .review=${review}
       .identifier=${this.identifier}
       ?canDelete=${this.canDelete}
+      ?bypassTruncation=${this.showReviewsByDefault}
       .baseHost=${this.baseHost}
     ></ia-review>`;
   }

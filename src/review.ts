@@ -44,6 +44,9 @@ export class IaReview extends LitElement {
   /* Whether the person viewing this review has the power to delete it */
   @property({ type: Boolean }) canDelete = false;
 
+  /* Whether we should skip the truncation step for the subject/body */
+  @property({ type: Boolean }) bypassTruncation = false;
+
   /* Whether to show truncated review title / body */
   @state()
   private showTruncatedContent: boolean = false;
@@ -91,34 +94,32 @@ export class IaReview extends LitElement {
 
   /* Renders the review subject, truncating if necessary */
   private get subjectTemplate(): string {
-    if (!this.review?.reviewtitle) return '';
+    const subject = this.review?.reviewtitle;
 
-    return this.review.reviewtitle.length <= this.maxSubjectLength ||
-      this.showTruncatedContent
-      ? this.review.reviewtitle
-      : friendlyTruncate(this.review.reviewtitle, this.maxSubjectLength);
+    return this.truncateContent(subject ?? '', this.maxSubjectLength);
   }
 
   /* Renders the review body, truncating if necessary */
   private get bodyTemplate(): HTMLTemplateResult | typeof nothing {
-    if (!this.review?.reviewbody) return nothing;
+    const body = this.review?.reviewbody;
+    if (!body) return nothing;
 
-    const sanitizedReview = sanitizeReviewBody(this.review.reviewbody);
-    const truncatedReview =
-      sanitizedReview.length <= this.maxBodyLength || this.showTruncatedContent
-        ? sanitizedReview
-        : friendlyTruncate(sanitizedReview, this.maxBodyLength);
+    const sanitizedReview = sanitizeReviewBody(body);
+    const truncatedReview = this.truncateContent(
+      sanitizedReview,
+      this.maxBodyLength,
+    );
 
     return html`${unsafeHTML(this.prepReview(truncatedReview))}`;
   }
 
   /* Renders the More/Less button if review is truncated */
   private get truncationButtonsTemplate(): HTMLTemplateResult | typeof nothing {
-    if (!this.review?.reviewtitle || !this.review?.reviewbody) return nothing;
+    if (this.bypassTruncation) return nothing;
 
     const noTruncationNeeded =
-      this.review.reviewtitle.length <= this.maxSubjectLength &&
-      this.review.reviewbody.length <= this.maxBodyLength;
+      (this.review?.reviewtitle?.length ?? 0) <= this.maxSubjectLength &&
+      (this.review?.reviewbody?.length ?? 0) <= this.maxBodyLength;
 
     if (noTruncationNeeded) return nothing;
 
@@ -210,6 +211,13 @@ export class IaReview extends LitElement {
     if (!this.review?.createdate) return '';
 
     return `review-${Date.parse(this.review.createdate.toString())}`;
+  }
+
+  /** Truncates the review subject/body if needed */
+  private truncateContent(original: string, maxLength: number): string {
+    if (this.showTruncatedContent || this.bypassTruncation) return original;
+
+    return friendlyTruncate(original, maxLength);
   }
 
   /**

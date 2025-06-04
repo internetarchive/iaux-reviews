@@ -113,6 +113,19 @@ describe('IaReviews', () => {
     );
   });
 
+  it('shows reviews by default if requested', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews
+        .ownReview=${mockReview1}
+        .reviews=${mockReviews}
+        ?showReviewsByDefault=${true}
+      ></ia-reviews>`,
+    );
+
+    const reviews = el.shadowRoot?.querySelectorAll('ia-review');
+    expect(reviews?.length).to.equal(3);
+  });
+
   it('displays a message instead of the reviews or review form if there are no reviews yet', async () => {
     const el = await fixture<IaReviews>(html`<ia-reviews></ia-reviews>`);
 

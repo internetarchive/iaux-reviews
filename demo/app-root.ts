@@ -122,6 +122,9 @@ export class AppRoot extends LitElement {
   @state()
   private reviewsFrozen: boolean = false;
 
+  @state()
+  private alwaysDisplay: boolean = false;
+
   render() {
     return html` <h2>General Settings</h2>
       <button @click=${() => (this.useOwnReview = !this.useOwnReview)}>
@@ -135,6 +138,9 @@ export class AppRoot extends LitElement {
       </button>
       <button @click=${() => (this.reviewsFrozen = !this.reviewsFrozen)}>
         ${this.reviewsFrozen ? 'Unfreeze' : 'Freeze'} reviews
+      </button>
+      <button @click=${() => (this.alwaysDisplay = !this.alwaysDisplay)}>
+        ${this.alwaysDisplay ? 'Hide' : 'Show'} reviews by default
       </button>
       <h2>Toggle ReCaptcha</h2>
       ${!this.recaptchaManager
@@ -223,6 +229,7 @@ export class AppRoot extends LitElement {
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
           .fetchHandler=${this.fetchHandler}
           ?canDelete=${this.allowDeletion}
+          ?showReviewsByDefault=${this.alwaysDisplay}
           ?bypassRecaptcha=${this.bypassRecaptcha}
           ?reviewsDisabled=${this.reviewsDisabled}
           ?reviewsFrozen=${this.reviewsFrozen}
