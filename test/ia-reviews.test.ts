@@ -4,6 +4,7 @@ import type { IaReviews } from '../src/ia-reviews';
 import { Review } from '@internetarchive/metadata-service';
 import '../src/ia-reviews';
 import { ReviewForm } from '../src/review-form';
+import { IaReview } from '../src/review';
 
 const mockReview1 = new Review({
   stars: 5,
@@ -322,5 +323,110 @@ describe('IaReviews', () => {
 
     const addEditButton = el.shadowRoot?.querySelector('.add-edit-btn');
     expect(addEditButton).not.to.exist;
+  });
+
+  it('closes the review form if requested', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews
+        .reviews=${mockReviews}
+        .displayReviewForm=${true}
+        .displayReviews=${true}
+      ></ia-reviews>`,
+    );
+
+    let reviewForm = el.shadowRoot?.querySelector('ia-review-form');
+    expect(reviewForm).to.exist;
+
+    const event = new CustomEvent('reviewEditCanceled');
+    reviewForm?.dispatchEvent(event);
+
+    await el.updateComplete;
+
+    reviewForm = el.shadowRoot?.querySelector('ia-review-form');
+    expect(reviewForm).not.to.exist;
+  });
+
+  it('also hides the reviews if the review form is closed and there are no reviews', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews
+        .displayReviewForm=${true}
+        .displayReviews=${true}
+      ></ia-reviews>`,
+    );
+
+    let reviewForm = el.shadowRoot?.querySelector('ia-review-form');
+    expect(reviewForm).to.exist;
+
+    const event = new CustomEvent('reviewEditCanceled');
+    reviewForm?.dispatchEvent(event);
+
+    await el.updateComplete;
+
+    reviewForm = el.shadowRoot?.querySelector('ia-review-form');
+    expect(reviewForm).not.to.exist;
+    const noReviewsMsg = el.shadowRoot?.querySelector(
+      '.message',
+    ) as HTMLDivElement;
+    expect(noReviewsMsg).to.exist;
+    expect(noReviewsMsg?.innerText).to.include(
+      'There are no reviews yet. Be the first one to write a review.',
+    );
+  });
+
+  it("updates the patron's own review if requested", async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews
+        .reviews=${mockReviews}
+        .displayReviewForm=${true}
+        .displayReviews=${true}
+      ></ia-reviews>`,
+    );
+
+    let reviewForm = el.shadowRoot?.querySelector('ia-review-form');
+    expect(reviewForm).to.exist;
+
+    const event = new CustomEvent<Review>('reviewUpdated', {
+      detail: new Review({
+        reviewtitle: 'I am a test!',
+        reviewbody: 'Testing 123',
+      }),
+    });
+    reviewForm?.dispatchEvent(event);
+
+    await el.updateComplete;
+
+    reviewForm = el.shadowRoot?.querySelector('ia-review-form');
+    expect(reviewForm).not.to.exist;
+    const patronsOwnReview = el.shadowRoot?.querySelectorAll(
+      'ia-review',
+    )[0] as IaReview;
+    expect(patronsOwnReview.review?.reviewtitle).to.equal('I am a test!');
+    expect(patronsOwnReview?.review?.reviewbody).to.equal('Testing 123');
+  });
+
+  it('updates the review count if patron adds a review', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews
+        .reviews=${mockReviews}
+        .displayReviewForm=${true}
+        .displayReviews=${true}
+      ></ia-reviews>`,
+    );
+
+    const reviewForm = el.shadowRoot?.querySelector('ia-review-form');
+    const reviewsTitle = el.shadowRoot?.querySelector('h2');
+    expect(reviewsTitle?.textContent?.trim()).to.equal('Reviews (2)');
+
+    const event = new CustomEvent<Review>('reviewUpdated', {
+      detail: new Review({
+        reviewtitle: 'I am a test!',
+        reviewbody: 'Testing 123',
+      }),
+    });
+    reviewForm?.dispatchEvent(event);
+
+    await el.updateComplete;
+
+    expect(reviewsTitle?.textContent?.trim()).to.equal('Reviews (3)');
   });
 });
