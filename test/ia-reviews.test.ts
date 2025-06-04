@@ -118,7 +118,7 @@ describe('IaReviews', () => {
       html`<ia-reviews
         .ownReview=${mockReview1}
         .reviews=${mockReviews}
-        ?showReviewsByDefault=${true}
+        ?displayReviewsByDefault=${true}
       ></ia-reviews>`,
     );
 

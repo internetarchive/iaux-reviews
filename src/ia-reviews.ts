@@ -49,7 +49,7 @@ export class IaReviews extends LitElement {
   @property({ type: Boolean }) canDelete = false;
 
   /* Whether we should bypass the show/hide and more/less toggles */
-  @property({ type: Boolean }) showReviewsByDefault = false;
+  @property({ type: Boolean }) displayReviewsByDefault = false;
 
   /* Maximum allowable length for subject */
   @property({ type: Number }) maxSubjectLength?: number;
@@ -121,7 +121,10 @@ export class IaReviews extends LitElement {
       this.updateReviewsCount();
     }
 
-    if (changed.has('showReviewsByDefault') && this.showReviewsByDefault) {
+    if (
+      changed.has('displayReviewsByDefualt') &&
+      this.displayReviewsByDefault
+    ) {
       this.displayReviews = true;
     }
   }
@@ -262,7 +265,7 @@ export class IaReviews extends LitElement {
       .review=${review}
       .identifier=${this.identifier}
       ?canDelete=${this.canDelete}
-      ?bypassTruncation=${this.showReviewsByDefault}
+      ?bypassTruncation=${this.displayReviewsByDefault}
       .baseHost=${this.baseHost}
     ></ia-review>`;
   }

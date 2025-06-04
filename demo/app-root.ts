@@ -229,7 +229,7 @@ export class AppRoot extends LitElement {
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
           .fetchHandler=${this.fetchHandler}
           ?canDelete=${this.allowDeletion}
-          ?showReviewsByDefault=${this.alwaysDisplay}
+          ?displayReviewsByDefault=${this.alwaysDisplay}
           ?bypassRecaptcha=${this.bypassRecaptcha}
           ?reviewsDisabled=${this.reviewsDisabled}
           ?reviewsFrozen=${this.reviewsFrozen}
