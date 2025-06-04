@@ -81,19 +81,10 @@ export class AppRoot extends LitElement {
 
   private fetchHandler: FetchHandlerInterface = new MockFetchHandler();
 
-  private goodRecaptchaManager: RecaptchaManagerInterface =
+  private mockRecaptchaManager: RecaptchaManagerInterface =
     new RecaptchaManager({
       defaultSiteKey: 'demo-key',
     });
-
-  private badRecaptchaManager: RecaptchaManagerInterface = new RecaptchaManager(
-    {
-      defaultSiteKey: 'i-am-a-bad-key-that-will-fail',
-    },
-  );
-
-  @state()
-  private recaptchaManager?: RecaptchaManagerInterface;
 
   @state()
   private bypassRecaptcha: boolean = true;
@@ -136,21 +127,6 @@ export class AppRoot extends LitElement {
       <button @click=${() => (this.reviewsFrozen = !this.reviewsFrozen)}>
         ${this.reviewsFrozen ? 'Unfreeze' : 'Freeze'} reviews
       </button>
-      <h2>Toggle ReCaptcha</h2>
-      ${!this.recaptchaManager
-        ? html`
-            <button
-              @click=${() =>
-                (this.recaptchaManager = this.goodRecaptchaManager)}
-            >
-              Turn on ReCaptcha (good site key)</button
-            ><button
-              @click=${() => (this.recaptchaManager = this.badRecaptchaManager)}
-            >
-              Turn on ReCaptcha (bad site key)
-            </button>
-          `
-        : nothing}
       <button @click=${() => (this.bypassRecaptcha = !this.bypassRecaptcha)}>
         ${!this.bypassRecaptcha ? 'Bypass' : 'Enable'} ReCaptcha
       </button>
@@ -213,7 +189,7 @@ export class AppRoot extends LitElement {
           .identifier=${'goody'}
           .reviews=${this.useOtherReviews ? this.otherReviews : undefined}
           .ownReview=${this.useOwnReview ? this.review : undefined}
-          .recaptchaManager=${this.recaptchaManager}
+          .recaptchaManager=${this.mockRecaptchaManager}
           .submitterItemname=${'@foo-bar'}
           .submitterScreenname=${'Foo Bar'}
           .reviewSubmissionError=${this.unrecoverableError
