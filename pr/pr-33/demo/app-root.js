@@ -783,7 +783,7 @@
       <div class="reviews">
         ${this.reviewsTitleTemplate} ${this.reviewsListTemplate}
       </div>
-    `}updated(e){e.has("ownReview")&&(this.currentReview=this.ownReview,this.updateReviewsCount()),e.has("reviews")&&this.updateReviewsCount(),e.has("displayReviewsByDefualt")&&this.displayReviewsByDefault&&(this.displayReviews=!0)}get reviewsTitleTemplate(){return v`
+    `}updated(e){e.has("ownReview")&&(this.currentReview=this.ownReview,this.updateReviewsCount()),e.has("reviews")&&this.updateReviewsCount(),e.has("displayReviewsByDefault")&&this.displayReviewsByDefault&&(this.displayReviews=!0)}get reviewsTitleTemplate(){return v`
       <div class="reviews-title">
         <h2>
           ${Ri}
