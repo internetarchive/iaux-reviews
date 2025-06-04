@@ -122,7 +122,7 @@ export class IaReviews extends LitElement {
     }
 
     if (
-      changed.has('displayReviewsByDefualt') &&
+      changed.has('displayReviewsByDefault') &&
       this.displayReviewsByDefault
     ) {
       this.displayReviews = true;
