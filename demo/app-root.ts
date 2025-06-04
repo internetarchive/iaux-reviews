@@ -1,4 +1,4 @@
-import { css, html, LitElement, nothing } from 'lit';
+import { css, html, HTMLTemplateResult, LitElement, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import { Review } from '@internetarchive/metadata-service';
@@ -140,46 +140,10 @@ export class AppRoot extends LitElement {
         ${this.useCharCounts ? 'Remove' : 'Use'} char count limits
       </button>
       <h2>Toggle review display</h2>
-      ${this.review !== this.mockOldReview
-        ? html`<button
-            @click=${() => {
-              this.useOwnReview = true;
-              this.review = this.mockOldReview;
-            }}
-          >
-            Prefill normal review
-          </button>`
-        : nothing}
-      ${this.review !== this.longReview
-        ? html`<button
-            @click=${() => {
-              this.useOwnReview = true;
-              this.review = this.longReview;
-            }}
-          >
-            Prefill long review
-          </button>`
-        : nothing}
-      ${this.review !== this.reviewWithLink
-        ? html`<button
-            @click=${() => {
-              this.useOwnReview = true;
-              this.review = this.reviewWithLink;
-            }}
-          >
-            Prefill review with link
-          </button>`
-        : nothing}
-      ${this.review !== this.reviewWithTextLink
-        ? html`<button
-            @click=${() => {
-              this.useOwnReview = true;
-              this.review = this.reviewWithTextLink;
-            }}
-          >
-            Prefill review with text link
-          </button>`
-        : nothing}
+      ${this.renderReviewToggle(this.mockOldReview, 'normal review')}
+      ${this.renderReviewToggle(this.longReview, 'long review')}
+      ${this.renderReviewToggle(this.reviewWithLink, 'review with link')}
+      ${this.renderReviewToggle(this.reviewWithLink, 'review with text link')}
       <button @click=${() => (this.allowDeletion = !this.allowDeletion)}>
         ${this.allowDeletion ? 'Prevent' : 'Allow'} deletion
       </button>
@@ -204,6 +168,29 @@ export class AppRoot extends LitElement {
           ?reviewsFrozen=${this.reviewsFrozen}
         ></ia-reviews>
       </div>`;
+  }
+
+  private renderReviewToggle(
+    review: Review,
+    reviewName: string,
+  ): HTMLTemplateResult {
+    return html`
+      <button
+        @click=${() => {
+          this.switchInOutReview(review);
+        }}
+      >
+        ${this.review !== review ? 'Prefill' : 'Remove'} ${reviewName}
+      </button>
+    `;
+  }
+
+  private switchInOutReview(review: Review): void {
+    this.useOwnReview = true;
+
+    if (this.review !== review) {
+      this.review = review;
+    } else this.review = this.mockOldReview;
   }
 
   static styles = css`
