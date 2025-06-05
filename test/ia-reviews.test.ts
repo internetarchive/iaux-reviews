@@ -29,11 +29,23 @@ const mockReview2 = new Review({
 const mockReviews: Review[] = [mockReview1, mockReview2];
 
 describe('IaReviews', () => {
-  it('passes the a11y audit', async () => {
+  it('passes the a11y audit for the reviews list', async () => {
     const el = await fixture<IaReviews>(
       html`<ia-reviews
         .reviews=${mockReviews}
         .displayReviews=${true}
+      ></ia-reviews>`,
+    );
+
+    await expect(el).shadowDom.to.be.accessible();
+  });
+
+  it('passes the a11y audit for the review form', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews
+        .reviews=${mockReviews}
+        .displayReviews=${true}
+        .displayReviewForm=${true}
       ></ia-reviews>`,
     );
 

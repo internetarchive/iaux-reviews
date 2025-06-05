@@ -34,7 +34,7 @@ export class IaReviews extends LitElement {
   @property({ type: String }) identifier?: string;
 
   /* The list of reviews to be rendered */
-  @property({ type: Array }) reviews?: Review[];
+  @property({ type: Array }) reviews?: Review[] = [];
 
   /* One's own review, if applicable */
   @property({ type: Object }) ownReview?: Review;
@@ -88,19 +88,15 @@ export class IaReviews extends LitElement {
 
   /* Whether to display the review form or the editable review */
   @state()
-  displayReviewForm: boolean = false;
+  private displayReviewForm: boolean = false;
 
   /* Whether to display the existing reviews */
   @state()
-  displayReviews: boolean = false;
+  private displayReviews: boolean = false;
 
   /* The current version of the review */
   @state()
-  currentReview?: Review;
-
-  /* The current review count */
-  @state()
-  reviewsCount: number = 0;
+  private currentReview?: Review;
 
   render() {
     return html`
@@ -114,11 +110,6 @@ export class IaReviews extends LitElement {
   protected updated(changed: PropertyValues): void {
     if (changed.has('ownReview')) {
       this.currentReview = this.ownReview;
-      this.updateReviewsCount();
-    }
-
-    if (changed.has('reviews')) {
-      this.updateReviewsCount();
     }
 
     if (
@@ -149,8 +140,8 @@ export class IaReviews extends LitElement {
     `;
   }
 
-  /* Renders the reviews list, including the editable current review, if applicable */
-  private get reviewsListTemplate(): HTMLTemplateResult | typeof nothing {
+  /* Renders the reviews list, including the editable current review, or a message if applicable */
+  private get reviewsListTemplate(): HTMLTemplateResult {
     if (this.reviewsDisabled)
       return html`<div class="message">
         ${msg('Reviews have been disabled for this item.')}
@@ -168,9 +159,8 @@ export class IaReviews extends LitElement {
               ${msg('Reviews can no longer be added to this item.')}
             </div>`
           : nothing}
-        ${this.editableCurrentReviewTemplate}${this.reviews
-          ? this.reviews.map(review => this.renderReview(review))
-          : nothing}
+        ${this.editableCurrentReviewTemplate}
+        ${this.reviews?.map(review => this.renderReview(review))}
       </div>
     `;
   }
@@ -251,10 +241,9 @@ export class IaReviews extends LitElement {
     </div>`;
   }
 
-  /** Updates the review count */
-  private updateReviewsCount(): void {
-    this.reviewsCount =
-      (this.reviews?.length ?? 0) + (this.currentReview ? 1 : 0);
+  /** Calculates the current reviews count */
+  private get reviewsCount(): number {
+    return (this.reviews?.length ?? 0) + (this.currentReview ? 1 : 0);
   }
 
   /* Renders the given review, using the ia-review component */
@@ -278,11 +267,6 @@ export class IaReviews extends LitElement {
 
   /** Handles successful review submission */
   private handleReviewUpdate(e: CustomEvent<Review>): void {
-    // Update the reviews count to reflect new review, if applicable
-    if (!this.currentReview) {
-      this.reviewsCount = this.reviewsCount + 1;
-    }
-
     this.currentReview = e.detail;
     this.displayReviewForm = false;
   }
