@@ -105,12 +105,9 @@ export class IaReviews extends LitElement {
   }
 
   protected updated(changed: PropertyValues): void {
-    if (
-      (changed.has('reviews') || changed.has('submitterItemname')) &&
-      this.reviews &&
-      this.submitterItemname
-    ) {
-      this.splitOffPatronsReview();
+    if (changed.has('reviews') || changed.has('submitterItemname')) {
+      if (this.reviews && this.submitterItemname) this.splitOffPatronsReview();
+      if (!this.reviews) this.currentReview = undefined;
     }
 
     if (

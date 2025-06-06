@@ -1,4 +1,4 @@
-import { css, html, HTMLTemplateResult, LitElement, nothing } from 'lit';
+import { css, html, HTMLTemplateResult, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import { Review } from '@internetarchive/metadata-service';
@@ -58,7 +58,8 @@ export class AppRoot extends LitElement {
     reviewer_itemname: '@foo-bar',
   });
 
-  private otherReviews = [
+  private reviews = [
+    this.mockOldReview,
     new Review({
       stars: 2,
       reviewtitle: 'Eh, just ok',
@@ -99,13 +100,10 @@ export class AppRoot extends LitElement {
   private allowDeletion: boolean = false;
 
   @state()
+  private useExistingReviews: boolean = true;
+
+  @state()
   private review: Review = this.mockOldReview;
-
-  @state()
-  private useOwnReview: boolean = true;
-
-  @state()
-  private useOtherReviews: boolean = true;
 
   @state()
   private reviewsDisabled: boolean = false;
@@ -115,11 +113,10 @@ export class AppRoot extends LitElement {
 
   render() {
     return html` <h2>General Settings</h2>
-      <button @click=${() => (this.useOwnReview = !this.useOwnReview)}>
-        ${this.useOwnReview ? 'Remove' : 'Show'} own review
-      </button>
-      <button @click=${() => (this.useOtherReviews = !this.useOtherReviews)}>
-        ${this.useOtherReviews ? 'Remove' : 'Show'} other reviews
+      <button
+        @click=${() => (this.useExistingReviews = !this.useExistingReviews)}
+      >
+        ${this.useExistingReviews ? 'Remove' : 'Show'} existing reviews
       </button>
       <button @click=${() => (this.reviewsDisabled = !this.reviewsDisabled)}>
         ${this.reviewsDisabled ? 'Enable' : 'Disable'} reviews
@@ -143,7 +140,10 @@ export class AppRoot extends LitElement {
       ${this.renderReviewToggle(this.mockOldReview, 'normal review')}
       ${this.renderReviewToggle(this.longReview, 'long review')}
       ${this.renderReviewToggle(this.reviewWithLink, 'review with link')}
-      ${this.renderReviewToggle(this.reviewWithLink, 'review with text link')}
+      ${this.renderReviewToggle(
+        this.reviewWithTextLink,
+        'review with text link',
+      )}
       <button @click=${() => (this.allowDeletion = !this.allowDeletion)}>
         ${this.allowDeletion ? 'Prevent' : 'Allow'} deletion
       </button>
@@ -151,8 +151,7 @@ export class AppRoot extends LitElement {
       <div class="container">
         <ia-reviews
           .identifier=${'goody'}
-          .reviews=${this.useOtherReviews ? this.otherReviews : undefined}
-          .ownReview=${this.useOwnReview ? this.review : undefined}
+          .reviews=${this.useExistingReviews ? this.reviews : undefined}
           .recaptchaManager=${this.mockRecaptchaManager}
           .submitterItemname=${'@foo-bar'}
           .submitterScreenname=${'Foo Bar'}
@@ -186,7 +185,7 @@ export class AppRoot extends LitElement {
   }
 
   private switchInOutReview(review: Review): void {
-    this.useOwnReview = true;
+    this.useExistingReviews = true;
 
     if (this.review !== review) {
       this.review = review;
