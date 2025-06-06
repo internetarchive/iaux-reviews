@@ -20,7 +20,6 @@ import type {
 } from '@internetarchive/recaptcha-manager';
 import '@internetarchive/ia-activity-indicator';
 import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service';
-import { IaFetchHandler } from '@internetarchive/fetch-handler-service';
 import { Review } from '@internetarchive/metadata-service';
 
 import starSelected from './assets/star-selected';
@@ -45,9 +44,6 @@ export class ReviewForm extends LitElement {
   /* The path for the endpoint we're submitting to */
   @property({ type: String }) endpointPath: string = '/write-review.php';
 
-  /* Whether to display the form or the editable review */
-  @property({ type: String }) displayMode: 'review' | 'form' = 'form';
-
   /** Form submitter's screenname, if applicable */
   @property({ type: String }) submitterScreenname: string = 'Anonymous';
 
@@ -67,17 +63,13 @@ export class ReviewForm extends LitElement {
   @property({ type: Number }) maxBodyLength?: number;
 
   /* Handler for form submission */
-  @property({ type: Object }) fetchHandler: FetchHandlerInterface =
-    new IaFetchHandler();
+  @property({ type: Object }) fetchHandler?: FetchHandlerInterface;
 
   /* Service for activating the recaptcha challenge */
   @property({ type: Object }) recaptchaManager?: RecaptchaManagerInterface;
 
   /* Optionally avoid using recaptcha for the form */
   @property({ type: Boolean }) bypassRecaptcha: boolean = false;
-
-  /* Optionally allow review deletion */
-  @property({ type: Boolean }) canDelete: boolean = false;
 
   /* Recaptcha widget for the form */
   private recaptchaWidget?: RecaptchaWidgetInterface;
@@ -118,20 +110,18 @@ export class ReviewForm extends LitElement {
     "There's been a temporary error. Please wait a moment and try again.";
 
   render() {
-    return this.displayMode === 'review'
-      ? this.reviewTemplate
-      : html`<form id="review-form" @submit=${this.handleSubmit}>
-          ${this.unrecoverableError
-            ? this.unrecoverableErrorTemplate
-            : html`
-                <span class="inputs">
-                  ${this.starsInputTemplate} ${this.subjectInputTemplate}
-                  ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
-                </span>
-              `}
-          ${this.recaptchaMessageTemplate} ${this.recoverableErrorTemplate}
-          ${this.actionButtonsTemplate}
-        </form>`;
+    return html`<form id="review-form" @submit=${this.handleSubmit}>
+      ${this.unrecoverableError
+        ? this.unrecoverableErrorTemplate
+        : html`
+            <span class="inputs">
+              ${this.starsInputTemplate} ${this.subjectInputTemplate}
+              ${this.bodyInputTemplate} ${this.hiddenInputsTemplate}
+            </span>
+          `}
+      ${this.recaptchaMessageTemplate} ${this.recoverableErrorTemplate}
+      ${this.actionButtonsTemplate}
+    </form>`;
   }
 
   protected firstUpdated(): void {
@@ -140,12 +130,10 @@ export class ReviewForm extends LitElement {
 
   protected updated(changed: PropertyValues): void {
     // Fill in previous review, if provided
-    if (changed.has('oldReview') && this.oldReview) {
-      if (this.oldReview.stars) this.currentStars = this.oldReview.stars;
-      if (this.oldReview.reviewtitle)
-        this.currentSubjectLength = this.oldReview.reviewtitle.length;
-      if (this.oldReview.reviewbody)
-        this.currentBodyLength = this.oldReview.reviewbody.length;
+    if (changed.has('oldReview')) {
+      this.currentStars = this.oldReview?.stars ?? 0;
+      this.currentSubjectLength = this.oldReview?.reviewtitle?.length ?? 0;
+      this.currentBodyLength = this.oldReview?.reviewbody?.length ?? 0;
     }
 
     // Set up ReCaptcha, if possible
@@ -165,21 +153,6 @@ export class ReviewForm extends LitElement {
     ) {
       this.formCanSubmit = this.checkSubmissionAllowed();
     }
-  }
-
-  /** Review to render on success or cancel */
-  private get reviewTemplate(): HTMLTemplateResult | typeof nothing {
-    if (!this.oldReview) return nothing;
-    return html`
-      <div class="review-container">
-        <ia-review
-          .identifier=${this.identifier}
-          .review=${this.oldReview}
-          .baseHost=${this.baseHost}
-          ?canDelete=${this.canDelete}
-        ></ia-review>
-      </div>
-    `;
   }
 
   /** Error to render instead of form inputs */
@@ -352,7 +325,7 @@ export class ReviewForm extends LitElement {
         type="button"
         class="ia-button dark"
         data-testid="cancel-btn"
-        @click=${() => (this.displayMode = 'review')}
+        @click=${this.cancelReviewEdit}
       >
         ${msg('Cancel')}
       </button>
@@ -434,6 +407,11 @@ export class ReviewForm extends LitElement {
       return this.stopSubmission();
     }
 
+    if (!this.fetchHandler) {
+      this.recoverableError = this.GENERIC_ERROR_MESSAGE;
+      return this.stopSubmission();
+    }
+
     try {
       const formData = new URLSearchParams();
 
@@ -463,8 +441,13 @@ export class ReviewForm extends LitElement {
 
       if (result?.success === true) {
         this.submissionInProgress = false;
-        this.oldReview = this.generateSubmittedReview();
-        this.displayMode = 'review';
+        const newReview = this.generateSubmittedReview();
+
+        // Emit a reviewUpdated event
+        const event = new CustomEvent<Review>('reviewUpdated', {
+          detail: newReview,
+        });
+        this.dispatchEvent(event);
       } else {
         this.recoverableError = result.error ?? this.GENERIC_ERROR_MESSAGE;
         this.stopSubmission();
@@ -540,6 +523,12 @@ export class ReviewForm extends LitElement {
     }
   }
 
+  /* Emits an event to close the form */
+  private cancelReviewEdit(): void {
+    const event = new CustomEvent('reviewEditCanceled');
+    this.dispatchEvent(event);
+  }
+
   /* Prevents form submission and sets stars based on number clicked */
   private handleStarClicked(e: Event, num: number): void {
     e.preventDefault();
@@ -601,37 +590,6 @@ export class ReviewForm extends LitElement {
     return [
       iaButtonStyles,
       css`
-        :host {
-          font-family: var(
-            --ia-font-stack,
-            'Helvetica Neue',
-            Helvetica,
-            Arial,
-            sans-serif
-          );
-
-          color: var(--ia-text-color, #2c2c2c);
-
-          --container-error-color: #ea0202;
-          --container-link-color: #4f65f5;
-          --container-bg-color: #fbfbfd;
-          --container-border-color: #999999;
-        }
-
-        ia-review {
-          --error-color: var(--container-error-color, #ea0202);
-          --link-color: var(--container-link-color, #4f65f5);
-        }
-
-        form,
-        .review-container {
-          border: 2px solid var(--container-border-color, #999999);
-          border-radius: 5px;
-          background-color: var(--container-bg-color, #fbfbfd);
-          padding: 10px;
-          margin-bottom: 20px;
-        }
-
         .form-heading {
           display: flex;
           flex-direction: row;

@@ -206,8 +206,24 @@ describe('IaReview', () => {
       html`<ia-review .review=${mockReview} .maxBodyLength=${6}></ia-review>`,
     );
 
-    const subject = el.shadowRoot?.querySelector('.body');
-    expect(subject?.textContent).to.contain('I loved...');
+    const body = el.shadowRoot?.querySelector('.body');
+    expect(body?.textContent).to.contain('I loved...');
+  });
+
+  it('can skip truncation if requested', async () => {
+    const el = await fixture<IaReview>(
+      html`<ia-review
+        .review=${mockReview}
+        .maxSubjectLength=${6}
+        .maxBodyLength=${6}
+        ?bypassTruncation=${true}
+      ></ia-review>`,
+    );
+
+    const subject = el.shadowRoot?.querySelector('.subject');
+    expect(subject?.textContent).to.contain('What a cool book!');
+    const body = el.shadowRoot?.querySelector('.body');
+    expect(body?.textContent).to.contain('I loved it.');
   });
 
   it('shows a more button if subject/body are truncated', async () => {
@@ -226,6 +242,20 @@ describe('IaReview', () => {
   it('does not show a more button if subject/body are not truncated', async () => {
     const el = await fixture<IaReview>(
       html`<ia-review .review=${mockReview}></ia-review>`,
+    );
+
+    const moreBtn = el.shadowRoot?.querySelector('.more-btn');
+    expect(moreBtn).not.to.exist;
+  });
+
+  it('does not show a more button if truncation is bypassed', async () => {
+    const el = await fixture<IaReview>(
+      html`<ia-review
+        .review=${mockReview}
+        .maxSubjectLength=${6}
+        .maxBodyLength=${6}
+        ?bypassTruncation=${true}
+      ></ia-review>`,
     );
 
     const moreBtn = el.shadowRoot?.querySelector('.more-btn');

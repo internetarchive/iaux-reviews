@@ -1,12 +1,9 @@
-import { html, fixture, expect, oneEvent } from '@open-wc/testing';
+import { html, fixture, expect } from '@open-wc/testing';
 
 import type { ReviewForm } from '../src/review-form';
 import { Review } from '@internetarchive/metadata-service';
-import { MockRecaptchaManager } from './mocks/mock-recaptcha-manager';
-import { IaReview } from '../src/review';
 import '../src/review-form';
 import { MockFetchHandler } from './mocks/mock-fetch-handler';
-import { error } from 'console';
 
 const mockOldReview = new Review({
   stars: 5,
@@ -18,7 +15,6 @@ const mockOldReview = new Review({
   reviewer_itemname: '@foo-bar',
 });
 
-const mockRecaptchaManager = new MockRecaptchaManager();
 const mockFetchHandler = new MockFetchHandler();
 
 describe('ReviewForm', () => {
@@ -315,21 +311,6 @@ describe('ReviewForm', () => {
     expect(identifierInput.value).to.equal('foo');
   });
 
-  it('shows a cancel button that switches to review display mode', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form .identifier=${'foo'}></ia-review-form>`,
-    );
-
-    const cancelBtn = el.shadowRoot?.querySelector(
-      'button[data-testid=cancel-btn]',
-    ) as HTMLAnchorElement;
-    expect(cancelBtn).to.exist;
-
-    cancelBtn.click();
-
-    expect(el.displayMode).to.equal('review');
-  });
-
   it('prefills the token if provided', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form .token=${'12345a'}></ia-review-form>`,
@@ -344,7 +325,10 @@ describe('ReviewForm', () => {
 
   it('shows an error on submit if no recaptcha manager/widget is provided', async () => {
     const el = await fixture<ReviewForm>(
-      html`<ia-review-form .oldReview=${mockOldReview}></ia-review-form>`,
+      html`<ia-review-form
+        .oldReview=${mockOldReview}
+        .fetchHandler=${mockFetchHandler}
+      ></ia-review-form>`,
     );
 
     const submitBtn = el.shadowRoot?.querySelector(
@@ -537,20 +521,6 @@ describe('ReviewForm', () => {
 
     const submitBtn = el.shadowRoot?.querySelector('button[type="submit"');
     expect(submitBtn?.getAttribute('disabled')).not.to.exist;
-  });
-
-  it('shows a review instead of the review form if requested', async () => {
-    const el = await fixture<ReviewForm>(
-      html`<ia-review-form
-        .maxBodyLength=${100}
-        .oldReview=${mockOldReview}
-        .displayMode=${'review'}
-      ></ia-review-form>`,
-    );
-
-    const reviewElement = el.shadowRoot?.querySelector('ia-review') as IaReview;
-    expect(reviewElement).to.exist;
-    expect(reviewElement?.review).to.equal(mockOldReview);
   });
 
   it('shows a loading indicator and disables the button if submission is in progress', async () => {

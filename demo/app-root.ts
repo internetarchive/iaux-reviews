@@ -1,5 +1,5 @@
-import { css, html, LitElement, nothing } from 'lit';
-import { customElement, query, state } from 'lit/decorators.js';
+import { css, html, HTMLTemplateResult, LitElement } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
 
 import { Review } from '@internetarchive/metadata-service';
 import {
@@ -9,9 +9,10 @@ import {
 
 import '../src/review-form';
 import '../src/review';
+import '../src/ia-reviews';
+
 import { MockFetchHandler } from '../test/mocks/mock-fetch-handler';
 import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service';
-import { ReviewForm } from '../src/review-form';
 
 @customElement('app-root')
 export class AppRoot extends LitElement {
@@ -57,21 +58,34 @@ export class AppRoot extends LitElement {
     reviewer_itemname: '@foo-bar',
   });
 
+  private reviews = [
+    this.mockOldReview,
+    new Review({
+      stars: 2,
+      reviewtitle: 'Eh, just ok',
+      reviewbody: 'It was fine.',
+      reviewer: 'Bar Baz',
+      reviewdate: '04/20/2025',
+      createdate: '04/19/2025',
+      reviewer_itemname: '@bar-baz',
+    }),
+    new Review({
+      stars: 5,
+      reviewtitle: 'My favorite book!!!!!',
+      reviewbody: 'Wow, what a great read',
+      reviewer: 'Bar Foo',
+      reviewdate: '04/19/2025',
+      createdate: '04/19/2025',
+      reviewer_itemname: '@bar-foo',
+    }),
+  ];
+
   private fetchHandler: FetchHandlerInterface = new MockFetchHandler();
 
-  private goodRecaptchaManager: RecaptchaManagerInterface =
+  private mockRecaptchaManager: RecaptchaManagerInterface =
     new RecaptchaManager({
       defaultSiteKey: 'demo-key',
     });
-
-  private badRecaptchaManager: RecaptchaManagerInterface = new RecaptchaManager(
-    {
-      defaultSiteKey: 'i-am-a-bad-key-that-will-fail',
-    },
-  );
-
-  @state()
-  private recaptchaManager?: RecaptchaManagerInterface;
 
   @state()
   private bypassRecaptcha: boolean = true;
@@ -80,36 +94,36 @@ export class AppRoot extends LitElement {
   private unrecoverableError: boolean = false;
 
   @state()
-  private recoverableError: boolean = false;
-
-  @state()
   private useCharCounts: boolean = true;
 
   @state()
   private allowDeletion: boolean = false;
 
   @state()
+  private useExistingReviews: boolean = true;
+
+  @state()
   private review: Review = this.mockOldReview;
 
-  @query('ia-review-form')
-  private reviewForm!: ReviewForm;
+  @state()
+  private reviewsDisabled: boolean = false;
+
+  @state()
+  private reviewsFrozen: boolean = false;
 
   render() {
-    return html` <h2>Toggle ReCaptcha</h2>
-      ${!this.recaptchaManager
-        ? html`
-            <button
-              @click=${() =>
-                (this.recaptchaManager = this.goodRecaptchaManager)}
-            >
-              Turn on ReCaptcha (good site key)</button
-            ><button
-              @click=${() => (this.recaptchaManager = this.badRecaptchaManager)}
-            >
-              Turn on ReCaptcha (bad site key)
-            </button>
-          `
-        : nothing}
+    return html` <h2>General Settings</h2>
+      <button
+        @click=${() => (this.useExistingReviews = !this.useExistingReviews)}
+      >
+        ${this.useExistingReviews ? 'Remove' : 'Show'} existing reviews
+      </button>
+      <button @click=${() => (this.reviewsDisabled = !this.reviewsDisabled)}>
+        ${this.reviewsDisabled ? 'Enable' : 'Disable'} reviews
+      </button>
+      <button @click=${() => (this.reviewsFrozen = !this.reviewsFrozen)}>
+        ${this.reviewsFrozen ? 'Unfreeze' : 'Freeze'} reviews
+      </button>
       <button @click=${() => (this.bypassRecaptcha = !this.bypassRecaptcha)}>
         ${!this.bypassRecaptcha ? 'Bypass' : 'Enable'} ReCaptcha
       </button>
@@ -119,68 +133,63 @@ export class AppRoot extends LitElement {
       >
         ${this.unrecoverableError ? 'Hide' : 'Show'} unrecoverable error
       </button>
-      <button
-        @click=${() => {
-          this.unrecoverableError = false;
-          this.recoverableError = !this.recoverableError;
-        }}
-      >
-        ${this.recoverableError ? 'Hide' : 'Show'} recoverable error
-      </button>
       <button @click=${() => (this.useCharCounts = !this.useCharCounts)}>
         ${this.useCharCounts ? 'Remove' : 'Use'} char count limits
       </button>
       <h2>Toggle review display</h2>
-      <button
-        @click=${() => {
-          this.reviewForm.displayMode = 'form';
-        }}
-      >
-        Switch to form view
-      </button>
-      ${this.review !== this.mockOldReview
-        ? html`<button @click=${() => (this.review = this.mockOldReview)}>
-            Prefill normal review
-          </button>`
-        : nothing}
-      ${this.review !== this.longReview
-        ? html`<button @click=${() => (this.review = this.longReview)}>
-            Prefill long review
-          </button>`
-        : nothing}
-      ${this.review !== this.reviewWithLink
-        ? html`<button @click=${() => (this.review = this.reviewWithLink)}>
-            Prefill review with link
-          </button>`
-        : nothing}
-      ${this.review !== this.reviewWithTextLink
-        ? html`<button @click=${() => (this.review = this.reviewWithTextLink)}>
-            Prefill review with text link
-          </button>`
-        : nothing}
+      ${this.renderReviewToggle(this.mockOldReview, 'normal review')}
+      ${this.renderReviewToggle(this.longReview, 'long review')}
+      ${this.renderReviewToggle(this.reviewWithLink, 'review with link')}
+      ${this.renderReviewToggle(
+        this.reviewWithTextLink,
+        'review with text link',
+      )}
       <button @click=${() => (this.allowDeletion = !this.allowDeletion)}>
         ${this.allowDeletion ? 'Prevent' : 'Allow'} deletion
       </button>
 
       <div class="container">
-        <ia-review-form
+        <ia-reviews
           .identifier=${'goody'}
-          .oldReview=${this.review}
-          .recaptchaManager=${this.recaptchaManager}
-          .unrecoverableError=${this.unrecoverableError
+          .reviews=${this.useExistingReviews ? this.reviews : undefined}
+          .recaptchaManager=${this.mockRecaptchaManager}
+          .submitterItemname=${'@foo-bar'}
+          .submitterScreenname=${'Foo Bar'}
+          .reviewSubmissionError=${this.unrecoverableError
             ? 'You must be logged in to write reviews.'
-            : undefined}
-          .recoverableError=${this.recoverableError
-            ? "There's a problem submitting your review, please try again later."
             : undefined}
           .maxSubjectLength=${this.useCharCounts ? 100 : undefined}
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
           .fetchHandler=${this.fetchHandler}
           ?canDelete=${this.allowDeletion}
           ?bypassRecaptcha=${this.bypassRecaptcha}
-          ?submissionInProgress=${true}
-        ></ia-review-form>
+          ?reviewsDisabled=${this.reviewsDisabled}
+          ?reviewsFrozen=${this.reviewsFrozen}
+        ></ia-reviews>
       </div>`;
+  }
+
+  private renderReviewToggle(
+    review: Review,
+    reviewName: string,
+  ): HTMLTemplateResult {
+    return html`
+      <button
+        @click=${() => {
+          this.switchInOutReview(review);
+        }}
+      >
+        ${this.review !== review ? 'Prefill' : 'Remove'} ${reviewName}
+      </button>
+    `;
+  }
+
+  private switchInOutReview(review: Review): void {
+    this.useExistingReviews = true;
+
+    if (this.review !== review) {
+      this.review = review;
+    } else this.review = this.mockOldReview;
   }
 
   static styles = css`
@@ -188,6 +197,7 @@ export class AppRoot extends LitElement {
       max-width: 750px;
       margin: 10px auto;
       font-size: 1.4rem;
+      margin-top: 50px;
     }
 
     h2,
