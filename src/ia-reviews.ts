@@ -36,9 +36,6 @@ export class IaReviews extends LitElement {
   /* The list of reviews to be rendered */
   @property({ type: Array }) reviews?: Review[] = [];
 
-  /* One's own review, if applicable */
-  @property({ type: Object }) ownReview?: Review;
-
   /* Whether reviews are disabled for the item */
   @property({ type: Boolean }) reviewsDisabled = false;
 
@@ -108,8 +105,12 @@ export class IaReviews extends LitElement {
   }
 
   protected updated(changed: PropertyValues): void {
-    if (changed.has('ownReview')) {
-      this.currentReview = this.ownReview;
+    if (
+      (changed.has('reviews') || changed.has('submitterItemname')) &&
+      this.reviews &&
+      this.submitterItemname
+    ) {
+      this.splitOffPatronsReview();
     }
 
     if (
@@ -160,7 +161,11 @@ export class IaReviews extends LitElement {
             </div>`
           : nothing}
         ${this.editableCurrentReviewTemplate}
-        ${this.reviews?.map(review => this.renderReview(review))}
+        ${this.reviews?.map(review =>
+          review.reviewer_itemname !== this.submitterItemname
+            ? this.renderReview(review)
+            : nothing,
+        )}
       </div>
     `;
   }
@@ -244,6 +249,28 @@ export class IaReviews extends LitElement {
   /** Calculates the current reviews count */
   private get reviewsCount(): number {
     return (this.reviews?.length ?? 0) + (this.currentReview ? 1 : 0);
+  }
+
+  /** Splits the patron's own review out of the reviews array */
+  private splitOffPatronsReview(): void {
+    if (!this.reviews || !this.submitterItemname) return;
+
+    let patronsOwnReview: Review | null = null;
+    const filteredReviews: Review[] = [];
+
+    this.reviews.forEach(review => {
+      if (
+        !patronsOwnReview &&
+        review.reviewer_itemname === this.submitterItemname
+      ) {
+        patronsOwnReview = review;
+      } else filteredReviews.push(review);
+    });
+
+    if (patronsOwnReview) {
+      this.currentReview = patronsOwnReview;
+      this.reviews = filteredReviews;
+    }
   }
 
   /* Renders the given review, using the ia-review component */

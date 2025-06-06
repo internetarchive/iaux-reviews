@@ -79,23 +79,47 @@ describe('IaReviews', () => {
   it("includes the patron's own review in the count", async () => {
     const el = await fixture<IaReviews>(
       html`<ia-reviews
+        .submitterItemname=${'@foo-bar'}
         .reviews=${mockReviews}
-        .ownReview=${mockReview1}
         .displayReviews=${true}
       ></ia-reviews>`,
     );
 
     const reviewsTitle = el.shadowRoot?.querySelector('h2');
-    expect(reviewsTitle?.textContent?.trim()).to.equal('Reviews (3)');
+    expect(reviewsTitle?.textContent?.trim()).to.equal('Reviews (2)');
   });
 
   it("includes the patron's own review in the count even if no other reviews", async () => {
     const el = await fixture<IaReviews>(
-      html`<ia-reviews .ownReview=${mockReview1}></ia-reviews>`,
+      html`<ia-reviews
+        .reviews=${[mockReviews[1]]}
+        .submitterItemname=${'@foo-bar'}
+      ></ia-reviews>`,
     );
 
     const reviewsTitle = el.shadowRoot?.querySelector('h2');
     expect(reviewsTitle?.textContent?.trim()).to.equal('Reviews (1)');
+  });
+
+  it("identifies and splits off the patron's own review, if found", async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews
+        .reviews=${mockReviews}
+        .submitterItemname=${'@foo-bar'}
+        .displayReviews=${true}
+      ></ia-reviews>`,
+    );
+
+    const ownReviewContainer = el.shadowRoot?.querySelector(
+      '.own-review-container',
+    );
+    expect(ownReviewContainer).to.exist;
+
+    const ownReview = ownReviewContainer?.querySelector(
+      'ia-review',
+    ) as IaReview;
+    expect(ownReview).to.exist;
+    expect(ownReview?.review?.reviewer_itemname).to.equal('@foo-bar');
   });
 
   it('does not show any number if there are no reviews', async () => {
@@ -109,10 +133,7 @@ describe('IaReviews', () => {
 
   it('displays a message instead of the reviews by default', async () => {
     const el = await fixture<IaReviews>(
-      html`<ia-reviews
-        .ownReview=${mockReview1}
-        .reviews=${mockReviews}
-      ></ia-reviews>`,
+      html`<ia-reviews .reviews=${mockReviews}></ia-reviews>`,
     );
 
     const reviews = el.shadowRoot?.querySelectorAll('ia-review');
@@ -122,21 +143,20 @@ describe('IaReviews', () => {
     ) as HTMLDivElement;
     expect(displayReviewsMsg).to.exist;
     expect(displayReviewsMsg?.innerText).to.include(
-      'There are 3 reviews for this item. Display reviews.',
+      'There are 2 reviews for this item. Display reviews.',
     );
   });
 
   it('shows reviews by default if requested', async () => {
     const el = await fixture<IaReviews>(
       html`<ia-reviews
-        .ownReview=${mockReview1}
         .reviews=${mockReviews}
         ?displayReviewsByDefault=${true}
       ></ia-reviews>`,
     );
 
     const reviews = el.shadowRoot?.querySelectorAll('ia-review');
-    expect(reviews?.length).to.equal(3);
+    expect(reviews?.length).to.equal(2);
   });
 
   it('displays a message instead of the reviews or review form if there are no reviews yet', async () => {
@@ -174,10 +194,7 @@ describe('IaReviews', () => {
 
   it('displays the reviews on button click', async () => {
     const el = await fixture<IaReviews>(
-      html`<ia-reviews
-        .ownReview=${mockReview1}
-        .reviews=${mockReviews}
-      ></ia-reviews>`,
+      html`<ia-reviews .reviews=${mockReviews}></ia-reviews>`,
     );
 
     const displayReviewsBtn = el.shadowRoot?.querySelector(
@@ -188,7 +205,7 @@ describe('IaReviews', () => {
 
     await el.updateComplete;
     const reviews = el.shadowRoot?.querySelectorAll('ia-review');
-    expect(reviews?.length).to.equal(3);
+    expect(reviews?.length).to.equal(2);
   });
 
   it('does not display the review form by default', async () => {
@@ -232,7 +249,7 @@ describe('IaReviews', () => {
   it('the add/edit button reads edit if you have a review', async () => {
     const el = await fixture<IaReviews>(
       html`<ia-reviews
-        .ownReview=${mockReviews[0]}
+        .submitterItemname=${'@foo-bar'}
         .reviews=${mockReviews}
       ></ia-reviews>`,
     );
@@ -254,10 +271,7 @@ describe('IaReviews', () => {
 
   it('displays the review form if add/edit button clicked', async () => {
     const el = await fixture<IaReviews>(
-      html`<ia-reviews
-        .ownReview=${mockReviews[0]}
-        .reviews=${mockReviews}
-      ></ia-reviews>`,
+      html`<ia-reviews .reviews=${mockReviews}></ia-reviews>`,
     );
 
     const addEditButton = el.shadowRoot?.querySelector(
@@ -277,7 +291,6 @@ describe('IaReviews', () => {
   it('fully disables the reviews if requested', async () => {
     const el = await fixture<IaReviews>(
       html`<ia-reviews
-        .ownReview=${mockReviews[0]}
         .reviews=${mockReviews}
         ?reviewsDisabled=${true}
       ></ia-reviews>`,
@@ -300,7 +313,6 @@ describe('IaReviews', () => {
   it('displays reviews but prevents adding reviews if frozen', async () => {
     const el = await fixture<IaReviews>(
       html`<ia-reviews
-        .ownReview=${mockReviews[0]}
         .reviews=${mockReviews}
         .displayReviews=${true}
         ?reviewsFrozen=${true}
@@ -308,7 +320,7 @@ describe('IaReviews', () => {
     );
 
     const reviews = el.shadowRoot?.querySelectorAll('ia-review');
-    expect(reviews?.length).to.equal(3);
+    expect(reviews?.length).to.equal(2);
 
     const frozenMessage = el.shadowRoot?.querySelector(
       '.message',
