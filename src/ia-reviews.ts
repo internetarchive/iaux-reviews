@@ -34,7 +34,7 @@ export class IaReviews extends LitElement {
   @property({ type: String }) identifier?: string;
 
   /* The list of reviews to be rendered */
-  @property({ type: Array }) reviews?: Review[] = [];
+  @property({ type: Array }) reviews: Review[] = [];
 
   /* Whether reviews are disabled for the item */
   @property({ type: Boolean }) reviewsDisabled = false;
@@ -110,8 +110,7 @@ export class IaReviews extends LitElement {
 
   protected updated(changed: PropertyValues): void {
     if (changed.has('reviews') || changed.has('submitterItemname')) {
-      if (this.reviews && this.submitterItemname) this.splitOffPatronsReview();
-      if (!this.reviews) this.currentReview = undefined;
+      this.filterReviews();
     }
 
     if (
@@ -162,7 +161,7 @@ export class IaReviews extends LitElement {
             </div>`
           : nothing}
         ${this.editableCurrentReviewTemplate}
-        ${this.reviews?.map(review =>
+        ${this.sortReviews(this.reviews).map(review =>
           review.reviewer_itemname !== this.submitterItemname
             ? this.renderReview(review)
             : nothing,
@@ -249,13 +248,11 @@ export class IaReviews extends LitElement {
 
   /** Calculates the current reviews count */
   private get reviewsCount(): number {
-    return (this.reviews?.length ?? 0) + (this.currentReview ? 1 : 0);
+    return (this.reviews.length ?? 0) + (this.currentReview ? 1 : 0);
   }
 
-  /** Splits the patron's own review out of the reviews array */
-  private splitOffPatronsReview(): void {
-    if (!this.reviews || !this.submitterItemname) return;
-
+  /** Sorts the reviews and splits the patron's own review out of the reviews array */
+  private filterReviews(): void {
     let patronsOwnReview: Review | null = null;
     const filteredReviews: Review[] = [];
 
@@ -272,6 +269,17 @@ export class IaReviews extends LitElement {
       this.currentReview = patronsOwnReview;
       this.reviews = filteredReviews;
     }
+  }
+
+  /** Sorts reviews by create date for render */
+  private sortReviews(reviews: Review[]): Review[] {
+    const sortedReviews = [...reviews].sort((a, b) =>
+      a.createdate && b.createdate
+        ? new Date(b.createdate).getTime() - new Date(a.createdate).getTime()
+        : 0,
+    );
+
+    return sortedReviews;
   }
 
   /* Renders the given review, using the ia-review component */

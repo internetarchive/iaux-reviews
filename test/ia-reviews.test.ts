@@ -11,7 +11,7 @@ const mockReview1 = new Review({
   reviewtitle: 'What a cool book!',
   reviewbody: 'I loved it.',
   reviewer: 'Foo Bar',
-  reviewdate: '03/20/2025',
+  reviewdate: '03/21/2025',
   createdate: '02/07/2025',
   reviewer_itemname: '@foo-bar',
 });
@@ -120,6 +120,22 @@ describe('IaReviews', () => {
     ) as IaReview;
     expect(ownReview).to.exist;
     expect(ownReview?.review?.reviewer_itemname).to.equal('@foo-bar');
+  });
+
+  it('sorts reviews descending by createdate', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews
+        .reviews=${mockReviews}
+        .displayReviews=${true}
+      ></ia-reviews>`,
+    );
+
+    const reviews = el.shadowRoot?.querySelectorAll(
+      'ia-review',
+    ) as NodeListOf<IaReview>;
+    expect(reviews).to.exist;
+    expect(reviews[0].review?.reviewer).to.equal('Bar Baz');
+    expect(reviews[1].review?.reviewer).to.equal('Foo Bar');
   });
 
   it('does not show any number if there are no reviews', async () => {
