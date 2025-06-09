@@ -95,6 +95,10 @@ export class IaReviews extends LitElement {
   @state()
   private currentReview?: Review;
 
+  /* Whether recaptcha has been activated (by clicking the add/edit button) */
+  @state()
+  private recaptchaActivated: boolean = false;
+
   render() {
     return html`
       <span class="left-icon">${reviewsIcon}</span>
@@ -183,10 +187,7 @@ export class IaReviews extends LitElement {
           Be the first one to
           <button
             class="ia-button link no-reviews-btn"
-            @click=${() => {
-              this.displayReviewForm = true;
-              this.displayReviews = true;
-            }}
+            @click=${this.addEditReview}
           >
             write a review</button
           >.
@@ -236,6 +237,9 @@ export class IaReviews extends LitElement {
             .token=${this.token}
             .unrecoverableError=${this.reviewSubmissionError}
             .fetchHandler=${this.fetchHandler}
+            .recaptchaManager=${this.recaptchaActivated
+              ? this.recaptchaManager
+              : undefined}
             ?bypassRecaptcha=${this.bypassRecaptcha}
             @reviewUpdated=${this.handleReviewUpdate}
             @reviewEditCanceled=${this.handleEditCanceled}
@@ -285,6 +289,7 @@ export class IaReviews extends LitElement {
 
   /** Prepare the review form for adding or editing */
   private addEditReview(): void {
+    if (!this.bypassRecaptcha) this.recaptchaActivated = true;
     this.displayReviews = true;
     this.displayReviewForm = true;
   }
