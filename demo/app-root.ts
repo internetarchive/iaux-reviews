@@ -66,7 +66,7 @@ export class AppRoot extends LitElement {
       reviewbody: 'It was fine.',
       reviewer: 'Bar Baz',
       reviewdate: '04/20/2025',
-      createdate: '04/19/2025',
+      createdate: '04/07/2025',
       reviewer_itemname: '@bar-baz',
     }),
     new Review({
@@ -151,7 +151,7 @@ export class AppRoot extends LitElement {
       <div class="container">
         <ia-reviews
           .identifier=${'goody'}
-          .reviews=${this.useExistingReviews ? this.reviews : undefined}
+          .reviews=${this.useExistingReviews ? this.reviews : []}
           .recaptchaManager=${this.mockRecaptchaManager}
           .submitterItemname=${'@foo-bar'}
           .submitterScreenname=${'Foo Bar'}
