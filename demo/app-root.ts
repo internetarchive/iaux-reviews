@@ -111,7 +111,7 @@ export class AppRoot extends LitElement {
   private reviewsFrozen: boolean = false;
 
   render() {
-    return html` <h2>General Settings</h2>
+    return html` <h2>General settings</h2>
       <button
         @click=${() => (this.useExistingReviews = !this.useExistingReviews)}
       >
@@ -123,10 +123,10 @@ export class AppRoot extends LitElement {
       <button @click=${() => (this.reviewsFrozen = !this.reviewsFrozen)}>
         ${this.reviewsFrozen ? 'Unfreeze' : 'Freeze'} reviews
       </button>
-      <button @click=${() => (this.bypassRecaptcha = !this.bypassRecaptcha)}>
-        ${!this.bypassRecaptcha ? 'Bypass' : 'Enable'} ReCaptcha
+      <button @click=${() => (this.allowDeletion = !this.allowDeletion)}>
+        ${this.allowDeletion ? 'Prevent' : 'Allow'} deletion
       </button>
-      <h2>Toggle errors</h2>
+      <h2>Review form settings</h2>
       <button
         @click=${() => (this.unrecoverableError = !this.unrecoverableError)}
       >
@@ -135,16 +135,16 @@ export class AppRoot extends LitElement {
       <button @click=${() => (this.useCharCounts = !this.useCharCounts)}>
         ${this.useCharCounts ? 'Remove' : 'Use'} char count limits
       </button>
-      <h2>Toggle review display</h2>
+      <button @click=${() => (this.bypassRecaptcha = !this.bypassRecaptcha)}>
+        ${!this.bypassRecaptcha ? 'Bypass' : 'Enable'} ReCaptcha
+      </button>
+      <h2>Own review settings</h2>
       ${this.renderReviewToggle(this.longReview, 'long review')}
       ${this.renderReviewToggle(this.reviewWithLink, 'review with link')}
       ${this.renderReviewToggle(
         this.reviewWithTextLink,
         'review with text link',
       )}
-      <button @click=${() => (this.allowDeletion = !this.allowDeletion)}>
-        ${this.allowDeletion ? 'Prevent' : 'Allow'} deletion
-      </button>
 
       <div class="container">
         <ia-reviews
