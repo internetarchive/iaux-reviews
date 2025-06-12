@@ -380,7 +380,7 @@ export class IaReviews extends LitElement {
         }
 
         .reviews-title .reviews-icon {
-          vertical-align: bottom;
+          vertical-align: middle;
           display: none;
         }
 
@@ -421,6 +421,12 @@ export class IaReviews extends LitElement {
 
           .reviews-title .reviews-icon {
             display: inline;
+            padding-right: 1rem;
+          }
+
+          .reviews-title {
+            align-items: center;
+            padding-bottom: 1.6rem;
           }
         }
       `,
