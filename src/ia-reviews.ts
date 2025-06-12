@@ -34,7 +34,7 @@ export class IaReviews extends LitElement {
   @property({ type: String }) identifier?: string;
 
   /* The list of reviews to be rendered */
-  @property({ type: Array }) reviews?: Review[] = [];
+  @property({ type: Array }) reviews: Review[] = [];
 
   /* Whether reviews are disabled for the item */
   @property({ type: Boolean }) reviewsDisabled = false;
@@ -91,9 +91,17 @@ export class IaReviews extends LitElement {
   @state()
   private displayReviews: boolean = false;
 
+  /* The sorted and filtered reviews to render */
+  @state()
+  private filteredReviews: Review[] = [];
+
   /* The current version of the review */
   @state()
   private currentReview?: Review;
+
+  /* Whether recaptcha has been activated (by clicking the add/edit button) */
+  @state()
+  private recaptchaActivated: boolean = false;
 
   render() {
     return html`
@@ -104,10 +112,9 @@ export class IaReviews extends LitElement {
     `;
   }
 
-  protected updated(changed: PropertyValues): void {
+  protected willUpdate(changed: PropertyValues): void {
     if (changed.has('reviews') || changed.has('submitterItemname')) {
-      if (this.reviews && this.submitterItemname) this.splitOffPatronsReview();
-      if (!this.reviews) this.currentReview = undefined;
+      this.sortFilterReviews();
     }
 
     if (
@@ -158,7 +165,7 @@ export class IaReviews extends LitElement {
             </div>`
           : nothing}
         ${this.editableCurrentReviewTemplate}
-        ${this.reviews?.map(review =>
+        ${this.filteredReviews.map(review =>
           review.reviewer_itemname !== this.submitterItemname
             ? this.renderReview(review)
             : nothing,
@@ -183,10 +190,7 @@ export class IaReviews extends LitElement {
           Be the first one to
           <button
             class="ia-button link no-reviews-btn"
-            @click=${() => {
-              this.displayReviewForm = true;
-              this.displayReviews = true;
-            }}
+            @click=${this.addEditReview}
           >
             write a review</button
           >.
@@ -236,6 +240,9 @@ export class IaReviews extends LitElement {
             .token=${this.token}
             .unrecoverableError=${this.reviewSubmissionError}
             .fetchHandler=${this.fetchHandler}
+            .recaptchaManager=${this.recaptchaActivated
+              ? this.recaptchaManager
+              : undefined}
             ?bypassRecaptcha=${this.bypassRecaptcha}
             @reviewUpdated=${this.handleReviewUpdate}
             @reviewEditCanceled=${this.handleEditCanceled}
@@ -245,14 +252,12 @@ export class IaReviews extends LitElement {
 
   /** Calculates the current reviews count */
   private get reviewsCount(): number {
-    return (this.reviews?.length ?? 0) + (this.currentReview ? 1 : 0);
+    return this.filteredReviews.length + (this.currentReview ? 1 : 0);
   }
 
-  /** Splits the patron's own review out of the reviews array */
-  private splitOffPatronsReview(): void {
-    if (!this.reviews || !this.submitterItemname) return;
-
-    let patronsOwnReview: Review | null = null;
+  /** Sorts the reviews and splits the patron's own review out of the reviews array */
+  private sortFilterReviews(): void {
+    let patronsOwnReview: Review | undefined;
     const filteredReviews: Review[] = [];
 
     this.reviews.forEach(review => {
@@ -264,10 +269,19 @@ export class IaReviews extends LitElement {
       } else filteredReviews.push(review);
     });
 
-    if (patronsOwnReview) {
-      this.currentReview = patronsOwnReview;
-      this.reviews = filteredReviews;
-    }
+    this.currentReview = patronsOwnReview;
+    this.filteredReviews = this.sortReviews(filteredReviews);
+  }
+
+  /** Sorts reviews by create date for render */
+  private sortReviews(reviews: Review[]): Review[] {
+    const sortedReviews = [...reviews].sort((a, b) =>
+      a.createdate && b.createdate
+        ? new Date(b.createdate).getTime() - new Date(a.createdate).getTime()
+        : 0,
+    );
+
+    return sortedReviews;
   }
 
   /* Renders the given review, using the ia-review component */
@@ -285,6 +299,7 @@ export class IaReviews extends LitElement {
 
   /** Prepare the review form for adding or editing */
   private addEditReview(): void {
+    if (!this.bypassRecaptcha) this.recaptchaActivated = true;
     this.displayReviews = true;
     this.displayReviewForm = true;
   }
@@ -367,7 +382,7 @@ export class IaReviews extends LitElement {
         }
 
         .reviews-title .reviews-icon {
-          vertical-align: bottom;
+          vertical-align: middle;
           display: none;
         }
 
@@ -408,6 +423,12 @@ export class IaReviews extends LitElement {
 
           .reviews-title .reviews-icon {
             display: inline;
+            padding-right: 1rem;
+          }
+
+          .reviews-title {
+            align-items: center;
+            padding-bottom: 1.6rem;
           }
         }
       `,
