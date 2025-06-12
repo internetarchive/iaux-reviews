@@ -124,11 +124,7 @@ export class ReviewForm extends LitElement {
     </form>`;
   }
 
-  protected firstUpdated(): void {
-    this.formCanSubmit = this.checkSubmissionAllowed();
-  }
-
-  protected updated(changed: PropertyValues): void {
+  protected willUpdate(changed: PropertyValues): void {
     // Fill in previous review, if provided
     if (changed.has('oldReview')) {
       this.currentStars = this.oldReview?.stars ?? 0;
@@ -140,16 +136,22 @@ export class ReviewForm extends LitElement {
     if (
       changed.has('recaptchaManager') &&
       !this.bypassRecaptcha &&
-      this.recaptchaManager &&
-      !this.unrecoverableError
+      this.recaptchaManager
     ) {
       this.setupRecaptcha();
+    }
+
+    // Disable form if unrecoverable error added
+    if (changed.has('unrecoverableError')) {
+      this.formCanSubmit = this.checkSubmissionAllowed();
     }
 
     // Ensure new subject and body have correct length
     if (
       changed.has('currentSubjectLength') ||
-      changed.has('currentBodyLength')
+      changed.has('currentBodyLength') ||
+      changed.has('maxSubjectLength') ||
+      changed.has('maxBodyLength')
     ) {
       this.formCanSubmit = this.checkSubmissionAllowed();
     }
