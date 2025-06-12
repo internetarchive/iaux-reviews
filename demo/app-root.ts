@@ -59,7 +59,6 @@ export class AppRoot extends LitElement {
   });
 
   private reviews = [
-    this.mockOldReview,
     new Review({
       stars: 2,
       reviewtitle: 'Eh, just ok',
@@ -137,7 +136,6 @@ export class AppRoot extends LitElement {
         ${this.useCharCounts ? 'Remove' : 'Use'} char count limits
       </button>
       <h2>Toggle review display</h2>
-      ${this.renderReviewToggle(this.mockOldReview, 'normal review')}
       ${this.renderReviewToggle(this.longReview, 'long review')}
       ${this.renderReviewToggle(this.reviewWithLink, 'review with link')}
       ${this.renderReviewToggle(
@@ -151,7 +149,9 @@ export class AppRoot extends LitElement {
       <div class="container">
         <ia-reviews
           .identifier=${'goody'}
-          .reviews=${this.useExistingReviews ? this.reviews : []}
+          .reviews=${this.useExistingReviews
+            ? this.reviews.concat(this.review)
+            : []}
           .recaptchaManager=${this.mockRecaptchaManager}
           .submitterItemname=${'@foo-bar'}
           .submitterScreenname=${'Foo Bar'}

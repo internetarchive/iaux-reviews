@@ -91,6 +91,10 @@ export class IaReviews extends LitElement {
   @state()
   private displayReviews: boolean = false;
 
+  /* The sorted and filtered reviews to render */
+  @state()
+  private filteredReviews: Review[] = [];
+
   /* The current version of the review */
   @state()
   private currentReview?: Review;
@@ -108,9 +112,9 @@ export class IaReviews extends LitElement {
     `;
   }
 
-  protected updated(changed: PropertyValues): void {
+  protected willUpdate(changed: PropertyValues): void {
     if (changed.has('reviews') || changed.has('submitterItemname')) {
-      this.filterReviews();
+      this.sortFilterReviews();
     }
 
     if (
@@ -161,7 +165,7 @@ export class IaReviews extends LitElement {
             </div>`
           : nothing}
         ${this.editableCurrentReviewTemplate}
-        ${this.sortReviews(this.reviews).map(review =>
+        ${this.filteredReviews.map(review =>
           review.reviewer_itemname !== this.submitterItemname
             ? this.renderReview(review)
             : nothing,
@@ -248,12 +252,12 @@ export class IaReviews extends LitElement {
 
   /** Calculates the current reviews count */
   private get reviewsCount(): number {
-    return (this.reviews.length ?? 0) + (this.currentReview ? 1 : 0);
+    return this.filteredReviews.length + (this.currentReview ? 1 : 0);
   }
 
   /** Sorts the reviews and splits the patron's own review out of the reviews array */
-  private filterReviews(): void {
-    let patronsOwnReview: Review | null = null;
+  private sortFilterReviews(): void {
+    let patronsOwnReview: Review | undefined;
     const filteredReviews: Review[] = [];
 
     this.reviews.forEach(review => {
@@ -265,10 +269,8 @@ export class IaReviews extends LitElement {
       } else filteredReviews.push(review);
     });
 
-    if (patronsOwnReview) {
-      this.currentReview = patronsOwnReview;
-      this.reviews = filteredReviews;
-    }
+    this.currentReview = patronsOwnReview;
+    this.filteredReviews = this.sortReviews(filteredReviews);
   }
 
   /** Sorts reviews by create date for render */
