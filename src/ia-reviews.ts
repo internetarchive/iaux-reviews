@@ -89,7 +89,7 @@ export class IaReviews extends LitElement {
 
   /* Whether to display the existing reviews */
   @state()
-  displayReviews: boolean = false;
+  private displayReviews: boolean = false;
 
   /* The sorted and filtered reviews to render */
   @state()
