@@ -192,26 +192,11 @@ describe('IaReviews', () => {
     expect(reviewForm).not.to.exist;
   });
 
-  it('does display the review form if requested', async () => {
-    const el = await fixture<IaReviews>(
-      html`<ia-reviews
-        .reviews=${mockReviews}
-        .displayReviews=${true}
-        .displayReviewForm=${true}
-      ></ia-reviews>`,
-    );
-
-    const reviewForm = el.shadowRoot?.querySelector(
-      'ia-review-form',
-    ) as ReviewForm;
-    expect(reviewForm).to.exist;
-  });
-
   it('displays the review form if requested', async () => {
     const el = await fixture<IaReviews>(
       html`<ia-reviews
         .reviews=${mockReviews}
-        ?reviewAddEditRequested=${true}
+        .displayReviewForm=${true}
       ></ia-reviews>`,
     );
 
