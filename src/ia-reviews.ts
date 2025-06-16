@@ -85,11 +85,11 @@ export class IaReviews extends LitElement {
 
   /* Whether to display the review form or the editable review */
   @state()
-  private displayReviewForm: boolean = false;
+  displayReviewForm: boolean = false;
 
   /* Whether to display the existing reviews */
   @state()
-  private displayReviews: boolean = false;
+  displayReviews: boolean = false;
 
   /* The sorted and filtered reviews to render */
   @state()
@@ -136,12 +136,9 @@ export class IaReviews extends LitElement {
       this.sortFilterReviews();
     }
 
-    if (
-      changed.has('reviewAddEditRequested') &&
-      this.reviewAddEditRequested === true
-    ) {
+    if (changed.has('displayReviewForm') && this.displayReviewForm === true) {
+      if (!this.bypassRecaptcha) this.recaptchaActivated = true;
       this.displayReviews = true;
-      this.displayReviewForm = true;
     }
 
     if (
@@ -280,12 +277,14 @@ export class IaReviews extends LitElement {
   /** Prepare the review form for adding or editing */
   private addEditReview(): void {
     if (!this.bypassRecaptcha) this.recaptchaActivated = true;
-    this.displayReviews = true;
     this.displayReviewForm = true;
   }
 
   /** Handles successful review submission */
   private handleReviewUpdate(e: CustomEvent<Review>): void {
+    if (!this.currentReview && e.detail) {
+      this.dispatchEvent(new CustomEvent<void>('newReviewAdded'));
+    }
     this.currentReview = e.detail;
     this.displayReviewForm = false;
   }

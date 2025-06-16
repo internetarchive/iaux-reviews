@@ -1,5 +1,5 @@
 import { css, html, HTMLTemplateResult, LitElement } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, query, state } from 'lit/decorators.js';
 
 import { Review } from '@internetarchive/metadata-service';
 import {
@@ -13,6 +13,7 @@ import '../src/ia-reviews';
 
 import { MockFetchHandler } from '../test/mocks/mock-fetch-handler';
 import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service';
+import { IaReviews } from '../src/ia-reviews';
 
 @customElement('app-root')
 export class AppRoot extends LitElement {
@@ -111,10 +112,10 @@ export class AppRoot extends LitElement {
   private reviewsFrozen: boolean = false;
 
   @state()
-  private displayReviewForm: boolean = false;
-
-  @state()
   private hasOwnReview: boolean = true;
+
+  @query('ia-reviews')
+  reviewsComponent!: IaReviews;
 
   render() {
     return html` <h2>General settings</h2>
@@ -154,7 +155,7 @@ export class AppRoot extends LitElement {
       <br />
       <hr />
       <h2>Review count: ${this.reviews.length + (this.review ? 1 : 0)}</h2>
-      <button @click=${() => (this.displayReviewForm = true)}>
+      <button @click=${() => (this.reviewsComponent.displayReviewForm = true)}>
         ${this.hasOwnReview ? 'Edit review' : 'Add review'}
       </button>
       <div class="container">
@@ -176,7 +177,6 @@ export class AppRoot extends LitElement {
           ?bypassRecaptcha=${this.bypassRecaptcha}
           ?reviewsDisabled=${this.reviewsDisabled}
           ?reviewsFrozen=${this.reviewsFrozen}
-          ?reviewAddEditRequested=${this.displayReviewForm}
         ></ia-reviews>
       </div>`;
   }
