@@ -111,9 +111,6 @@ export class AppRoot extends LitElement {
   @state()
   private reviewsFrozen: boolean = false;
 
-  @state()
-  private hasOwnReview: boolean = true;
-
   @query('ia-reviews')
   reviewsComponent!: IaReviews;
 
@@ -153,10 +150,10 @@ export class AppRoot extends LitElement {
         'review with text link',
       )}
       <br />
+      <br />
       <hr />
-      <h2>Review count: ${this.reviews.length + (this.review ? 1 : 0)}</h2>
       <button @click=${() => (this.reviewsComponent.displayReviewForm = true)}>
-        ${this.hasOwnReview ? 'Edit review' : 'Add review'}
+        Add or edit review
       </button>
       <div class="container">
         <ia-reviews
