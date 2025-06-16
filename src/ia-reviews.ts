@@ -18,9 +18,6 @@ import {
 } from '@internetarchive/fetch-handler-service';
 import { iaButtonStyles } from '@internetarchive/ia-styles';
 
-import addIcon from './assets/add-icon';
-import reviewsIcon from './assets/reviews-icon';
-
 import './review';
 import './review-form';
 
@@ -79,6 +76,9 @@ export class IaReviews extends LitElement {
   /* An optional error message to be displayed instead of the review form */
   @property({ type: String }) reviewSubmissionError?: string;
 
+  /* Whether the add/edit button has been clicked */
+  @property({ type: Boolean }) reviewAddEditRequested: boolean = false;
+
   /* An optional handler for form submission to pass along to the form */
   @property({ type: Object }) fetchHandler: FetchHandlerInterface =
     new IaFetchHandler();
@@ -99,62 +99,18 @@ export class IaReviews extends LitElement {
   @state()
   private currentReview?: Review;
 
+  /* The number of reviews */
+  @state()
+  private reviewsCount: number = 0;
+
   /* Whether recaptcha has been activated (by clicking the add/edit button) */
   @state()
   private recaptchaActivated: boolean = false;
 
   render() {
-    return html`
-      <span class="left-icon">${reviewsIcon}</span>
-      <div class="reviews">
-        ${this.reviewsTitleTemplate} ${this.reviewsListTemplate}
-      </div>
-    `;
-  }
-
-  protected willUpdate(changed: PropertyValues): void {
-    if (changed.has('reviews') || changed.has('submitterItemname')) {
-      this.sortFilterReviews();
-    }
-
-    if (
-      changed.has('displayReviewsByDefault') &&
-      this.displayReviewsByDefault
-    ) {
-      this.displayReviews = true;
-    }
-  }
-
-  /* Title for the reviews section, including the add/edit review button */
-  private get reviewsTitleTemplate(): HTMLTemplateResult {
-    return html`
-      <div class="reviews-title">
-        <h2>
-          ${reviewsIcon}
-          ${msg(
-            `Reviews ${!this.reviewsDisabled && this.reviewsCount > 0 ? `(${this.reviewsCount})` : ''}`,
-          )}
-        </h2>
-        ${!this.reviewsDisabled && !this.reviewsFrozen
-          ? html`<button class="add-edit-btn" @click=${this.addEditReview}>
-              ${addIcon}
-              ${msg(this.currentReview ? 'Edit My Review' : 'Add Review')}
-            </button>`
-          : nothing}
-      </div>
-    `;
-  }
-
-  /* Renders the reviews list, including the editable current review, or a message if applicable */
-  private get reviewsListTemplate(): HTMLTemplateResult {
-    if (this.reviewsDisabled)
-      return html`<div class="message">
-        ${msg('Reviews have been disabled for this item.')}
-      </div>`;
-
+    if (this.reviewsDisabled) return this.reviewsDisabledTemplate;
     if (this.reviewsCount === 0 && !this.displayReviewForm)
       return this.noReviewsMsgTemplate;
-
     if (!this.displayReviews) return this.displayReviewsMsgTemplate;
 
     return html`
@@ -172,6 +128,35 @@ export class IaReviews extends LitElement {
         )}
       </div>
     `;
+  }
+
+  protected willUpdate(changed: PropertyValues): void {
+    if (changed.has('reviews') || changed.has('submitterItemname')) {
+      this.reviewsCount = this.reviews.length;
+      this.sortFilterReviews();
+    }
+
+    if (
+      changed.has('reviewAddEditRequested') &&
+      this.reviewAddEditRequested === true
+    ) {
+      this.displayReviews = true;
+      this.displayReviewForm = true;
+    }
+
+    if (
+      changed.has('displayReviewsByDefault') &&
+      this.displayReviewsByDefault
+    ) {
+      this.displayReviews = true;
+    }
+  }
+
+  /* Message to display if reviews are disabled */
+  private get reviewsDisabledTemplate(): HTMLTemplateResult {
+    return html`<div class="message">
+      ${msg('Reviews have been disabled for this item.')}
+    </div>`;
   }
 
   /* Message to display instead of the reviews list if there are no reviews yet */
@@ -248,11 +233,6 @@ export class IaReviews extends LitElement {
             @reviewEditCanceled=${this.handleEditCanceled}
           ></ia-review-form>`}
     </div>`;
-  }
-
-  /** Calculates the current reviews count */
-  private get reviewsCount(): number {
-    return this.filteredReviews.length + (this.currentReview ? 1 : 0);
   }
 
   /** Sorts the reviews and splits the patron's own review out of the reviews array */
@@ -334,10 +314,6 @@ export class IaReviews extends LitElement {
           );
 
           color: var(--ia-text-color, #2c2c2c);
-          display: flex;
-          flex-direction: row;
-          gap: 2rem;
-          align-items: flex-start;
         }
 
         .reviews-list {
@@ -369,67 +345,6 @@ export class IaReviews extends LitElement {
           vertical-align: baseline;
           padding: 0;
           font-weight: 600;
-        }
-
-        .reviews-title {
-          display: flex;
-          flex-direction: row;
-          justify-content: space-between;
-          align-items: flex-end;
-          border-bottom: 1px solid #979797;
-          padding-bottom: 5px;
-          margin-bottom: 10px;
-        }
-
-        .reviews-title .reviews-icon {
-          vertical-align: middle;
-          display: none;
-        }
-
-        .reviews-icon {
-          width: 3.5rem;
-          padding-top: 0.5rem;
-        }
-
-        .reviews {
-          flex-grow: 1;
-        }
-
-        .reviews-title h2 {
-          font-size: 3rem;
-          font-weight: 500;
-          margin: 0;
-        }
-
-        .add-edit-btn {
-          all: unset;
-          font-weight: 500;
-        }
-
-        .add-edit-btn:hover {
-          cursor: pointer;
-        }
-
-        .add-icon {
-          width: 1.6rem;
-          display: inline-block;
-          vertical-align: bottom;
-        }
-
-        @media only screen and (max-width: 767px) {
-          .left-icon {
-            display: none;
-          }
-
-          .reviews-title .reviews-icon {
-            display: inline;
-            padding-right: 1rem;
-          }
-
-          .reviews-title {
-            align-items: center;
-            padding-bottom: 1.6rem;
-          }
         }
       `,
     ];

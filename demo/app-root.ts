@@ -110,6 +110,12 @@ export class AppRoot extends LitElement {
   @state()
   private reviewsFrozen: boolean = false;
 
+  @state()
+  private displayReviewForm: boolean = false;
+
+  @state()
+  private hasOwnReview: boolean = true;
+
   render() {
     return html` <h2>General settings</h2>
       <button
@@ -145,7 +151,12 @@ export class AppRoot extends LitElement {
         this.reviewWithTextLink,
         'review with text link',
       )}
-
+      <br />
+      <hr />
+      <h2>Review count: ${this.reviews.length + (this.review ? 1 : 0)}</h2>
+      <button @click=${() => (this.displayReviewForm = true)}>
+        ${this.hasOwnReview ? 'Edit review' : 'Add review'}
+      </button>
       <div class="container">
         <ia-reviews
           .identifier=${'goody'}
@@ -165,6 +176,7 @@ export class AppRoot extends LitElement {
           ?bypassRecaptcha=${this.bypassRecaptcha}
           ?reviewsDisabled=${this.reviewsDisabled}
           ?reviewsFrozen=${this.reviewsFrozen}
+          ?reviewAddEditRequested=${this.displayReviewForm}
         ></ia-reviews>
       </div>`;
   }
