@@ -11,7 +11,7 @@ const mockReview1 = new Review({
   reviewtitle: 'What a cool book!',
   reviewbody: 'I loved it.',
   reviewer: 'Foo Bar',
-  reviewdate: '03/20/2025',
+  reviewdate: '03/21/2025',
   createdate: '02/07/2025',
   reviewer_itemname: '@foo-bar',
 });
@@ -64,43 +64,6 @@ describe('IaReviews', () => {
     expect(reviews?.length).to.equal(2);
   });
 
-  it('shows the correct number of reviews in parentheses', async () => {
-    const el = await fixture<IaReviews>(
-      html`<ia-reviews
-        .reviews=${mockReviews}
-        .displayReviews=${true}
-      ></ia-reviews>`,
-    );
-
-    const reviewsTitle = el.shadowRoot?.querySelector('h2');
-    expect(reviewsTitle?.textContent?.trim()).to.equal('Reviews (2)');
-  });
-
-  it("includes the patron's own review in the count", async () => {
-    const el = await fixture<IaReviews>(
-      html`<ia-reviews
-        .submitterItemname=${'@foo-bar'}
-        .reviews=${mockReviews}
-        .displayReviews=${true}
-      ></ia-reviews>`,
-    );
-
-    const reviewsTitle = el.shadowRoot?.querySelector('h2');
-    expect(reviewsTitle?.textContent?.trim()).to.equal('Reviews (2)');
-  });
-
-  it("includes the patron's own review in the count even if no other reviews", async () => {
-    const el = await fixture<IaReviews>(
-      html`<ia-reviews
-        .reviews=${[mockReviews[1]]}
-        .submitterItemname=${'@foo-bar'}
-      ></ia-reviews>`,
-    );
-
-    const reviewsTitle = el.shadowRoot?.querySelector('h2');
-    expect(reviewsTitle?.textContent?.trim()).to.equal('Reviews (1)');
-  });
-
   it("identifies and splits off the patron's own review, if found", async () => {
     const el = await fixture<IaReviews>(
       html`<ia-reviews
@@ -122,13 +85,20 @@ describe('IaReviews', () => {
     expect(ownReview?.review?.reviewer_itemname).to.equal('@foo-bar');
   });
 
-  it('does not show any number if there are no reviews', async () => {
+  it('sorts reviews descending by createdate', async () => {
     const el = await fixture<IaReviews>(
-      html`<ia-reviews .displayReviews=${true}></ia-reviews>`,
+      html`<ia-reviews
+        .reviews=${mockReviews}
+        .displayReviews=${true}
+      ></ia-reviews>`,
     );
 
-    const reviewsTitle = el.shadowRoot?.querySelector('h2');
-    expect(reviewsTitle?.textContent?.trim()).to.equal('Reviews');
+    const reviews = el.shadowRoot?.querySelectorAll(
+      'ia-review',
+    ) as NodeListOf<IaReview>;
+    expect(reviews).to.exist;
+    expect(reviews[0].review?.reviewer).to.equal('Bar Baz');
+    expect(reviews[1].review?.reviewer).to.equal('Foo Bar');
   });
 
   it('displays a message instead of the reviews by default', async () => {
@@ -222,62 +192,13 @@ describe('IaReviews', () => {
     expect(reviewForm).not.to.exist;
   });
 
-  it('does display the review form if requested', async () => {
+  it('displays the review form if requested', async () => {
     const el = await fixture<IaReviews>(
       html`<ia-reviews
         .reviews=${mockReviews}
-        .displayReviews=${true}
         .displayReviewForm=${true}
       ></ia-reviews>`,
     );
-
-    const reviewForm = el.shadowRoot?.querySelector(
-      'ia-review-form',
-    ) as ReviewForm;
-    expect(reviewForm).to.exist;
-  });
-
-  it('includes a button to add or edit a review', async () => {
-    const el = await fixture<IaReviews>(
-      html`<ia-reviews .reviews=${mockReviews}></ia-reviews>`,
-    );
-
-    const addEditButton = el.shadowRoot?.querySelector('.add-edit-btn');
-    expect(addEditButton).to.exist;
-  });
-
-  it('the add/edit button reads edit if you have a review', async () => {
-    const el = await fixture<IaReviews>(
-      html`<ia-reviews
-        .submitterItemname=${'@foo-bar'}
-        .reviews=${mockReviews}
-      ></ia-reviews>`,
-    );
-
-    const addEditButton = el.shadowRoot?.querySelector('.add-edit-btn');
-    expect(addEditButton).to.exist;
-    expect(addEditButton?.textContent).to.contain('Edit My Review');
-  });
-
-  it("the add/edit button reads add if you don't have a review", async () => {
-    const el = await fixture<IaReviews>(
-      html`<ia-reviews .reviews=${mockReviews}></ia-reviews>`,
-    );
-
-    const addEditButton = el.shadowRoot?.querySelector('.add-edit-btn');
-    expect(addEditButton).to.exist;
-    expect(addEditButton?.textContent).to.contain('Add Review');
-  });
-
-  it('displays the review form if add/edit button clicked', async () => {
-    const el = await fixture<IaReviews>(
-      html`<ia-reviews .reviews=${mockReviews}></ia-reviews>`,
-    );
-
-    const addEditButton = el.shadowRoot?.querySelector(
-      '.add-edit-btn',
-    ) as HTMLButtonElement;
-    addEditButton?.click();
 
     await el.updateComplete;
     const reviewForm = el.shadowRoot?.querySelector(
@@ -426,31 +347,5 @@ describe('IaReviews', () => {
     )[0] as IaReview;
     expect(patronsOwnReview.review?.reviewtitle).to.equal('I am a test!');
     expect(patronsOwnReview?.review?.reviewbody).to.equal('Testing 123');
-  });
-
-  it('updates the review count if patron adds a review', async () => {
-    const el = await fixture<IaReviews>(
-      html`<ia-reviews
-        .reviews=${mockReviews}
-        .displayReviewForm=${true}
-        .displayReviews=${true}
-      ></ia-reviews>`,
-    );
-
-    const reviewForm = el.shadowRoot?.querySelector('ia-review-form');
-    const reviewsTitle = el.shadowRoot?.querySelector('h2');
-    expect(reviewsTitle?.textContent?.trim()).to.equal('Reviews (2)');
-
-    const event = new CustomEvent<Review>('reviewUpdated', {
-      detail: new Review({
-        reviewtitle: 'I am a test!',
-        reviewbody: 'Testing 123',
-      }),
-    });
-    reviewForm?.dispatchEvent(event);
-
-    await el.updateComplete;
-
-    expect(reviewsTitle?.textContent?.trim()).to.equal('Reviews (3)');
   });
 });

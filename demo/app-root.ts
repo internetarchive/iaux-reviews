@@ -1,5 +1,5 @@
 import { css, html, HTMLTemplateResult, LitElement } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, query, state } from 'lit/decorators.js';
 
 import { Review } from '@internetarchive/metadata-service';
 import {
@@ -13,6 +13,7 @@ import '../src/ia-reviews';
 
 import { MockFetchHandler } from '../test/mocks/mock-fetch-handler';
 import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service';
+import { IaReviews } from '../src/ia-reviews';
 
 @customElement('app-root')
 export class AppRoot extends LitElement {
@@ -59,14 +60,13 @@ export class AppRoot extends LitElement {
   });
 
   private reviews = [
-    this.mockOldReview,
     new Review({
       stars: 2,
       reviewtitle: 'Eh, just ok',
       reviewbody: 'It was fine.',
       reviewer: 'Bar Baz',
       reviewdate: '04/20/2025',
-      createdate: '04/19/2025',
+      createdate: '04/07/2025',
       reviewer_itemname: '@bar-baz',
     }),
     new Review({
@@ -111,8 +111,11 @@ export class AppRoot extends LitElement {
   @state()
   private reviewsFrozen: boolean = false;
 
+  @query('ia-reviews')
+  reviewsComponent!: IaReviews;
+
   render() {
-    return html` <h2>General Settings</h2>
+    return html` <h2>General settings</h2>
       <button
         @click=${() => (this.useExistingReviews = !this.useExistingReviews)}
       >
@@ -124,10 +127,10 @@ export class AppRoot extends LitElement {
       <button @click=${() => (this.reviewsFrozen = !this.reviewsFrozen)}>
         ${this.reviewsFrozen ? 'Unfreeze' : 'Freeze'} reviews
       </button>
-      <button @click=${() => (this.bypassRecaptcha = !this.bypassRecaptcha)}>
-        ${!this.bypassRecaptcha ? 'Bypass' : 'Enable'} ReCaptcha
+      <button @click=${() => (this.allowDeletion = !this.allowDeletion)}>
+        ${this.allowDeletion ? 'Prevent' : 'Allow'} deletion
       </button>
-      <h2>Toggle errors</h2>
+      <h2>Review form settings</h2>
       <button
         @click=${() => (this.unrecoverableError = !this.unrecoverableError)}
       >
@@ -136,22 +139,28 @@ export class AppRoot extends LitElement {
       <button @click=${() => (this.useCharCounts = !this.useCharCounts)}>
         ${this.useCharCounts ? 'Remove' : 'Use'} char count limits
       </button>
-      <h2>Toggle review display</h2>
-      ${this.renderReviewToggle(this.mockOldReview, 'normal review')}
+      <button @click=${() => (this.bypassRecaptcha = !this.bypassRecaptcha)}>
+        ${!this.bypassRecaptcha ? 'Bypass' : 'Enable'} ReCaptcha
+      </button>
+      <h2>Own review settings</h2>
       ${this.renderReviewToggle(this.longReview, 'long review')}
       ${this.renderReviewToggle(this.reviewWithLink, 'review with link')}
       ${this.renderReviewToggle(
         this.reviewWithTextLink,
         'review with text link',
       )}
-      <button @click=${() => (this.allowDeletion = !this.allowDeletion)}>
-        ${this.allowDeletion ? 'Prevent' : 'Allow'} deletion
+      <br />
+      <br />
+      <hr />
+      <button @click=${() => (this.reviewsComponent.displayReviewForm = true)}>
+        Add or edit review
       </button>
-
       <div class="container">
         <ia-reviews
           .identifier=${'goody'}
-          .reviews=${this.useExistingReviews ? this.reviews : undefined}
+          .reviews=${this.useExistingReviews
+            ? this.reviews.concat(this.review)
+            : []}
           .recaptchaManager=${this.mockRecaptchaManager}
           .submitterItemname=${'@foo-bar'}
           .submitterScreenname=${'Foo Bar'}
