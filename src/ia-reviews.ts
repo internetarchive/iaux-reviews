@@ -137,7 +137,8 @@ export class IaReviews extends LitElement {
     }
 
     if (changed.has('displayReviewForm') && this.displayReviewForm === true) {
-      if (!this.bypassRecaptcha) this.recaptchaActivated = true;
+      if (!this.bypassRecaptcha && !this.recaptchaActivated)
+        this.recaptchaActivated = true;
       this.displayReviews = true;
     }
 
@@ -284,6 +285,7 @@ export class IaReviews extends LitElement {
   private handleReviewUpdate(e: CustomEvent<Review>): void {
     if (!this.currentReview && e.detail) {
       this.dispatchEvent(new CustomEvent<void>('newReviewAdded'));
+      this.reviewsCount += 1;
     }
     this.currentReview = e.detail;
     this.displayReviewForm = false;
