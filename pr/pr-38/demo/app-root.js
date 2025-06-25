@@ -516,21 +516,25 @@
           <div class="recoverable-error">
             ${Fr(this.sanitizeErrorMsg(E(this.recoverableError)))}
           </div>
-        `:A}get recaptchaMessageTemplate(){return this.bypassRecaptcha?A:v`${E(v`This site is protected by reCAPTCHA and the Google
-        <a
-          target="_blank"
-          class="inline-link"
-          href="https://policies.google.com/privacy"
-          >Privacy Policy</a
-        >
-        and
-        <a
-          target="_blank"
-          class="inline-link"
-          href="https://policies.google.com/terms"
-          >Terms of Service</a
-        >
-        apply.`)}`}get starsInputTemplate(){return v`
+        `:A}get recaptchaMessageTemplate(){return this.bypassRecaptcha?A:v`
+      <span class="recaptcha-disclaimer"
+        >${E(v`This site is protected by reCAPTCHA and the Google
+            <a
+              target="_blank"
+              class="inline-link"
+              href="https://policies.google.com/privacy"
+              >Privacy Policy</a
+            >
+            and
+            <a
+              target="_blank"
+              class="inline-link"
+              href="https://policies.google.com/terms"
+              >Terms of Service</a
+            >
+            apply.`)}</span
+      >
+    `}get starsInputTemplate(){return v`
       <div class="form-heading rating">
         <label for="stars-field">${E("Rating (optional)")}</label>
       </div>
@@ -762,6 +766,10 @@
           margin-top: 2px;
           --activityIndicatorLoadingRingColor: #fff;
           --activityIndicatorLoadingDotColor: #fff;
+        }
+
+        .recaptcha-disclaimer {
+          font-size: 1.2rem;
         }
 
         @media only screen and (max-width: 350px) {
