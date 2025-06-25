@@ -184,23 +184,27 @@ export class ReviewForm extends LitElement {
   private get recaptchaMessageTemplate(): HTMLTemplateResult | typeof nothing {
     if (this.bypassRecaptcha) return nothing;
 
-    return html`${msg(
-      html`This site is protected by reCAPTCHA and the Google
-        <a
-          target="_blank"
-          class="inline-link"
-          href="https://policies.google.com/privacy"
-          >Privacy Policy</a
-        >
-        and
-        <a
-          target="_blank"
-          class="inline-link"
-          href="https://policies.google.com/terms"
-          >Terms of Service</a
-        >
-        apply.`,
-    )}`;
+    return html`
+      <span class="recaptcha-disclaimer"
+        >${msg(
+          html`This site is protected by reCAPTCHA and the Google
+            <a
+              target="_blank"
+              class="inline-link"
+              href="https://policies.google.com/privacy"
+              >Privacy Policy</a
+            >
+            and
+            <a
+              target="_blank"
+              class="inline-link"
+              href="https://policies.google.com/terms"
+              >Terms of Service</a
+            >
+            apply.`,
+        )}</span
+      >
+    `;
   }
 
   /** Clickable group of stars */
@@ -721,6 +725,10 @@ export class ReviewForm extends LitElement {
           margin-top: 2px;
           --activityIndicatorLoadingRingColor: #fff;
           --activityIndicatorLoadingDotColor: #fff;
+        }
+
+        .recaptcha-disclaimer {
+          font-size: 1.2rem;
         }
 
         @media only screen and (max-width: 350px) {
