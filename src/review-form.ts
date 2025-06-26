@@ -124,11 +124,7 @@ export class ReviewForm extends LitElement {
     </form>`;
   }
 
-  protected firstUpdated(): void {
-    this.formCanSubmit = this.checkSubmissionAllowed();
-  }
-
-  protected updated(changed: PropertyValues): void {
+  protected willUpdate(changed: PropertyValues): void {
     // Fill in previous review, if provided
     if (changed.has('oldReview')) {
       this.currentStars = this.oldReview?.stars ?? 0;
@@ -140,16 +136,22 @@ export class ReviewForm extends LitElement {
     if (
       changed.has('recaptchaManager') &&
       !this.bypassRecaptcha &&
-      this.recaptchaManager &&
-      !this.unrecoverableError
+      this.recaptchaManager
     ) {
       this.setupRecaptcha();
+    }
+
+    // Disable form if unrecoverable error added
+    if (changed.has('unrecoverableError')) {
+      this.formCanSubmit = this.checkSubmissionAllowed();
     }
 
     // Ensure new subject and body have correct length
     if (
       changed.has('currentSubjectLength') ||
-      changed.has('currentBodyLength')
+      changed.has('currentBodyLength') ||
+      changed.has('maxSubjectLength') ||
+      changed.has('maxBodyLength')
     ) {
       this.formCanSubmit = this.checkSubmissionAllowed();
     }
@@ -182,23 +184,27 @@ export class ReviewForm extends LitElement {
   private get recaptchaMessageTemplate(): HTMLTemplateResult | typeof nothing {
     if (this.bypassRecaptcha) return nothing;
 
-    return html`${msg(
-      html`This site is protected by reCAPTCHA and the Google
-        <a
-          target="_blank"
-          class="inline-link"
-          href="https://policies.google.com/privacy"
-          >Privacy Policy</a
-        >
-        and
-        <a
-          target="_blank"
-          class="inline-link"
-          href="https://policies.google.com/terms"
-          >Terms of Service</a
-        >
-        apply.`,
-    )}`;
+    return html`
+      <span class="recaptcha-disclaimer"
+        >${msg(
+          html`This site is protected by reCAPTCHA and the Google
+            <a
+              target="_blank"
+              class="inline-link"
+              href="https://policies.google.com/privacy"
+              >Privacy Policy</a
+            >
+            and
+            <a
+              target="_blank"
+              class="inline-link"
+              href="https://policies.google.com/terms"
+              >Terms of Service</a
+            >
+            apply.`,
+        )}</span
+      >
+    `;
   }
 
   /** Clickable group of stars */
@@ -719,6 +725,10 @@ export class ReviewForm extends LitElement {
           margin-top: 2px;
           --activityIndicatorLoadingRingColor: #fff;
           --activityIndicatorLoadingDotColor: #fff;
+        }
+
+        .recaptcha-disclaimer {
+          font-size: 1.2rem;
         }
 
         @media only screen and (max-width: 350px) {
