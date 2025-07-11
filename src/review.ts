@@ -239,7 +239,7 @@ export class IaReview extends LitElement {
     if (!this.review || !this.identifier) return;
     if (!confirm(msg('Are you sure you want to delete this review?'))) return;
 
-    const deleteUrl = `${this.baseHost}/edit-reviews.php?identifier=${this.identifier}&deleteReviewer=${this.review.reviewer}`;
+    const deleteUrl = `${this.baseHost}/edit-reviews.php?identifier=${this.identifier}&deleteReviewer=${this.review.reviewer}&deleteReviewerItemname=${this.review.reviewer_itemname}`;
     try {
       await fetch(deleteUrl, { method: 'POST' });
       this.deleteMsg = 'This review has been queued for deletion.';
