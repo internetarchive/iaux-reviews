@@ -19,7 +19,7 @@ import type {
   RecaptchaWidgetInterface,
 } from '@internetarchive/recaptcha-manager';
 import '@internetarchive/ia-activity-indicator';
-import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service';
+import type { FetchHandlerInterface } from '@internetarchive/fetch-handler';
 import { Review } from '@internetarchive/metadata-service';
 
 import starSelected from './assets/star-selected';
@@ -37,9 +37,6 @@ export class ReviewForm extends LitElement {
 
   /* The token for the review edit */
   @property({ type: String }) token: string = '';
-
-  /* The host for archive endpoints and data */
-  @property({ type: String }) baseHost: string = 'https://archive.org';
 
   /* The path for the endpoint we're submitting to */
   @property({ type: String }) endpointPath: string = '/write-review.php';
@@ -436,16 +433,13 @@ export class ReviewForm extends LitElement {
       formData.append('submitter', 'review-form');
 
       const result: { success: boolean; error?: string } =
-        await this.fetchHandler.fetchApiResponse(
-          `${this.baseHost}${this.endpointPath}`,
-          {
-            method: 'POST',
-            includeCredentials: true,
-            body: formData,
-          },
-        );
+        await this.fetchHandler.fetchApiPathResponse(this.endpointPath, {
+          method: 'POST',
+          includeCredentials: true,
+          body: formData,
+        });
 
-      if (result?.success === true) {
+      if (result.success === true) {
         this.submissionInProgress = false;
         const newReview = this.generateSubmittedReview();
 
