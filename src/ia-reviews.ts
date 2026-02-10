@@ -12,10 +12,7 @@ import { msg } from '@lit/localize';
 
 import type { Review } from '@internetarchive/metadata-service';
 import type { RecaptchaManagerInterface } from '@internetarchive/recaptcha-manager';
-import {
-  FetchHandlerInterface,
-  IaFetchHandler,
-} from '@internetarchive/fetch-handler-service';
+import type { FetchHandlerInterface } from '@internetarchive/fetch-handler';
 import { iaButtonStyles } from '@internetarchive/ia-styles';
 
 import './review';
@@ -80,8 +77,7 @@ export class IaReviews extends LitElement {
   @property({ type: Boolean }) reviewAddEditRequested: boolean = false;
 
   /* An optional handler for form submission to pass along to the form */
-  @property({ type: Object }) fetchHandler: FetchHandlerInterface =
-    new IaFetchHandler();
+  @property({ type: Object }) fetchHandler?: FetchHandlerInterface;
 
   /* Whether to display the review form or the editable review */
   @state()

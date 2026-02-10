@@ -12,7 +12,7 @@ import '../src/review';
 import '../src/ia-reviews';
 
 import { MockFetchHandler } from '../test/mocks/mock-fetch-handler';
-import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service';
+import type { FetchHandlerInterface } from '@internetarchive/fetch-handler';
 import { IaReviews } from '../src/ia-reviews';
 
 @customElement('app-root')
