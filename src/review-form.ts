@@ -432,14 +432,14 @@ export class ReviewForm extends LitElement {
       // Indicates to the backend that submission is intended
       formData.append('submitter', 'review-form');
 
-      const result: { success: boolean; error?: string } | undefined =
-        await this.fetchHandler?.fetchApiPathResponse(this.endpointPath, {
+      const result: { success: boolean; error?: string } =
+        await this.fetchHandler.fetchApiPathResponse(this.endpointPath, {
           method: 'POST',
           includeCredentials: true,
           body: formData,
         });
 
-      if (result?.success === true) {
+      if (result.success === true) {
         this.submissionInProgress = false;
         const newReview = this.generateSubmittedReview();
 
@@ -449,7 +449,7 @@ export class ReviewForm extends LitElement {
         });
         this.dispatchEvent(event);
       } else {
-        this.recoverableError = result?.error ?? this.GENERIC_ERROR_MESSAGE;
+        this.recoverableError = result.error ?? this.GENERIC_ERROR_MESSAGE;
         this.stopSubmission();
       }
     } catch (e) {
