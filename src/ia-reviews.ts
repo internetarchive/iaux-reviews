@@ -270,7 +270,6 @@ export class IaReviews extends LitElement {
       .review=${review}
       .identifier=${this.identifier}
       .baseHost=${this.baseHost}
-      .fetchHandler=${this.fetchHandler}
       .csrfToken=${this.token}
       ?canDelete=${this.canDelete}
       ?bypassTruncation=${this.displayReviewsByDefault}
