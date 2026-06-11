@@ -11,7 +11,6 @@ import { msg } from '@lit/localize';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 import { Review } from '@internetarchive/metadata-service';
-import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service';
 
 import starBasic from './assets/star-basic';
 import { truncateScreenname } from './utils/truncate-screenname';
@@ -43,7 +42,7 @@ export class IaReview extends LitElement {
   @property({ type: String }) baseHost = 'https://archive.org';
 
   /* CSRF token to use for delete request submission */
-  @property({ type: String }) csrfToken?: string = '';
+  @property({ type: String }) csrfToken: string = '';
 
   /* Whether the person viewing this review has the power to delete it */
   @property({ type: Boolean }) canDelete = false;
