@@ -41,6 +41,9 @@ export class IaReview extends LitElement {
   /* Base for URLs */
   @property({ type: String }) baseHost = 'https://archive.org';
 
+  /* CSRF token to use for delete request submission */
+  @property({ type: String }) csrfToken: string = '';
+
   /* Whether the person viewing this review has the power to delete it */
   @property({ type: Boolean }) canDelete = false;
 
@@ -239,9 +242,12 @@ export class IaReview extends LitElement {
     if (!this.review || !this.identifier) return;
     if (!confirm(msg('Are you sure you want to delete this review?'))) return;
 
-    const deleteUrl = `${this.baseHost}/edit-reviews.php?identifier=${this.identifier}&deleteReviewer=${this.review.reviewer}&deleteReviewerItemname=${this.review.reviewer_itemname}`;
+    const deleteUrl = `${this.baseHost}/edit-reviews.php?identifier=${this.identifier}&deleteReviewer=${this.review.reviewer}&deleteReviewerItemname=${this.review.reviewer_itemname}&csrf_token=${this.csrfToken}`;
     try {
-      await fetch(deleteUrl, { method: 'POST' });
+      await fetch(deleteUrl, {
+        method: 'POST',
+      });
+
       this.deleteMsg = 'This review has been queued for deletion.';
     } catch {
       this.deleteMsg = 'Sorry, we were unable to delete this review.';

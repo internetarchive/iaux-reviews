@@ -269,9 +269,10 @@ export class IaReviews extends LitElement {
     return html`<ia-review
       .review=${review}
       .identifier=${this.identifier}
+      .baseHost=${this.baseHost}
+      .csrfToken=${this.token}
       ?canDelete=${this.canDelete}
       ?bypassTruncation=${this.displayReviewsByDefault}
-      .baseHost=${this.baseHost}
     ></ia-review>`;
   }
 
