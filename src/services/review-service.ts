@@ -1,5 +1,4 @@
 import { IaFetchHandler } from '@internetarchive/fetch-handler-service';
-import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service';
 
 import type {
   ReviewDeletion,
@@ -8,9 +7,19 @@ import type {
   ReviewSubmission,
 } from './review-service-interface';
 
+/**
+ * The slice of a fetch handler this service uses.
+ *
+ * Narrow on purpose: consumers hand over whichever handler they already have, and there is more
+ * than one `@internetarchive` package providing one.
+ */
+export type ReviewFetchHandler = {
+  fetch(input: RequestInfo, init?: RequestInit): Promise<Response>;
+};
+
 export type ReviewServiceOptions = {
   /** Handles retries and, for consumers that configure it, the CSRF header */
-  fetchHandler?: FetchHandlerInterface;
+  fetchHandler?: ReviewFetchHandler;
 
   /** Origin for the endpoints. Empty string keeps requests same-origin. */
   baseHost?: string;
@@ -45,7 +54,7 @@ const GENERIC_ERROR = 'Sorry, something went wrong. Please try again later.';
  * the `field_reviewtoken` body field, which is what the legacy `write-review.php` form post uses.
  */
 export class ReviewService implements ReviewServiceInterface {
-  private fetchHandler: FetchHandlerInterface;
+  private fetchHandler: ReviewFetchHandler;
 
   private baseHost: string;
 
