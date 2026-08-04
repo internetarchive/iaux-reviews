@@ -18,6 +18,9 @@ import {
 } from '@internetarchive/fetch-handler-service';
 import { iaButtonStyles } from '@internetarchive/ia-styles';
 
+import type { ReviewServiceInterface } from './services/review-service-interface';
+import { ReviewService } from './services/review-service';
+
 import './review';
 import './review-form';
 
@@ -79,9 +82,22 @@ export class IaReviews extends LitElement {
   /* Whether the add/edit button has been clicked */
   @property({ type: Boolean }) reviewAddEditRequested: boolean = false;
 
-  /* An optional handler for form submission to pass along to the form */
+  /* Handles retries, and for consumers that configure it, the CSRF header */
   @property({ type: Object }) fetchHandler: FetchHandlerInterface =
     new IaFetchHandler();
+
+  /**
+   * Handles the review write and delete requests.
+   *
+   * Leave unset to get a default built from `fetchHandler`, `baseHost`, `endpointPath`, and
+   * `token`, which is what attribute-only consumers rely on. Supply one to control the endpoint
+   * paths and verbs, or to source the CSRF token somewhere else.
+   */
+  @property({ type: Object }) reviewService?: ReviewServiceInterface;
+
+  /* The service the components actually call, whether injected or built here */
+  @state()
+  private activeReviewService?: ReviewServiceInterface;
 
   /* Whether to display the review form or the editable review */
   @state()
@@ -131,6 +147,24 @@ export class IaReviews extends LitElement {
   }
 
   protected willUpdate(changed: PropertyValues): void {
+    const serviceInputsChanged =
+      changed.has('reviewService') ||
+      changed.has('fetchHandler') ||
+      changed.has('baseHost') ||
+      changed.has('endpointPath') ||
+      changed.has('token');
+
+    if (!this.activeReviewService || serviceInputsChanged) {
+      this.activeReviewService =
+        this.reviewService ??
+        new ReviewService({
+          fetchHandler: this.fetchHandler,
+          baseHost: this.baseHost,
+          submitPath: this.endpointPath,
+          csrfToken: this.token,
+        });
+    }
+
     if (changed.has('reviews') || changed.has('submitterItemname')) {
       this.reviewsCount = this.reviews.length;
       this.sortFilterReviews();
@@ -214,15 +248,12 @@ export class IaReviews extends LitElement {
         : html`<ia-review-form
             .identifier=${this.identifier}
             .oldReview=${this.currentReview}
-            .baseHost=${this.baseHost}
-            .endpointPath=${this.endpointPath}
             .submitterItemname=${this.submitterItemname}
             .submitterScreenname=${this.submitterScreenname}
             .maxSubjectLength=${this.maxSubjectLength}
             .maxBodyLength=${this.maxBodyLength}
-            .token=${this.token}
             .unrecoverableError=${this.reviewSubmissionError}
-            .fetchHandler=${this.fetchHandler}
+            .reviewService=${this.activeReviewService}
             .recaptchaManager=${this.recaptchaActivated
               ? this.recaptchaManager
               : undefined}
@@ -270,7 +301,7 @@ export class IaReviews extends LitElement {
       .review=${review}
       .identifier=${this.identifier}
       .baseHost=${this.baseHost}
-      .csrfToken=${this.token}
+      .reviewService=${this.activeReviewService}
       ?canDelete=${this.canDelete}
       ?bypassTruncation=${this.displayReviewsByDefault}
     ></ia-review>`;

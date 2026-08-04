@@ -1,9 +1,9 @@
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, waitUntil } from '@open-wc/testing';
 
 import type { ReviewForm } from '../src/review-form';
 import { Review } from '@internetarchive/metadata-service';
 import '../src/review-form';
-import { MockFetchHandler } from './mocks/mock-fetch-handler';
+import { MockReviewService } from './mocks/mock-review-service';
 
 const mockOldReview = new Review({
   stars: 5,
@@ -14,8 +14,6 @@ const mockOldReview = new Review({
   createdate: new Date('02/07/2025'),
   reviewer_itemname: '@foo-bar',
 });
-
-const mockFetchHandler = new MockFetchHandler();
 
 describe('ReviewForm', () => {
   it('passes the a11y audit', async () => {
@@ -299,35 +297,83 @@ describe('ReviewForm', () => {
     expect(starsInput?.value).to.equal('0');
   });
 
-  it('prefills the identifier if provided', async () => {
+  it('hands the identifier and the edited fields to the review service', async () => {
+    const reviewService = new MockReviewService();
     const el = await fixture<ReviewForm>(
-      html`<ia-review-form .identifier=${'foo'}></ia-review-form>`,
+      html`<ia-review-form
+        .identifier=${'foo'}
+        .oldReview=${mockOldReview}
+        .reviewService=${reviewService}
+        ?bypassRecaptcha=${true}
+      ></ia-review-form>`,
     );
 
-    const identifierInput = el.shadowRoot?.querySelector(
-      'input[name="identifier"]',
-    ) as HTMLInputElement;
-    expect(identifierInput).to.exist;
-    expect(identifierInput.value).to.equal('foo');
+    (
+      el.shadowRoot?.querySelector('button[name="submit"]') as HTMLButtonElement
+    )?.click();
+    await el.updateComplete;
+
+    expect(reviewService.submissions.length).to.equal(1);
+    expect(reviewService.submissions[0]).to.deep.equal({
+      identifier: 'foo',
+      title: 'What a cool book!',
+      body: 'I loved it.',
+      stars: '5',
+      recaptchaToken: undefined,
+    });
   });
 
-  it('prefills the token if provided', async () => {
+  it('shows an error on submit if it has no review service', async () => {
     const el = await fixture<ReviewForm>(
-      html`<ia-review-form .token=${'12345a'}></ia-review-form>`,
+      html`<ia-review-form
+        .identifier=${'foo'}
+        .oldReview=${mockOldReview}
+        ?bypassRecaptcha=${true}
+      ></ia-review-form>`,
     );
 
-    const tokenInput = el.shadowRoot?.querySelector(
-      'input[name="field_reviewtoken"]',
-    ) as HTMLInputElement;
-    expect(tokenInput).to.exist;
-    expect(tokenInput.value).to.equal('12345a');
+    (
+      el.shadowRoot?.querySelector('button[name="submit"]') as HTMLButtonElement
+    )?.click();
+    await el.updateComplete;
+
+    const errorDiv = el.shadowRoot?.querySelector(
+      '.recoverable-error',
+    ) as HTMLDivElement;
+    expect(errorDiv).to.exist;
+  });
+
+  it('surfaces the error the review service reports', async () => {
+    const reviewService = new MockReviewService();
+    reviewService.result = { success: false, error: 'Reviews are frozen.' };
+    const el = await fixture<ReviewForm>(
+      html`<ia-review-form
+        .identifier=${'foo'}
+        .oldReview=${mockOldReview}
+        .reviewService=${reviewService}
+        ?bypassRecaptcha=${true}
+      ></ia-review-form>`,
+    );
+
+    (
+      el.shadowRoot?.querySelector('button[name="submit"]') as HTMLButtonElement
+    )?.click();
+
+    // the service call resolves a microtask later, so the error needs waiting for
+    await waitUntil(() => el.shadowRoot?.querySelector('.recoverable-error'));
+
+    const errorDiv = el.shadowRoot?.querySelector(
+      '.recoverable-error',
+    ) as HTMLDivElement;
+    expect(errorDiv?.textContent).to.contain('Reviews are frozen.');
   });
 
   it('shows an error on submit if no recaptcha manager/widget is provided', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
+        .identifier=${'foo'}
         .oldReview=${mockOldReview}
-        .fetchHandler=${mockFetchHandler}
+        .reviewService=${new MockReviewService()}
       ></ia-review-form>`,
     );
 
@@ -351,11 +397,10 @@ describe('ReviewForm', () => {
   it('skips recaptcha if the bypass switch is activated', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
+        .identifier=${'foo'}
         .oldReview=${mockOldReview}
-        .fetchHandler=${mockFetchHandler}
+        .reviewService=${new MockReviewService()}
         ?bypassRecaptcha=${true}
-        .baseHost=${'#'}
-        .endpointPath=${'#'}
       ></ia-review-form>`,
     );
 
@@ -376,11 +421,10 @@ describe('ReviewForm', () => {
   it('skips recaptcha if the bypass switch is activated, even with recaptcha manager', async () => {
     const el = await fixture<ReviewForm>(
       html`<ia-review-form
+        .identifier=${'foo'}
         .oldReview=${mockOldReview}
-        .fetchHandler=${mockFetchHandler}
+        .reviewService=${new MockReviewService()}
         ?bypassRecaptcha=${true}
-        .baseHost=${'#'}
-        .endpointPath=${'#'}
       ></ia-review-form>`,
     );
 
