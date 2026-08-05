@@ -1,4 +1,5 @@
-import { IaFetchHandler } from '@internetarchive/fetch-handler-service';
+import { FetchHandler } from '@internetarchive/fetch-handler';
+import type { FetchHandlerInterface } from '@internetarchive/fetch-handler';
 
 import type {
   ReviewDeletion,
@@ -7,19 +8,15 @@ import type {
   ReviewSubmission,
 } from './review-service-interface';
 
-/**
- * The slice of a fetch handler this service uses.
- *
- * Narrow on purpose: consumers hand over whichever handler they already have, and there is more
- * than one `@internetarchive` package providing one.
- */
-export type ReviewFetchHandler = {
-  fetch(input: RequestInfo, init?: RequestInit): Promise<Response>;
-};
-
 export type ReviewServiceOptions = {
-  /** Handles retries and, for consumers that configure it, the CSRF header */
-  fetchHandler?: ReviewFetchHandler;
+  /**
+   * Handles retries and the CSRF token.
+   *
+   * Writing and deleting need a handler built with a `getCsrfToken` source, since that is what
+   * supplies the `X-CSRF-Token` header these endpoints require. The token resolves per request,
+   * so it doesn't have to be known when the service is constructed.
+   */
+  fetchHandler?: FetchHandlerInterface;
 
   /** Origin for the endpoints. Empty string keeps requests same-origin. */
   baseHost?: string;
@@ -32,13 +29,6 @@ export type ReviewServiceOptions = {
 
   /** Verb the delete endpoint expects */
   deleteMethod?: 'POST' | 'DELETE';
-
-  /**
-   * CSRF token to send as `X-CSRF-Token`.
-   *
-   * Consumers whose fetch handler already attaches the header leave this unset.
-   */
-  csrfToken?: string;
 };
 
 /** The endpoints the legacy details page serves */
@@ -50,11 +40,11 @@ const GENERIC_ERROR = 'Sorry, something went wrong. Please try again later.';
 /**
  * Talks to the archive.org review endpoints.
  *
- * Both operations send the CSRF token as an `X-CSRF-Token` header. Submission also repeats it in
- * the `field_reviewtoken` body field, which is what the legacy `write-review.php` form post uses.
+ * The CSRF token is left to the fetch handler: both operations opt into its automatic
+ * `X-CSRF-Token` header, which resolves the token per request.
  */
 export class ReviewService implements ReviewServiceInterface {
-  private fetchHandler: ReviewFetchHandler;
+  private fetchHandler: FetchHandlerInterface;
 
   private baseHost: string;
 
@@ -64,15 +54,12 @@ export class ReviewService implements ReviewServiceInterface {
 
   private deleteMethod: 'POST' | 'DELETE';
 
-  private csrfToken?: string;
-
   constructor(options?: ReviewServiceOptions) {
-    this.fetchHandler = options?.fetchHandler ?? new IaFetchHandler();
+    this.fetchHandler = options?.fetchHandler ?? new FetchHandler();
     this.baseHost = options?.baseHost ?? 'https://archive.org';
     this.submitPath = options?.submitPath ?? LEGACY_SUBMIT_PATH;
     this.deletePath = options?.deletePath ?? LEGACY_DELETE_PATH;
     this.deleteMethod = options?.deleteMethod ?? 'POST';
-    this.csrfToken = options?.csrfToken;
   }
 
   /** @inheritdoc */
@@ -91,9 +78,6 @@ export class ReviewService implements ReviewServiceInterface {
 
     // tells write-review.php the post came from the form rather than a direct visit
     body.append('submitter', 'review-form');
-
-    // the legacy endpoint reads the token from this field when there's no header
-    if (this.csrfToken) body.append('field_reviewtoken', this.csrfToken);
 
     return this.request(`${this.baseHost}${this.submitPath}`, {
       method: 'POST',
@@ -122,15 +106,14 @@ export class ReviewService implements ReviewServiceInterface {
     url: string,
     init: { method: string; body?: BodyInit },
   ): Promise<ReviewServiceResult> {
-    const headers: Record<string, string> = {};
-    if (this.csrfToken) headers['X-CSRF-Token'] = this.csrfToken;
-
     try {
       const response = await this.fetchHandler.fetch(url, {
-        method: init.method,
-        body: init.body,
-        credentials: 'include',
-        headers,
+        requestInit: {
+          method: init.method,
+          body: init.body,
+          credentials: 'include',
+        },
+        includeCsrfToken: true,
       });
 
       return await this.parseResult(response);

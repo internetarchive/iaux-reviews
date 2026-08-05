@@ -24,35 +24,25 @@ const jsonResponse = (body: unknown, status = 200) =>
 
 describe('ReviewService', () => {
   describe('submitReview', () => {
-    it('sends the CSRF token as an X-CSRF-Token header', async () => {
-      const fetchHandler = new MockFetchHandler();
-      const service = new ReviewService({ fetchHandler, csrfToken: 'tok123' });
-
-      await service.submitReview(submission);
-
-      expect(fetchHandler.headerOnLastFetch('X-CSRF-Token')).to.equal('tok123');
-    });
-
-    it('also sends the token as field_reviewtoken for the legacy endpoint', async () => {
-      const fetchHandler = new MockFetchHandler();
-      const service = new ReviewService({ fetchHandler, csrfToken: 'tok123' });
-
-      await service.submitReview(submission);
-
-      expect(fetchHandler.bodyOnLastFetch().get('field_reviewtoken')).to.equal(
-        'tok123',
-      );
-    });
-
-    it('omits the token entirely when it has none, leaving it to the fetch handler', async () => {
+    it('opts into the fetch handler CSRF header', async () => {
       const fetchHandler = new MockFetchHandler();
       const service = new ReviewService({ fetchHandler });
 
       await service.submitReview(submission);
 
-      expect(fetchHandler.headerOnLastFetch('X-CSRF-Token')).to.be.undefined;
+      expect(fetchHandler.lastIncludedCsrfToken).to.be.true;
+    });
+
+    it('carries no token of its own, so the handler resolves it per request', async () => {
+      const fetchHandler = new MockFetchHandler();
+      const service = new ReviewService({ fetchHandler });
+
+      await service.submitReview(submission);
+
       expect(fetchHandler.bodyOnLastFetch().get('field_reviewtoken')).to.be
         .null;
+      const headers = fetchHandler.lastRequestInit.headers;
+      expect(headers).to.be.undefined;
     });
 
     it('maps the submission onto the wire field names', async () => {
@@ -98,8 +88,8 @@ describe('ReviewService', () => {
       expect(fetchHandler.lastFetch.url).to.equal(
         'https://example.archive.org/services/offshoot/details-page/review.php',
       );
-      expect(fetchHandler.lastFetch.init?.method).to.equal('POST');
-      expect(fetchHandler.lastFetch.init?.credentials).to.equal('include');
+      expect(fetchHandler.lastRequestInit.method).to.equal('POST');
+      expect(fetchHandler.lastRequestInit.credentials).to.equal('include');
     });
 
     it('defaults to the legacy write endpoint', async () => {
@@ -140,13 +130,12 @@ describe('ReviewService', () => {
   describe('deleteReview', () => {
     it('keeps the CSRF token out of the query string', async () => {
       const fetchHandler = new MockFetchHandler();
-      const service = new ReviewService({ fetchHandler, csrfToken: 'tok123' });
+      const service = new ReviewService({ fetchHandler });
 
       await service.deleteReview(deletion);
 
-      expect(fetchHandler.lastFetch.url).to.not.contain('tok123');
       expect(fetchHandler.lastFetch.url).to.not.contain('csrf_token');
-      expect(fetchHandler.headerOnLastFetch('X-CSRF-Token')).to.equal('tok123');
+      expect(fetchHandler.lastIncludedCsrfToken).to.be.true;
     });
 
     it('sends credentials', async () => {
@@ -155,7 +144,7 @@ describe('ReviewService', () => {
 
       await service.deleteReview(deletion);
 
-      expect(fetchHandler.lastFetch.init?.credentials).to.equal('include');
+      expect(fetchHandler.lastRequestInit.credentials).to.equal('include');
     });
 
     it('identifies the review by reviewer in the query string', async () => {
@@ -190,7 +179,7 @@ describe('ReviewService', () => {
       await service.deleteReview(deletion);
 
       expect(fetchHandler.lastFetch.url).to.contain('/edit-reviews.php');
-      expect(fetchHandler.lastFetch.init?.method).to.equal('POST');
+      expect(fetchHandler.lastRequestInit.method).to.equal('POST');
     });
 
     it('uses the configured verb and path', async () => {
@@ -207,7 +196,7 @@ describe('ReviewService', () => {
       expect(fetchHandler.lastFetch.url).to.contain(
         '/services/offshoot/details-page/review.php',
       );
-      expect(fetchHandler.lastFetch.init?.method).to.equal('DELETE');
+      expect(fetchHandler.lastRequestInit.method).to.equal('DELETE');
     });
 
     it('reports failure when the server rejects the request', async () => {

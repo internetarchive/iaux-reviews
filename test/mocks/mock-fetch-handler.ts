@@ -1,9 +1,12 @@
-import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service/dist/src/fetch-handler-interface';
+import type {
+  FetchHandlerInterface,
+  FetchOptions,
+} from '@internetarchive/fetch-handler';
 
 /** A fetch() call the service made */
 export type RecordedFetch = {
   url: string;
-  init?: RequestInit;
+  options?: FetchOptions;
 };
 
 export class MockFetchHandler implements FetchHandlerInterface {
@@ -21,12 +24,19 @@ export class MockFetchHandler implements FetchHandlerInterface {
     return { success: true } as T;
   }
 
+  async fetchApiPathResponse<T>(): Promise<T> {
+    return { success: true } as T;
+  }
+
   async fetchIAApiResponse<T>(): Promise<T> {
     return {} as T;
   }
 
-  async fetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
-    this.fetches.push({ url: input as string, init });
+  async fetch(input: RequestInfo, options?: unknown): Promise<Response> {
+    this.fetches.push({
+      url: input as string,
+      options: options as FetchOptions,
+    });
     return this.response();
   }
 
@@ -35,17 +45,18 @@ export class MockFetchHandler implements FetchHandlerInterface {
     return this.fetches[this.fetches.length - 1];
   }
 
-  /** Header value off the last fetch, whatever shape the headers were passed in */
-  headerOnLastFetch(name: string): string | undefined {
-    const headers = this.lastFetch?.init?.headers as
-      | Record<string, string>
-      | undefined;
-    if (!headers) return undefined;
-    return new Headers(headers).get(name) ?? undefined;
+  /** The RequestInit the service handed to the handler */
+  get lastRequestInit(): RequestInit {
+    return this.lastFetch?.options?.requestInit ?? {};
+  }
+
+  /** Whether the last fetch opted into the handler's CSRF header */
+  get lastIncludedCsrfToken(): boolean | undefined {
+    return this.lastFetch?.options?.includeCsrfToken;
   }
 
   /** Body of the last fetch, decoded as url-encoded form params */
   bodyOnLastFetch(): URLSearchParams {
-    return new URLSearchParams(String(this.lastFetch?.init?.body ?? ''));
+    return new URLSearchParams(String(this.lastRequestInit.body ?? ''));
   }
 }
