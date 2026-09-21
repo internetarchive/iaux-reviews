@@ -12,11 +12,10 @@ import { msg } from '@lit/localize';
 
 import type { Review } from '@internetarchive/metadata-service';
 import type { RecaptchaManagerInterface } from '@internetarchive/recaptcha-manager';
-import {
-  FetchHandlerInterface,
-  IaFetchHandler,
-} from '@internetarchive/fetch-handler-service';
 import { iaButtonStyles } from '@internetarchive/ia-styles';
+
+import type { ReviewServiceInterface } from './services/review-service-interface';
+import { ReviewService } from './services/review-service';
 
 import './review';
 import './review-form';
@@ -51,16 +50,10 @@ export class IaReviews extends LitElement {
   /* Maximum allowable length for body */
   @property({ type: Number }) maxBodyLength?: number;
 
-  /* Base for URLs */
+  /* Base for URLs. Also used for the reviewer profile links. */
   @property({ type: String }) baseHost = 'https://archive.org';
 
   /** REVIEW FORM PROPERTIES */
-  /* The token for the review edit */
-  @property({ type: String }) token: string = '';
-
-  /* The path for the endpoint we're submitting to */
-  @property({ type: String }) endpointPath: string = '/write-review.php';
-
   /** Form submitter's screenname, if applicable */
   @property({ type: String }) submitterScreenname: string = 'Anonymous';
 
@@ -79,9 +72,17 @@ export class IaReviews extends LitElement {
   /* Whether the add/edit button has been clicked */
   @property({ type: Boolean }) reviewAddEditRequested: boolean = false;
 
-  /* An optional handler for form submission to pass along to the form */
-  @property({ type: Object }) fetchHandler: FetchHandlerInterface =
-    new IaFetchHandler();
+  /**
+   * Handles the review write and delete requests.
+   *
+   * Writing and deleting need one, since the service is what carries the CSRF token. Left unset,
+   * reviews still render and the form still opens, but a submission reports a generic failure.
+   */
+  @property({ type: Object }) reviewService?: ReviewServiceInterface;
+
+  /* The service the components actually call, whether injected or built here */
+  @state()
+  private activeReviewService?: ReviewServiceInterface;
 
   /* Whether to display the review form or the editable review */
   @state()
@@ -131,6 +132,17 @@ export class IaReviews extends LitElement {
   }
 
   protected willUpdate(changed: PropertyValues): void {
+    if (
+      !this.activeReviewService ||
+      changed.has('reviewService') ||
+      changed.has('baseHost')
+    ) {
+      // the fallback keeps rendering and the form working for a consumer that supplies no
+      // service; it carries no CSRF token, so a submission through it fails
+      this.activeReviewService =
+        this.reviewService ?? new ReviewService({ baseHost: this.baseHost });
+    }
+
     if (changed.has('reviews') || changed.has('submitterItemname')) {
       this.reviewsCount = this.reviews.length;
       this.sortFilterReviews();
@@ -214,15 +226,12 @@ export class IaReviews extends LitElement {
         : html`<ia-review-form
             .identifier=${this.identifier}
             .oldReview=${this.currentReview}
-            .baseHost=${this.baseHost}
-            .endpointPath=${this.endpointPath}
             .submitterItemname=${this.submitterItemname}
             .submitterScreenname=${this.submitterScreenname}
             .maxSubjectLength=${this.maxSubjectLength}
             .maxBodyLength=${this.maxBodyLength}
-            .token=${this.token}
             .unrecoverableError=${this.reviewSubmissionError}
-            .fetchHandler=${this.fetchHandler}
+            .reviewService=${this.activeReviewService}
             .recaptchaManager=${this.recaptchaActivated
               ? this.recaptchaManager
               : undefined}
@@ -270,7 +279,7 @@ export class IaReviews extends LitElement {
       .review=${review}
       .identifier=${this.identifier}
       .baseHost=${this.baseHost}
-      .csrfToken=${this.token}
+      .reviewService=${this.activeReviewService}
       ?canDelete=${this.canDelete}
       ?bypassTruncation=${this.displayReviewsByDefault}
     ></ia-review>`;

@@ -12,6 +12,8 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 import { Review } from '@internetarchive/metadata-service';
 
+import type { ReviewServiceInterface } from './services/review-service-interface';
+
 import starBasic from './assets/star-basic';
 import { truncateScreenname } from './utils/truncate-screenname';
 import sanitizeReviewBody from './utils/sanitize-review-body';
@@ -41,8 +43,8 @@ export class IaReview extends LitElement {
   /* Base for URLs */
   @property({ type: String }) baseHost = 'https://archive.org';
 
-  /* CSRF token to use for delete request submission */
-  @property({ type: String }) csrfToken: string = '';
+  /* Handles the review deletion request */
+  @property({ type: Object }) reviewService?: ReviewServiceInterface;
 
   /* Whether the person viewing this review has the power to delete it */
   @property({ type: Boolean }) canDelete = false;
@@ -239,19 +241,23 @@ export class IaReview extends LitElement {
    * Deletes the review, following an extra confirmation.
    */
   private async deleteReview(): Promise<void> {
-    if (!this.review || !this.identifier) return;
+    if (!this.review?.reviewer || !this.identifier) return;
     if (!confirm(msg('Are you sure you want to delete this review?'))) return;
 
-    const deleteUrl = `${this.baseHost}/edit-reviews.php?identifier=${this.identifier}&deleteReviewer=${this.review.reviewer}&deleteReviewerItemname=${this.review.reviewer_itemname}&csrf_token=${this.csrfToken}`;
-    try {
-      await fetch(deleteUrl, {
-        method: 'POST',
-      });
-
-      this.deleteMsg = 'This review has been queued for deletion.';
-    } catch {
-      this.deleteMsg = 'Sorry, we were unable to delete this review.';
+    if (!this.reviewService) {
+      this.deleteMsg = msg('Sorry, we were unable to delete this review.');
+      return;
     }
+
+    const result = await this.reviewService.deleteReview({
+      identifier: this.identifier,
+      reviewer: this.review.reviewer,
+      reviewerItemname: this.review.reviewer_itemname,
+    });
+
+    this.deleteMsg = result.success
+      ? msg('This review has been queued for deletion.')
+      : (result.error ?? msg('Sorry, we were unable to delete this review.'));
   }
 
   static get styles(): CSSResultGroup {

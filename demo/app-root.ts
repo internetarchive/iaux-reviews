@@ -12,7 +12,8 @@ import '../src/review';
 import '../src/ia-reviews';
 
 import { MockFetchHandler } from '../test/mocks/mock-fetch-handler';
-import type { FetchHandlerInterface } from '@internetarchive/fetch-handler-service';
+import { ReviewService } from '../src/services/review-service';
+import type { ReviewServiceInterface } from '../src/services/review-service-interface';
 import { IaReviews } from '../src/ia-reviews';
 
 @customElement('app-root')
@@ -80,7 +81,10 @@ export class AppRoot extends LitElement {
     }),
   ];
 
-  private fetchHandler: FetchHandlerInterface = new MockFetchHandler();
+  /* Stubs the network so the demo can submit without a backend */
+  private reviewService: ReviewServiceInterface = new ReviewService({
+    fetchHandler: new MockFetchHandler(),
+  });
 
   private mockRecaptchaManager: RecaptchaManagerInterface =
     new RecaptchaManager({
@@ -169,7 +173,7 @@ export class AppRoot extends LitElement {
             : undefined}
           .maxSubjectLength=${this.useCharCounts ? 100 : undefined}
           .maxBodyLength=${this.useCharCounts ? 1000 : undefined}
-          .fetchHandler=${this.fetchHandler}
+          .reviewService=${this.reviewService}
           ?canDelete=${this.allowDeletion}
           ?bypassRecaptcha=${this.bypassRecaptcha}
           ?reviewsDisabled=${this.reviewsDisabled}
