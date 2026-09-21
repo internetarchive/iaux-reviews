@@ -12,6 +12,38 @@ describe('linkUrlsInText', () => {
     );
   });
 
+  it('preserves an existing link with a path or querystring', () => {
+    expect(
+      linkUrlsInText(
+        'I am a <a href="https://archive.org/details/foo">test</a>',
+      ),
+    ).to.equal('I am a <a href="https://archive.org/details/foo">test</a>');
+
+    expect(
+      linkUrlsInText('I am a <a href="archive.org/search?query=test">test</a>'),
+    ).to.equal('I am a <a href="archive.org/search?query=test">test</a>');
+  });
+
+  it('preserves an existing link that carries other attributes', () => {
+    expect(
+      linkUrlsInText('I am a <a href="archive.org" rel="nofollow">test</a>'),
+    ).to.equal('I am a <a href="archive.org" rel="nofollow">test</a>');
+
+    expect(
+      linkUrlsInText('I am a <a rel="nofollow" href="archive.org">test</a>'),
+    ).to.equal('I am a <a rel="nofollow" href="archive.org">test</a>');
+  });
+
+  it('leaves an href alone when there is no hostname to link', () => {
+    expect(linkUrlsInText('I am a <a href="localhost">test</a>')).to.equal(
+      'I am a <a href="localhost">test</a>',
+    );
+
+    expect(linkUrlsInText('I am a <a href="">test</a>')).to.equal(
+      'I am a <a href="">test</a>',
+    );
+  });
+
   it('converts URLs from text into live links', () => {
     expect(linkUrlsInText('I am a test for archive.org')).to.equal(
       'I am a test for <a href="https://archive.org" rel="ugc nofollow" target="_blank">archive.org</a>',
