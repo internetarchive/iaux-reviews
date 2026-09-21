@@ -20,10 +20,12 @@ const URL_REGEXP =
  * @returns {string} The text with live links added
  */
 export default function linkUrlsInText(text: string): string {
-  // Protect existing links by ignoring them in search
+  // Protect existing links by ignoring them in search. Keep this pattern free of
+  // lookbehind assertions: Safari below 16.4 treats one as a syntax error and
+  // fails to load the module at all.
   const textWithExistingLinksPreserved = text.replace(
-    /(?<=href=")[^"]+(?=")/,
-    match => match.replace('.', '__DOT__'),
+    /href="([^"]+)"/,
+    (_match, url: string) => `href="${url.replace('.', '__DOT__')}"`,
   );
 
   // Add live links
