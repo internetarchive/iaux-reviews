@@ -72,7 +72,7 @@
     "@internetarchive/ia-activity-indicator": "^0.0.6",
     "@internetarchive/ia-styles": "^1.0.0",
     "@internetarchive/metadata-service": "^1.0.4",
-    "@internetarchive/recaptcha-manager": "^1.0.0",
+    "@internetarchive/recaptcha-manager": "^2.0.0",
     "@lit/localize": "^0.12.2",
     "dompurify": "^3.2.5",
     "lit": "^2.8.0"
