@@ -28,13 +28,35 @@ const mockReview2 = new Review({
 
 const mockReviews: Review[] = [mockReview1, mockReview2];
 
+/** Makes `count` reviews by different patrons, newest first, a day apart */
+function makeReviews(count: number): Review[] {
+  return Array.from(
+    { length: count },
+    (_, i) =>
+      new Review({
+        stars: 3,
+        reviewtitle: `Review ${i + 1}`,
+        reviewbody: 'Some thoughts.',
+        reviewer: `Reviewer ${i + 1}`,
+        reviewdate: `2025-01-${String(28 - i).padStart(2, '0')}`,
+        createdate: `2025-01-${String(28 - i).padStart(2, '0')}`,
+        reviewer_itemname: `@reviewer-${i + 1}`,
+      }),
+  );
+}
+
+/** The reviewer names of the reviews in the list, in render order */
+function listedReviewers(el: IaReviews): (string | undefined)[] {
+  const reviews = el.shadowRoot?.querySelectorAll(
+    '.reviews-list > ia-review',
+  ) as NodeListOf<IaReview>;
+  return [...reviews].map(review => review.review?.reviewer);
+}
+
 describe('IaReviews', () => {
   it('passes the a11y audit for the reviews list', async () => {
     const el = await fixture<IaReviews>(
-      html`<ia-reviews
-        .reviews=${mockReviews}
-        .displayReviews=${true}
-      ></ia-reviews>`,
+      html`<ia-reviews .reviews=${mockReviews}></ia-reviews>`,
     );
 
     await expect(el).shadowDom.to.be.accessible();
@@ -44,7 +66,6 @@ describe('IaReviews', () => {
     const el = await fixture<IaReviews>(
       html`<ia-reviews
         .reviews=${mockReviews}
-        .displayReviews=${true}
         .displayReviewForm=${true}
       ></ia-reviews>`,
     );
@@ -54,10 +75,7 @@ describe('IaReviews', () => {
 
   it('renders all the reviews that are passed to it', async () => {
     const el = await fixture<IaReviews>(
-      html`<ia-reviews
-        .reviews=${mockReviews}
-        .displayReviews=${true}
-      ></ia-reviews>`,
+      html`<ia-reviews .reviews=${mockReviews}></ia-reviews>`,
     );
 
     const reviews = el.shadowRoot?.querySelectorAll('ia-review');
@@ -69,7 +87,6 @@ describe('IaReviews', () => {
       html`<ia-reviews
         .reviews=${mockReviews}
         .submitterItemname=${'@foo-bar'}
-        .displayReviews=${true}
       ></ia-reviews>`,
     );
 
@@ -87,10 +104,7 @@ describe('IaReviews', () => {
 
   it('sorts reviews descending by createdate', async () => {
     const el = await fixture<IaReviews>(
-      html`<ia-reviews
-        .reviews=${mockReviews}
-        .displayReviews=${true}
-      ></ia-reviews>`,
+      html`<ia-reviews .reviews=${mockReviews}></ia-reviews>`,
     );
 
     const reviews = el.shadowRoot?.querySelectorAll(
@@ -101,20 +115,180 @@ describe('IaReviews', () => {
     expect(reviews[1].review?.reviewer).to.equal('Foo Bar');
   });
 
-  it('displays a message instead of the reviews by default', async () => {
+  it('shows the reviews by default', async () => {
     const el = await fixture<IaReviews>(
       html`<ia-reviews .reviews=${mockReviews}></ia-reviews>`,
     );
 
     const reviews = el.shadowRoot?.querySelectorAll('ia-review');
-    expect(reviews?.length).to.equal(0);
-    const displayReviewsMsg = el.shadowRoot?.querySelector(
-      '.message',
-    ) as HTMLDivElement;
-    expect(displayReviewsMsg).to.exist;
-    expect(displayReviewsMsg?.innerText).to.include(
-      'There are 2 reviews for this item. Display reviews.',
+    expect(reviews?.length).to.equal(2);
+    expect(el.shadowRoot?.querySelector('.show-more-btn')).not.to.exist;
+  });
+
+  it('shows only the 5 newest reviews, with a button for the rest', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews .reviews=${makeReviews(8).reverse()}></ia-reviews>`,
     );
+
+    expect(listedReviewers(el)).to.deep.equal([
+      'Reviewer 1',
+      'Reviewer 2',
+      'Reviewer 3',
+      'Reviewer 4',
+      'Reviewer 5',
+    ]);
+
+    const showMoreBtn = el.shadowRoot?.querySelector(
+      '.show-more-btn',
+    ) as HTMLButtonElement;
+    expect(showMoreBtn).to.exist;
+    expect(showMoreBtn.innerText).to.equal('Show 3 more reviews');
+  });
+
+  it('uses the singular when only one review is hidden', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews .reviews=${makeReviews(6)}></ia-reviews>`,
+    );
+
+    const showMoreBtn = el.shadowRoot?.querySelector(
+      '.show-more-btn',
+    ) as HTMLButtonElement;
+    expect(showMoreBtn.innerText).to.equal('Show 1 more review');
+  });
+
+  it('shows no button when there are exactly 5 reviews', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews .reviews=${makeReviews(5)}></ia-reviews>`,
+    );
+
+    expect(listedReviewers(el).length).to.equal(5);
+    expect(el.shadowRoot?.querySelector('.show-more-btn')).not.to.exist;
+  });
+
+  it('shows the rest of the reviews on button click', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews .reviews=${makeReviews(8)}></ia-reviews>`,
+    );
+
+    const showMoreBtn = el.shadowRoot?.querySelector(
+      '.show-more-btn',
+    ) as HTMLButtonElement;
+    showMoreBtn.click();
+    await el.updateComplete;
+
+    expect(listedReviewers(el).length).to.equal(8);
+    expect(el.shadowRoot?.querySelector('.show-more-btn')).not.to.exist;
+  });
+
+  it('moves focus to the first revealed review on button click', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews .reviews=${makeReviews(8)}></ia-reviews>`,
+    );
+
+    const showMoreBtn = el.shadowRoot?.querySelector(
+      '.show-more-btn',
+    ) as HTMLButtonElement;
+    showMoreBtn.focus();
+    showMoreBtn.click();
+    // The click handler awaits a render before it moves focus
+    await el.updateComplete;
+    await el.updateComplete;
+
+    const focused = el.shadowRoot?.activeElement as IaReview | null;
+    expect(focused?.review?.reviewer).to.equal('Reviewer 6');
+    // Focusable from script only, so it doesn't add a tab stop
+    expect(focused?.getAttribute('tabindex')).to.equal('-1');
+    expect(el.shadowRoot?.querySelectorAll('[tabindex]').length).to.equal(1);
+  });
+
+  it('passes the a11y audit with reviews hidden behind the button', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews .reviews=${makeReviews(8)}></ia-reviews>`,
+    );
+
+    await expect(el).shadowDom.to.be.accessible();
+  });
+
+  it('uses maxInitialReviews as the cap when set', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews
+        .reviews=${makeReviews(4)}
+        .maxInitialReviews=${2}
+      ></ia-reviews>`,
+    );
+
+    expect(listedReviewers(el)).to.deep.equal(['Reviewer 1', 'Reviewer 2']);
+    const showMoreBtn = el.shadowRoot?.querySelector(
+      '.show-more-btn',
+    ) as HTMLButtonElement;
+    expect(showMoreBtn.innerText).to.equal('Show 2 more reviews');
+  });
+
+  it("does not count the patron's own review toward the cap", async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews
+        .reviews=${makeReviews(6)}
+        .submitterItemname=${'@reviewer-1'}
+      ></ia-reviews>`,
+    );
+
+    const ownReview = el.shadowRoot?.querySelector(
+      '.own-review-container ia-review',
+    ) as IaReview;
+    expect(ownReview.review?.reviewer).to.equal('Reviewer 1');
+    expect(listedReviewers(el).length).to.equal(5);
+    expect(listedReviewers(el)).not.to.include('Reviewer 1');
+    expect(el.shadowRoot?.querySelector('.show-more-btn')).not.to.exist;
+  });
+
+  it("drops the patron's extra reviews so they don't count toward the cap", async () => {
+    const extraOwnReview = new Review({
+      reviewtitle: 'Second try',
+      reviewbody: 'Changed my mind.',
+      reviewer: 'Reviewer 1',
+      reviewdate: '2025-02-01',
+      createdate: '2025-02-01',
+      reviewer_itemname: '@reviewer-1',
+    });
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews
+        .reviews=${[...makeReviews(6), extraOwnReview]}
+        .submitterItemname=${'@reviewer-1'}
+      ></ia-reviews>`,
+    );
+
+    const ownReviews = el.shadowRoot?.querySelectorAll(
+      '.own-review-container ia-review',
+    );
+    expect(ownReviews?.length).to.equal(1);
+    expect(listedReviewers(el)).not.to.include('Reviewer 1');
+    expect(listedReviewers(el).length).to.equal(5);
+    expect(el.shadowRoot?.querySelector('.show-more-btn')).not.to.exist;
+  });
+
+  it('keeps the cap when the review form opens', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews .reviews=${makeReviews(8)}></ia-reviews>`,
+    );
+
+    el.displayReviewForm = true;
+    await el.updateComplete;
+
+    expect(el.shadowRoot?.querySelector('ia-review-form')).to.exist;
+    expect(listedReviewers(el).length).to.equal(5);
+    expect(el.shadowRoot?.querySelector('.show-more-btn')).to.exist;
+  });
+
+  it('shows every review, with no button, if displayReviewsByDefault is set', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews
+        .reviews=${makeReviews(8)}
+        ?displayReviewsByDefault=${true}
+      ></ia-reviews>`,
+    );
+
+    expect(listedReviewers(el).length).to.equal(8);
+    expect(el.shadowRoot?.querySelector('.show-more-btn')).not.to.exist;
   });
 
   it('shows reviews by default if requested', async () => {
@@ -162,28 +336,9 @@ describe('IaReviews', () => {
     expect(reviewForm).to.exist;
   });
 
-  it('displays the reviews on button click', async () => {
-    const el = await fixture<IaReviews>(
-      html`<ia-reviews .reviews=${mockReviews}></ia-reviews>`,
-    );
-
-    const displayReviewsBtn = el.shadowRoot?.querySelector(
-      '.display-reviews-btn',
-    ) as HTMLButtonElement;
-    expect(displayReviewsBtn).to.exist;
-    displayReviewsBtn?.click();
-
-    await el.updateComplete;
-    const reviews = el.shadowRoot?.querySelectorAll('ia-review');
-    expect(reviews?.length).to.equal(2);
-  });
-
   it('does not display the review form by default', async () => {
     const el = await fixture<IaReviews>(
-      html`<ia-reviews
-        .reviews=${mockReviews}
-        .displayReviews=${true}
-      ></ia-reviews>`,
+      html`<ia-reviews .reviews=${mockReviews}></ia-reviews>`,
     );
 
     const reviewForm = el.shadowRoot?.querySelector(
@@ -235,7 +390,6 @@ describe('IaReviews', () => {
     const el = await fixture<IaReviews>(
       html`<ia-reviews
         .reviews=${mockReviews}
-        .displayReviews=${true}
         ?reviewsFrozen=${true}
       ></ia-reviews>`,
     );
@@ -275,7 +429,6 @@ describe('IaReviews', () => {
       html`<ia-reviews
         .reviews=${mockReviews}
         .displayReviewForm=${true}
-        .displayReviews=${true}
       ></ia-reviews>`,
     );
 
@@ -293,10 +446,7 @@ describe('IaReviews', () => {
 
   it('also hides the reviews if the review form is closed and there are no reviews', async () => {
     const el = await fixture<IaReviews>(
-      html`<ia-reviews
-        .displayReviewForm=${true}
-        .displayReviews=${true}
-      ></ia-reviews>`,
+      html`<ia-reviews .displayReviewForm=${true}></ia-reviews>`,
     );
 
     let reviewForm = el.shadowRoot?.querySelector('ia-review-form');
@@ -323,7 +473,6 @@ describe('IaReviews', () => {
       html`<ia-reviews
         .reviews=${mockReviews}
         .displayReviewForm=${true}
-        .displayReviews=${true}
       ></ia-reviews>`,
     );
 

@@ -7,8 +7,9 @@ import {
   nothing,
   PropertyValues,
 } from 'lit';
-import { property, customElement, state } from 'lit/decorators.js';
-import { msg } from '@lit/localize';
+import { property, customElement, query, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { msg, str } from '@lit/localize';
 
 import type { Review } from '@internetarchive/metadata-service';
 import type { RecaptchaManagerInterface } from '@internetarchive/recaptcha-manager';
@@ -42,8 +43,11 @@ export class IaReviews extends LitElement {
   /* Whether the person viewing the reviews section has the power to delete reviews */
   @property({ type: Boolean }) canDelete = false;
 
-  /* Whether we should bypass the show/hide and more/less toggles */
+  /* Whether we should bypass the show-more and more/less toggles */
   @property({ type: Boolean }) displayReviewsByDefault = false;
+
+  /* How many reviews to show before the rest go behind a "Show more" button */
+  @property({ type: Number }) maxInitialReviews = 5;
 
   /* Maximum allowable length for subject */
   @property({ type: Number }) maxSubjectLength?: number;
@@ -87,9 +91,9 @@ export class IaReviews extends LitElement {
   @state()
   displayReviewForm: boolean = false;
 
-  /* Whether to display the existing reviews */
+  /* Whether the patron has asked to see the reviews past the initial few */
   @state()
-  private displayReviews: boolean = false;
+  private showAllReviews: boolean = false;
 
   /* The sorted and filtered reviews to render */
   @state()
@@ -107,11 +111,14 @@ export class IaReviews extends LitElement {
   @state()
   private recaptchaActivated: boolean = false;
 
+  /* The first review revealed by the "Show more" button, which takes focus */
+  @query('.reviews-list > ia-review[tabindex]')
+  private firstRevealedReview?: HTMLElement;
+
   render() {
     if (this.reviewsDisabled) return this.reviewsDisabledTemplate;
     if (this.reviewsCount === 0 && !this.displayReviewForm)
       return this.noReviewsMsgTemplate;
-    if (!this.displayReviews) return this.displayReviewsMsgTemplate;
 
     return html`
       <div class="reviews-list">
@@ -121,11 +128,10 @@ export class IaReviews extends LitElement {
             </div>`
           : nothing}
         ${this.editableCurrentReviewTemplate}
-        ${this.filteredReviews.map(review =>
-          review.reviewer_itemname !== this.submitterItemname
-            ? this.renderReview(review)
-            : nothing,
+        ${this.visibleReviews.map((review, index) =>
+          this.renderReview(review, index === this.firstRevealedIndex),
         )}
+        ${this.showMoreButtonTemplate}
       </div>
     `;
   }
@@ -139,15 +145,20 @@ export class IaReviews extends LitElement {
     if (changed.has('displayReviewForm') && this.displayReviewForm === true) {
       if (!this.bypassRecaptcha && !this.recaptchaActivated)
         this.recaptchaActivated = true;
-      this.displayReviews = true;
     }
+  }
 
-    if (
-      changed.has('displayReviewsByDefault') &&
-      this.displayReviewsByDefault
-    ) {
-      this.displayReviews = true;
-    }
+  /* The reviews to render, capped at maxInitialReviews until the patron asks for more */
+  private get visibleReviews(): Review[] {
+    if (this.showAllReviews || this.displayReviewsByDefault)
+      return this.filteredReviews;
+
+    return this.filteredReviews.slice(0, this.maxInitialReviews);
+  }
+
+  /* Index of the first review the "Show more" button revealed, if it has been clicked */
+  private get firstRevealedIndex(): number | undefined {
+    return this.showAllReviews ? this.maxInitialReviews : undefined;
   }
 
   /* Message to display if reviews are disabled */
@@ -182,20 +193,21 @@ export class IaReviews extends LitElement {
     `;
   }
 
-  /* Message to display instead of the reviews list if reviews are hidden */
-  private get displayReviewsMsgTemplate(): HTMLTemplateResult {
+  /* Button that reveals the reviews past the initial few */
+  private get showMoreButtonTemplate(): HTMLTemplateResult | typeof nothing {
+    const hiddenCount =
+      this.filteredReviews.length - this.visibleReviews.length;
+    if (hiddenCount <= 0) return nothing;
+
     return html`
-      <div class="message">
-        ${this.reviewsCount === 1
-          ? msg('There is 1 review for this item.')
-          : msg(`There are ${this.reviewsCount} reviews for this item.`)}
-        <button
-          class="ia-button link display-reviews-btn"
-          @click=${() => (this.displayReviews = true)}
-        >
-          ${msg(`Display ${this.reviewsCount === 1 ? 'review' : 'reviews'}`)}</button
-        >.
-      </div>
+      <button
+        class="ia-button link show-more-btn"
+        @click=${this.showMoreReviews}
+      >
+        ${hiddenCount === 1
+          ? msg('Show 1 more review')
+          : msg(str`Show ${hiddenCount} more reviews`)}
+      </button>
     `;
   }
 
@@ -233,18 +245,20 @@ export class IaReviews extends LitElement {
     </div>`;
   }
 
-  /** Sorts the reviews and splits the patron's own review out of the reviews array */
+  /**
+   * Sorts the reviews and splits the patron's own review out of the reviews array.
+   * Only their first review is kept; any others they have are dropped from the list.
+   */
   private sortFilterReviews(): void {
     let patronsOwnReview: Review | undefined;
     const filteredReviews: Review[] = [];
 
     this.reviews.forEach(review => {
-      if (
-        !patronsOwnReview &&
-        review.reviewer_itemname === this.submitterItemname
-      ) {
+      if (review.reviewer_itemname !== this.submitterItemname) {
+        filteredReviews.push(review);
+      } else if (!patronsOwnReview) {
         patronsOwnReview = review;
-      } else filteredReviews.push(review);
+      }
     });
 
     this.currentReview = patronsOwnReview;
@@ -262,11 +276,18 @@ export class IaReviews extends LitElement {
     return sortedReviews;
   }
 
-  /* Renders the given review, using the ia-review component */
-  private renderReview(review?: Review): HTMLTemplateResult | typeof nothing {
+  /**
+   * Renders the given review, using the ia-review component
+   * @param focusable Whether the review can take focus from script, but not from tabbing
+   */
+  private renderReview(
+    review?: Review,
+    focusable = false,
+  ): HTMLTemplateResult | typeof nothing {
     if (!review) return nothing;
 
     return html`<ia-review
+      tabindex=${ifDefined(focusable ? '-1' : undefined)}
       .review=${review}
       .identifier=${this.identifier}
       .baseHost=${this.baseHost}
@@ -274,6 +295,15 @@ export class IaReviews extends LitElement {
       ?canDelete=${this.canDelete}
       ?bypassTruncation=${this.displayReviewsByDefault}
     ></ia-review>`;
+  }
+
+  /** Reveals the rest of the reviews */
+  private async showMoreReviews(): Promise<void> {
+    this.showAllReviews = true;
+    await this.updateComplete;
+
+    // The button that was clicked is gone, so focus would otherwise fall back to the page
+    this.firstRevealedReview?.focus();
   }
 
   /** Prepare the review form for adding or editing */
@@ -295,11 +325,6 @@ export class IaReviews extends LitElement {
   /** Closes the review form if requested */
   private handleEditCanceled(): void {
     this.displayReviewForm = false;
-
-    // Display no-reviews message again if no new review was added
-    if (this.reviewsCount === 0) {
-      this.displayReviews = false;
-    }
   }
 
   static get styles(): CSSResultGroup {
@@ -348,6 +373,14 @@ export class IaReviews extends LitElement {
           vertical-align: baseline;
           padding: 0;
           font-weight: 600;
+        }
+
+        /* Two classes, to outrank .ia-button.link's padding */
+        .reviews-list .show-more-btn {
+          padding: 0;
+          font-weight: 600;
+          outline-color: currentColor;
+          outline-offset: 2px;
         }
       `,
     ];
