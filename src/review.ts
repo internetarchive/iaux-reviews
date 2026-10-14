@@ -6,8 +6,9 @@ import {
   HTMLTemplateResult,
   CSSResultGroup,
 } from 'lit';
-import { property, customElement, state } from 'lit/decorators.js';
+import { property, customElement, query, state } from 'lit/decorators.js';
 import { msg } from '@lit/localize';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 import { Review } from '@internetarchive/metadata-service';
@@ -58,6 +59,14 @@ export class IaReview extends LitElement {
   @state()
   private deleteMsg: string = '';
 
+  /* The link to the reviewer's profile, if the review has one */
+  @query('.reviewer-link')
+  private reviewerLink?: HTMLAnchorElement;
+
+  /* The review's outermost element */
+  @query('article.review')
+  private reviewArticle?: HTMLElement;
+
   render() {
     return !this.review
       ? html`
@@ -66,7 +75,11 @@ export class IaReview extends LitElement {
           </div>
         `
       : html`
-          <article class="review" id=${this.generateDomId()}>
+          <article
+            class="review"
+            id=${this.generateDomId()}
+            tabindex=${ifDefined(this.hasReviewerLink ? undefined : '-1')}
+          >
             ${this.canDelete
               ? html`
                   <button
@@ -93,6 +106,20 @@ export class IaReview extends LitElement {
             ${this.truncationButtonsTemplate}
           </article>
         `;
+  }
+
+  /**
+   * Focuses the reviewer link, the review's main tab stop. A review with no link (no reviewer
+   * itemname) focuses the review itself instead, which is why only that kind of review is
+   * focusable from script.
+   */
+  focus(options?: FocusOptions): void {
+    (this.reviewerLink ?? this.reviewArticle)?.focus(options);
+  }
+
+  /* Whether the reviewer's name links to their profile */
+  private get hasReviewerLink(): boolean {
+    return !!this.review?.reviewer_itemname;
   }
 
   /* Renders the review subject, truncating if necessary */
@@ -157,7 +184,7 @@ export class IaReview extends LitElement {
   private get reviewerTemplate(): HTMLTemplateResult | typeof nothing {
     return !this.review
       ? nothing
-      : this.review.reviewer_itemname
+      : this.hasReviewerLink
         ? html`
             <a
               href="${this.baseHost}/details/${this.review.reviewer_itemname}"

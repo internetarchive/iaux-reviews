@@ -1,4 +1,5 @@
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, waitUntil } from '@open-wc/testing';
+import { sendKeys } from '@web/test-runner-commands';
 
 import type { IaReviews } from '../src/ia-reviews';
 import { Review } from '@internetarchive/metadata-service';
@@ -42,6 +43,45 @@ function makeReviews(count: number): Review[] {
         createdate: `2025-01-${String(28 - i).padStart(2, '0')}`,
         reviewer_itemname: `@reviewer-${i + 1}`,
       }),
+  );
+}
+
+/** The reviews in the list, in render order */
+function listedReviews(el: IaReviews): IaReview[] {
+  return [
+    ...(el.shadowRoot?.querySelectorAll(
+      '.reviews-list > ia-review',
+    ) as NodeListOf<IaReview>),
+  ];
+}
+
+/** The reviewer link inside a rendered review */
+function reviewerLink(review: IaReview): HTMLAnchorElement | null | undefined {
+  return review.shadowRoot?.querySelector<HTMLAnchorElement>('.reviewer-link');
+}
+
+/**
+ * Where focus is in the list, e.g. "Reviewer 6: reviewer-link". A string keeps a failing assertion
+ * readable, where comparing elements makes the runner try to serialize the whole DOM.
+ */
+function focusedSpot(el: IaReviews): string {
+  const active = el.shadowRoot?.activeElement;
+  if (!(active instanceof IaReview)) return active?.tagName ?? 'nothing';
+
+  const inner = active.shadowRoot?.activeElement;
+  return `${active.review?.reviewer}: ${inner?.classList[0] ?? 'host'}`;
+}
+
+/** Clicks "Show more" from the keyboard's position and waits for focus to move */
+async function showMore(el: IaReviews): Promise<void> {
+  const showMoreBtn = el.shadowRoot?.querySelector(
+    '.show-more-btn',
+  ) as HTMLButtonElement;
+  showMoreBtn.focus();
+  showMoreBtn.click();
+  await waitUntil(
+    () => el.shadowRoot?.activeElement?.tagName === 'IA-REVIEW',
+    'focus never moved to a revealed review',
   );
 }
 
@@ -180,25 +220,34 @@ describe('IaReviews', () => {
     expect(el.shadowRoot?.querySelector('.show-more-btn')).not.to.exist;
   });
 
-  it('moves focus to the first revealed review on button click', async () => {
+  it("moves focus to the first revealed review's reviewer link on button click", async () => {
     const el = await fixture<IaReviews>(
       html`<ia-reviews .reviews=${makeReviews(8)}></ia-reviews>`,
     );
 
-    const showMoreBtn = el.shadowRoot?.querySelector(
-      '.show-more-btn',
-    ) as HTMLButtonElement;
-    showMoreBtn.focus();
-    showMoreBtn.click();
-    // The click handler awaits a render before it moves focus
-    await el.updateComplete;
-    await el.updateComplete;
+    await showMore(el);
 
-    const focused = el.shadowRoot?.activeElement as IaReview | null;
-    expect(focused?.review?.reviewer).to.equal('Reviewer 6');
-    // Focusable from script only, so it doesn't add a tab stop
-    expect(focused?.getAttribute('tabindex')).to.equal('-1');
-    expect(el.shadowRoot?.querySelectorAll('[tabindex]').length).to.equal(1);
+    expect(focusedSpot(el)).to.equal('Reviewer 6: reviewer-link');
+  });
+
+  it('keeps the first revealed review in the tab order', async () => {
+    const el = await fixture<IaReviews>(
+      html`<ia-reviews .reviews=${makeReviews(8)}></ia-reviews>`,
+    );
+    await showMore(el);
+    const [, , , , fifth, , seventh] = listedReviews(el);
+
+    // Back into it from the review after it
+    reviewerLink(seventh)?.focus();
+    await sendKeys({ down: 'Shift' });
+    await sendKeys({ press: 'Tab' });
+    await sendKeys({ up: 'Shift' });
+    expect(focusedSpot(el)).to.equal('Reviewer 6: reviewer-link');
+
+    // And forward into it from the review before it
+    reviewerLink(fifth)?.focus();
+    await sendKeys({ press: 'Tab' });
+    expect(focusedSpot(el)).to.equal('Reviewer 6: reviewer-link');
   });
 
   it('passes the a11y audit with reviews hidden behind the button', async () => {
