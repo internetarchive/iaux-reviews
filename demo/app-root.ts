@@ -80,6 +80,21 @@ export class AppRoot extends LitElement {
     }),
   ];
 
+  /* Enough extra reviews to push the list past the show-more cap */
+  private manyReviews = Array.from(
+    { length: 8 },
+    (_, i) =>
+      new Review({
+        stars: (i % 5) + 1,
+        reviewtitle: `Extra review ${i + 1}`,
+        reviewbody: 'Here are some more thoughts on this item.',
+        reviewer: `Reviewer ${i + 1}`,
+        reviewdate: `03/${String(28 - i).padStart(2, '0')}/2025`,
+        createdate: `03/${String(28 - i).padStart(2, '0')}/2025`,
+        reviewer_itemname: `@reviewer-${i + 1}`,
+      }),
+  );
+
   private fetchHandler: FetchHandlerInterface = new MockFetchHandler();
 
   private mockRecaptchaManager: RecaptchaManagerInterface =
@@ -103,6 +118,9 @@ export class AppRoot extends LitElement {
   private useExistingReviews: boolean = true;
 
   @state()
+  private useManyReviews: boolean = false;
+
+  @state()
   private review: Review = this.mockOldReview;
 
   @state()
@@ -120,6 +138,9 @@ export class AppRoot extends LitElement {
         @click=${() => (this.useExistingReviews = !this.useExistingReviews)}
       >
         ${this.useExistingReviews ? 'Remove' : 'Show'} existing reviews
+      </button>
+      <button @click=${() => (this.useManyReviews = !this.useManyReviews)}>
+        ${this.useManyReviews ? 'Use few' : 'Use many'} reviews
       </button>
       <button @click=${() => (this.reviewsDisabled = !this.reviewsDisabled)}>
         ${this.reviewsDisabled ? 'Enable' : 'Disable'} reviews
@@ -158,9 +179,7 @@ export class AppRoot extends LitElement {
       <div class="container">
         <ia-reviews
           .identifier=${'goody'}
-          .reviews=${this.useExistingReviews
-            ? this.reviews.concat(this.review)
-            : []}
+          .reviews=${this.existingReviews}
           .recaptchaManager=${this.mockRecaptchaManager}
           .submitterItemname=${'@foo-bar'}
           .submitterScreenname=${'Foo Bar'}
@@ -176,6 +195,15 @@ export class AppRoot extends LitElement {
           ?reviewsFrozen=${this.reviewsFrozen}
         ></ia-reviews>
       </div>`;
+  }
+
+  private get existingReviews(): Review[] {
+    if (!this.useExistingReviews) return [];
+
+    const reviews = this.useManyReviews
+      ? this.reviews.concat(this.manyReviews)
+      : this.reviews;
+    return reviews.concat(this.review);
   }
 
   private renderReviewToggle(

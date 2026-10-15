@@ -23,6 +23,38 @@ describe('IaReview', () => {
     await expect(el).shadowDom.to.be.accessible();
   });
 
+  it('focus() moves to the reviewer link', async () => {
+    const el = await fixture<IaReview>(
+      html`<ia-review .review=${mockReview} ?canDelete=${true}></ia-review>`,
+    );
+
+    el.focus();
+
+    expect(el.shadowRoot?.activeElement?.classList[0]).to.equal(
+      'reviewer-link',
+    );
+    // Only a review without a link needs to be focusable itself
+    expect(el.shadowRoot?.querySelector('article')?.hasAttribute('tabindex')).to
+      .be.false;
+  });
+
+  it('focus() moves to the review itself when there is no reviewer link', async () => {
+    const el = await fixture<IaReview>(
+      html`<ia-review
+        .review=${new Review({ ...mockReview, reviewer_itemname: undefined })}
+      ></ia-review>`,
+    );
+
+    el.focus();
+
+    expect(el.shadowRoot?.querySelector('.reviewer-link')).not.to.exist;
+    expect(el.shadowRoot?.activeElement?.tagName).to.equal('ARTICLE');
+    // Focusable from script, without adding a tab stop
+    expect(
+      el.shadowRoot?.querySelector('article')?.getAttribute('tabindex'),
+    ).to.equal('-1');
+  });
+
   it('renders an error if no review provided', async () => {
     const el = await fixture<IaReview>(html`<ia-review></ia-review>`);
 
